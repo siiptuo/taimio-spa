@@ -21,21 +21,70 @@ foreach ($pdo->query('SELECT * FROM activity ORDER BY started_at DESC') as $row)
         <title>Tiima</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            body {
+                font-family: sans-serif;
+                font-size: 14px;
+                max-width: 400px;
+                margin: 0 auto;
+                padding: 1em;
+            }
+            h1, h2 {
+                font-weight: normal;
+            }
+            button {
+                border: 1px solid silver;
+                background-color: #eee;
+                border-radius: 4px;
+                padding: 0.5em;
+                font: inherit;
+            }
+            .current-activity-display {
+                display: flex;
+                margin-bottom: 1em;
+            }
+            .current-activity-display h1 {
+                flex-grow: 1;
+                margin: 0;
+            }
+            .start-activity-form {
+                display: flex;
+            }
+            .start-activity-form input {
+                flex: 1;
+                padding: 0.5em;
+                background-color: white;
+                border: 1px solid silver;
+                border-right: none;
+                border-radius: 4px 0 0 4px;
+                font: inherit;
+            }
+            .start-activity-form button {
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+            .activity-list {
+                border-spacing: 0.5em 0.5em;
+                border-collapse: separate;
+            }
+        </style>
     </head>
     <body>
-        <h1>Tiima</h1>
 <?php if (isset($currentActivity)): ?>
-    <form method="POST" action="stop_activity.php">
+    <form method="POST" action="stop_activity.php" class="current-activity-display">
+        <h1><?= htmlspecialchars($currentActivity['title']) ?></h1>
         <input type="hidden" name="id" value="<?= $currentActivity['id'] ?>">
-        <span>Current activity: <?= htmlspecialchars($currentActivity['title']) ?></span>
         <button type="submit">Stop</button>
     </form>
 <?php else: ?>
-    <div>No activity</div>
+    <div class="current-activity-display">
+        <h1>No activity</h1>
+        <button type="submit" disabled>Stop</button>
+    </div>
 <?php endif; ?>
-<form method="POST" action="start_activity.php">
-    <label>Activity: <input type="text" name="title"></label>
-    <button type="submit">Start activity</button>
+<form method="POST" action="start_activity.php" class="start-activity-form">
+    <input type="text" name="title" placeholder="New activity...">
+    <button type="submit">Start</button>
 </form>
 <h2>Previous activities</h2>
 <?php foreach ($activities as $activity): ?>
@@ -46,7 +95,7 @@ foreach ($pdo->query('SELECT * FROM activity ORDER BY started_at DESC') as $row)
             </table>
         <?php endif; ?>
         <h3><?= $activity['started_at']->format('Y-m-d') ?></h3>
-        <table>
+        <table class="activity-list">
             <tbody>
     <?php endif; ?>
     <?php $lastDay = $currentDay; ?>
