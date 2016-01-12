@@ -1,0 +1,6 @@
+CREATE TABLE activity (
+    id SERIAL PRIMARY KEY,
+    started_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    finished_at TIMESTAMP,
+    title TEXT NOT NULL
+);
