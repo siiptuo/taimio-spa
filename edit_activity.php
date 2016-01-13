@@ -19,6 +19,7 @@ if (isset($activity['finished_at'])) {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="style.css">
+        <link rel="shortcut icon" href="tiima.ico">
     </head>
     <body>
         <form method="POST" action="save_activity.php">

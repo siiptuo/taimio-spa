@@ -39,6 +39,7 @@ foreach ($pdo->query('SELECT * FROM activity ORDER BY started_at DESC') as $row)
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="style.css">
+        <link rel="shortcut icon" href="tiima.ico">
     </head>
     <body>
 <?php if (isset($currentActivity)): ?>
