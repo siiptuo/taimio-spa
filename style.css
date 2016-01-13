@@ -77,3 +77,18 @@ label {
     white-space: nowrap;
     text-align: right;
 }
+
+.tag-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+}
+
+.tag-list li {
+    display: inline-block;
+    background-color: orange;
+    padding: 0.25em;
+    font-size: 0.75em;
+    border-radius: 2px;
+}

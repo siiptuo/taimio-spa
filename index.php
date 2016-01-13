@@ -14,6 +14,12 @@ function formatDuration($start, $end) {
 $currentActivity = null;
 $activities = [];
 foreach ($pdo->query('SELECT * FROM activity ORDER BY started_at DESC') as $row) {
+    if (($tagStart = strpos($row['title'], '#')) !== false) {
+        $row['tags'] = preg_split('/\s*#/', substr($row['title'], $tagStart + 1));
+        $row['title'] = trim(substr($row['title'], 0, $tagStart));
+    } else {
+        $row['tags'] = [];
+    }
     $row['started_at'] = new DateTime($row['started_at']);
     if (!isset($row['finished_at'])) {
         $row['duration'] = formatDuration($row['started_at'], new DateTime());
@@ -39,6 +45,13 @@ foreach ($pdo->query('SELECT * FROM activity ORDER BY started_at DESC') as $row)
     <form method="POST" action="stop_activity.php" class="current-activity-display">
         <h1>
             <?= htmlspecialchars($currentActivity['title']) ?>
+            <?php if (!empty($currentActivity['tags'])): ?>
+                <ul class="tag-list">
+                    <?php foreach ($currentActivity['tags'] as $tag): ?>
+                        <li><?= $tag ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
             <span data-start-time="<?= $currentActivity['started_at']->format(DateTime::ISO8601) ?>">
                 <?= $currentActivity['duration'] ?>
             </span>
@@ -73,7 +86,16 @@ foreach ($pdo->query('SELECT * FROM activity ORDER BY started_at DESC') as $row)
         <td><?= $activity['started_at']->format('H:i') ?></td>
         <td>-</td>
         <td><?php if ($activity['finished_at']): ?><?= $activity['finished_at']->format('H:i') ?><?php endif; ?></td>
-        <td class="activity-list-title-column"><a href="edit_activity.php?id=<?= $activity['id'] ?>"><?= htmlspecialchars($activity['title']) ?></a></td>
+        <td class="activity-list-title-column">
+            <a href="edit_activity.php?id=<?= $activity['id'] ?>"><?= htmlspecialchars($activity['title']) ?></a>
+            <?php if (!empty($activity['tags'])): ?>
+                <ul class="tag-list">
+                    <?php foreach ($activity['tags'] as $tag): ?>
+                        <li><?= $tag ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </td>
         <td class="activity-list-duration-column"<?php if ($activity === $currentActivity): ?> data-start-time="<?= $activity['started_at']->format(DateTime::ISO8601) ?>"<?php endif; ?>><?= $activity['duration'] ?></td>
     </tr>
 <?php endforeach; ?>
