@@ -32,61 +32,7 @@ foreach ($pdo->query('SELECT * FROM activity ORDER BY started_at DESC') as $row)
         <title>Tiima</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style>
-            body {
-                font-family: sans-serif;
-                font-size: 14px;
-                max-width: 400px;
-                margin: 0 auto;
-                padding: 1em;
-            }
-            h1, h2 {
-                font-weight: normal;
-            }
-            button {
-                border: 1px solid silver;
-                background-color: #eee;
-                border-radius: 4px;
-                padding: 0.5em;
-                font: inherit;
-            }
-            .current-activity-display {
-                display: flex;
-                margin-bottom: 1em;
-            }
-            .current-activity-display h1 {
-                flex-grow: 1;
-                margin: 0;
-            }
-            .start-activity-form {
-                display: flex;
-            }
-            .start-activity-form input {
-                flex: 1;
-                padding: 0.5em;
-                background-color: white;
-                border: 1px solid silver;
-                border-right: none;
-                border-radius: 4px 0 0 4px;
-                font: inherit;
-            }
-            .start-activity-form button {
-                border-top-left-radius: 0;
-                border-bottom-left-radius: 0;
-            }
-            .activity-list {
-                border-spacing: 0.5em 0.5em;
-                border-collapse: separate;
-                width: 100%;
-            }
-            .activity-list-title-column {
-                width: 99%;
-            }
-            .activity-list-duration-column {
-                white-space: nowrap;
-                text-align: right;
-            }
-        </style>
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
 <?php if (isset($currentActivity)): ?>
