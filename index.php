@@ -73,7 +73,7 @@ foreach ($pdo->query('SELECT * FROM activity ORDER BY started_at DESC') as $row)
         <td><?= $activity['started_at']->format('H:i') ?></td>
         <td>-</td>
         <td><?php if ($activity['finished_at']): ?><?= $activity['finished_at']->format('H:i') ?><?php endif; ?></td>
-        <td class="activity-list-title-column"><?= htmlspecialchars($activity['title']) ?></td>
+        <td class="activity-list-title-column"><a href="edit_activity.php?id=<?= $activity['id'] ?>"><?= htmlspecialchars($activity['title']) ?></a></td>
         <td class="activity-list-duration-column"<?php if ($activity === $currentActivity): ?> data-start-time="<?= $activity['started_at']->format(DateTime::ISO8601) ?>"<?php endif; ?>><?= $activity['duration'] ?></td>
     </tr>
 <?php endforeach; ?>
