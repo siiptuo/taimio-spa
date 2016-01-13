@@ -1,0 +1,14 @@
+{
+    "name": "siiptuo/tiima",
+    "description": "time tracking software",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tuomas Siipola",
+            "email": "siiptuo@kapsi.fi"
+        }
+    ],
+    "require": {
+        "robmorgan/phinx": "^0.5.1"
+    }
+}
