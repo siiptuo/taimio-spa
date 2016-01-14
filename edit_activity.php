@@ -2,10 +2,15 @@
 
 require 'database.php';
 
-$sth = $pdo->prepare('SELECT * FROM activity WHERE id = ?');
+$sth = $pdo->prepare('SELECT activity.*, json_agg(tag.title) AS tags FROM activity LEFT JOIN activity_tag ON activity_tag.activity_id = activity.id LEFT JOIN tag ON tag.id = activity_tag.tag_id WHERE activity.id = ? GROUP BY activity.id');
 $sth->execute([$_GET['id']]);
 $activity = $sth->fetch();
 
+if ($activity['tags'] === '[null]') {
+    $activity['tags'] = [];
+} else {
+    $activity['tags'] = json_decode($activity['tags']);
+}
 $activity['started_at'] = new DateTime($activity['started_at']);
 if (isset($activity['finished_at'])) {
     $activity['finished_at'] = new DateTime($activity['finished_at']);
@@ -38,7 +43,7 @@ if (isset($activity['finished_at'])) {
             </label>
             <label>
                 Title:
-                <input type="text" name="title" value="<?= $activity['title'] ?>">
+                <input type="text" name="title" value="<?= $activity['title'] ?><?php if (count($activity['tags']) > 0): ?> #<?= implode(' #', $activity['tags']) ?><?php endif; ?>">
             </label>
             <button type="submit">Save</button>
         </form>

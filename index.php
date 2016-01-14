@@ -13,12 +13,11 @@ function formatDuration($start, $end) {
 
 $currentActivity = null;
 $activities = [];
-foreach ($pdo->query('SELECT * FROM activity ORDER BY started_at DESC') as $row) {
-    if (($tagStart = strpos($row['title'], '#')) !== false) {
-        $row['tags'] = preg_split('/\s*#/', substr($row['title'], $tagStart + 1));
-        $row['title'] = trim(substr($row['title'], 0, $tagStart));
-    } else {
+foreach ($pdo->query('SELECT activity.*, json_agg(tag.title) AS tags FROM activity LEFT JOIN activity_tag ON activity_tag.activity_id = activity.id LEFT JOIN tag ON tag.id = activity_tag.tag_id GROUP BY activity.id ORDER BY started_at DESC') as $row) {
+    if ($row['tags'] === '[null]') {
         $row['tags'] = [];
+    } else {
+        $row['tags'] = json_decode($row['tags']);
     }
     $row['started_at'] = new DateTime($row['started_at']);
     if (!isset($row['finished_at'])) {
