@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <form method="POST" action="save_activity.php">
-    <input type="hidden" name="id" value="{{ activity.id }}">
+    <form method="POST" action="{{ path_for('save-activity', {id: activity.id}) }}">
+        <input type="hidden" name="id" value="{{ activity.id }}">
         <label>
             Start time:
             <input type="datetime-local" name="started_at" value="{{ activity.started_at|date('Y-m-d\\TH:i:sO') }}">

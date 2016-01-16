@@ -2,7 +2,7 @@
 
 {% block body %}
     {% if current_activity is not null %}
-        <form method="POST" action="stop_activity.php" class="current-activity-display">
+        <form method="POST" action="{{ path_for('stop-activity', {id: current_activity.id}) }}" class="current-activity-display">
             <h1>
                 {{ current_activity.title }}
                 {% if current_activity.tags is not empty %}
@@ -25,7 +25,7 @@
             <button type="submit" disabled>Stop</button>
         </div>
     {% endif %}
-    <form method="POST" action="start_activity.php" class="start-activity-form">
+    <form method="POST" action="{{ path_for('start-activity') }}" class="start-activity-form">
         <input type="text" name="title" placeholder="New activity...">
         <button type="submit">Start</button>
     </form>
@@ -47,7 +47,7 @@
             <td>-</td>
             <td>{% if activity.finished_at is not null %}{{ activity.finished_at|date('H:i') }}{% endif %}</td>
             <td class="activity-list-title-column">
-                <a href="edit_activity.php?id={{ activity.id }}">{{ activity.title }}</a>
+                <a href="{{ path_for('edit-activity', {id: activity.id}) }}">{{ activity.title }}</a>
                 {% if activity.tags is not empty %}
                     <ul class="tag-list">
                         {% for tag in activity.tags %}
