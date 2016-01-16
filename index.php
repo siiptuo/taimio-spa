@@ -20,7 +20,6 @@ function getTags($pdo, $tagId) {
     return array_filter(json_decode($sth->fetchColumn()));
 }
 
-
 $container = new Slim\Container([
     'settings' => [
         'displayErrorDetails' => true,
@@ -48,6 +47,144 @@ $container['view'] = function ($container) {
 };
 
 $app = new Slim\App($container);
+
+$app->get('/api/activities', function(Request $request, Response $response) {
+    $activities = [];
+    foreach ($this->db->query('SELECT activity.*, json_agg(activity_tag.tag_id) AS tags FROM activity LEFT JOIN activity_tag ON activity_tag.activity_id = activity.id GROUP BY activity.id ORDER BY started_at DESC') as $row) {
+        if ($row['tags'] === '[null]') {
+            $row['tags'] = [];
+        } else {
+            $tagIds = json_decode($row['tags']);
+            $row['tags'] = [];
+            foreach ($tagIds as $tagId) {
+                $row['tags'] = array_unique(array_merge($row['tags'], getTags($this->db, $tagId)));
+            }
+        }
+        $row['started_at'] = (new DateTime($row['started_at']))->format(DateTime::ISO8601);
+        if (isset($row['finished_at'])) {
+            $row['finished_at'] = (new DateTime($row['finished_at']))->format(DateTime::ISO8601);
+        }
+        $activities[] = $row;
+    }
+
+    return $response->withJson($activities);
+});
+
+$app->post('/api/activities', function(Request $request, Response $response) {
+    try {
+        $this->db->beginTransaction();
+
+        $data = $request->getParsedBody();
+
+        $activity = [];
+        $activity['title'] = $data['title'];
+        $activity['started_at'] = $data['started_at'];
+        $activity['finished_at'] = $data['finished_at'];
+        $activity['tags'] = $data['tags'];
+
+        $sth = $this->db->prepare('INSERT INTO activity (title, started_at, finished_at) VALUES (?, ?, ?) RETURNING id');
+        $sth->execute([
+            $activity['title'],
+            $activity['started_at'],
+            $activity['finished_at'],
+        ]);
+        $activity['id'] = $sth->fetchColumn();
+
+        if (count($activity['tags']) > 0) {
+            $tags = [];
+            foreach ($activity['tags'] as $tag) {
+                $sth = $this->db->prepare('INSERT INTO tag (title) VALUES (?) ON CONFLICT DO NOTHING RETURNING id');
+                $sth->execute([$tag]);
+                $id = $sth->fetchColumn();
+                if ($id === false) {
+                    $sth = $this->db->prepare('SELECT id FROM tag WHERE LOWER(title) = LOWER(?)');
+                    $sth->execute([$tag]);
+                    $id = $sth->fetchColumn();
+                }
+                $tags[] = [
+                    'id' => $id,
+                    'title' => $tag,
+                ];
+            }
+
+            $placeholders = substr(str_repeat('(?, ?), ', count($tags)), 0, -2);
+            $sth = $this->db->prepare("INSERT INTO activity_tag (activity_id, tag_id) VALUES $placeholders ON CONFLICT DO NOTHING");
+            $params = [];
+            foreach ($tags as $tag) {
+                array_push($params, $activity['id'], $tag['id']);
+            }
+            $sth->execute($params);
+        }
+
+        $this->db->commit();
+
+        return $response->withJson($activity);
+    } catch (PDOException $e) {
+        $this->db->rollBack();
+
+        return $response->withJson(['error' => $e->getMessage()], 500);
+    }
+});
+
+$app->put('/api/activities/{id:\d+}', function(Request $request, Response $response, array $args) {
+    $data = $request->getParsedBody();
+
+    $activity = [];
+    $activity['id'] = $args['id'];
+    $activity['title'] = $data['title'];
+    $activity['started_at'] = $data['started_at'];
+    $activity['finished_at'] = $data['finished_at'];
+    $activity['tags'] = $data['tags'];
+
+    try {
+        $this->db->beginTransaction();
+
+        $sth = $this->db->prepare('UPDATE activity SET title = ?, started_at = ?, finished_at = ? WHERE id = ?');
+        $sth->execute([
+            $activity['title'],
+            $activity['started_at'],
+            $activity['finished_at'],
+            $activity['id'],
+        ]);
+
+        $sth = $this->db->prepare('DELETE FROM activity_tag WHERE activity_id = ?');
+        $sth->execute([$activity['id']]);
+
+        if (count($activity['tags']) > 0) {
+            $tags = [];
+            foreach ($activity['tags'] as $tag) {
+                $sth = $this->db->prepare('INSERT INTO tag (title) VALUES (?) ON CONFLICT DO NOTHING RETURNING id');
+                $sth->execute([$tag]);
+                $id = $sth->fetchColumn();
+                if ($id === false) {
+                    $sth = $this->db->prepare('SELECT id FROM tag WHERE LOWER(title) = LOWER(?)');
+                    $sth->execute([$tag]);
+                    $id = $sth->fetchColumn();
+                }
+                $tags[] = [
+                    'id' => $id,
+                    'title' => $tag,
+                ];
+            }
+
+            $placeholders = substr(str_repeat('(?, ?), ', count($activity['tags'])), 0, -2);
+            $sth = $this->db->prepare("INSERT INTO activity_tag (activity_id, tag_id) VALUES $placeholders");
+            $params = [];
+            foreach ($tags as $tag) {
+                array_push($params, $activity['id'], $tag['id']);
+            }
+            $sth->execute($params);
+        }
+
+        $this->db->commit();
+
+        return $response->withJson($activity);
+    } catch (PDOException $e) {
+        $this->db->rollBack();
+
+        return $response->withJson(['error' => $e->getMessage()], 500);
+    }
+});
 
 $app->get('/', function (Request $request, Response $response) {
     $currentActivity = null;
