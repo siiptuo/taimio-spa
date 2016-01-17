@@ -1,0 +1,28 @@
+{
+  "name": "tiima",
+  "version": "1.0.0",
+  "description": "time tracking software",
+  "main": "script.js",
+  "scripts": {
+    "build": "browserify script.js -t babelify -o bundle.js",
+    "watch": "watchify script.js -v -t babelify -o bundle.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/siiptuo/tiima.git"
+  },
+  "author": "Tuomas Siipola <siiptuo@kapsi.fi>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/siiptuo/tiima/issues"
+  },
+  "homepage": "https://github.com/siiptuo/tiima#readme",
+  "dependencies": {
+    "vue": "^1.0.14"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.3.13",
+    "babelify": "^7.2.0",
+    "watchify": "^3.7.0"
+  }
+}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Tiima</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/style.css">
+        <link rel="shortcut icon" href="/tiima.ico">
+    </head>
+    <body>
+        <div id="app">
+            <form method="POST" action="" class="current-activity-display">
+                <h1>
+                    {{ currentActivity.title }}
+                    <ul class="tag-list">
+                        <li v-for="tag in currentActivity.tags">{{ tag }}</li>
+                    </ul>
+                    {{ currentActivity.started_at | duration }}
+                </h1>
+                <button type="submit">Stop</button>
+            </form>
+            <form method="POST" action="" class="start-activity-form">
+                <input type="text" name="title" placeholder="New activity...">
+                <button type="submit">Start</button>
+            </form>
+            <h2>Previous activities</h2>
+            <template v-for="day in days">
+                <h3>{{ day.date | date }}</h3>
+                <table class="activity-list">
+                    <tr v-for="activity in day.activities">
+                        <td>{{ activity.started_at | time }}</a>
+                        <td>-</a>
+                        <td>{{ activity.finished_at | time }}</a>
+                        <td class="activity-list-title-column">
+                            {{ activity.title }}
+                            <ul class="tag-list">
+                                <li v-for="tag in activity.tags">{{ tag }}</li>
+                            </ul>
+                        </td>
+                        <td class="activity-list-duration-column">{{ activity.started_at | duration activity.finished_at }}</td>
+                    </tr>
+                </table>
+            </template>
+        </div>
+        <script src="bundle.js"></script>
+    </body>
+</html>
