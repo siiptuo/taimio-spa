@@ -9,7 +9,7 @@
     </head>
     <body>
         <div id="app">
-            <form method="POST" action="" class="current-activity-display">
+            <form @submit.prevent="stopActivity" class="current-activity-display">
                 <h1 v-if="currentActivity">
                     {{ currentActivity.title }}
                     <ul class="tag-list">
@@ -20,8 +20,8 @@
                 <h1 v-else>No activity</h1>
                 <button type="submit" :disabled="currentActivity === null">Stop</button>
             </form>
-            <form method="POST" action="" class="start-activity-form">
-                <input type="text" name="title" placeholder="New activity...">
+            <form @submit.prevent="startActivity" class="start-activity-form">
+                <input type="text" name="title" placeholder="New activity..." v-model="newActivityInput">
                 <button type="submit">Start</button>
             </form>
             <h2>Previous activities</h2>

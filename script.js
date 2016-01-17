@@ -34,6 +34,20 @@ Vue.filter('duration', (start, end) => {
     }
 });
 
+function apiSaveActivity(activity) {
+    const isNew = typeof activity.id === 'undefined';
+    return fetch('/api/activities' + (isNew ? '' : '/' + activity.id), {
+        method: isNew ? 'POST' : 'PUT',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: serializeActivity(activity),
+    })
+        .then(response => response.json())
+        .then(unserializeActivity);
+}
+
 function init(data) {
     let currentActivity = null;
     data.forEach(day => {
@@ -47,8 +61,40 @@ function init(data) {
         el: '#app',
         data: {
             days: data,
-            currentActivity
+            currentActivity,
+            newActivityInput: '',
         },
+        methods: {
+            startActivity() {
+                const newActivity = {
+                    title: this.newActivityInput,
+                    tags: [],
+                    started_at: new Date(),
+                    finished_at: null,
+                };
+                if (this.currentActivity) {
+                    this.currentActivity.finished_at = new Date();
+                    apiSaveActivity(this.currentActivity)
+                        .then(() => { this.currentActivity = null; })
+                        .then(() => apiSaveActivity(newActivity))
+                        .then(activity => {
+                            this.days[0].activities.unshift(activity);
+                            this.currentActivity = activity;
+                        });
+                } else {
+                    apiSaveActivity(newActivity)
+                        .then(activity => {
+                            this.days[0].activities.unshift(activity);
+                            this.currentActivity = activity;
+                        });
+                }
+            },
+            stopActivity() {
+                this.currentActivity.finished_at = new Date();
+                apiSaveActivity(this.currentActivity)
+                    .then(() => { this.currentActivity = null; });
+            }
+        }
     });
 }
 
@@ -58,6 +104,16 @@ function unserializeActivity(data) {
         data.finished_at = new Date(data.finished_at);
     }
     return data;
+}
+
+function serializeActivity(activity) {
+    return JSON.stringify({
+        id: activity.id,
+        started_at: activity.started_at.toISOString(),
+        finished_at: activity.finished_at ? activity.finished_at.toISOString() : null,
+        title: activity.title,
+        tags: activity.tags
+    });
 }
 
 const millisecondsInDay = 1000 * 60 * 60 * 24;
