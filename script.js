@@ -34,6 +34,20 @@ Vue.filter('duration', (start, end) => {
     }
 });
 
+function parseActivityInput(input) {
+    const tagStart = input.indexOf('#');
+    if (tagStart >= 0) {
+        return {
+            title: input.slice(0, tagStart - 1),
+            tags: input.slice(tagStart + 1).split(' #')
+        };
+    }
+    return {
+        title: input,
+        tags: []
+    };
+}
+
 function apiSaveActivity(activity) {
     const isNew = typeof activity.id === 'undefined';
     return fetch('/api/activities' + (isNew ? '' : '/' + activity.id), {
@@ -66,9 +80,10 @@ function init(data) {
         },
         methods: {
             startActivity() {
+                const parsedInput = parseActivityInput(this.newActivityInput);
                 const newActivity = {
-                    title: this.newActivityInput,
-                    tags: [],
+                    title: parsedInput.title,
+                    tags: parsedInput.tags,
                     started_at: new Date(),
                     finished_at: null,
                 };
