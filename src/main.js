@@ -1,38 +1,9 @@
 import Vue from 'vue';
+import * as filters from './filters';
 
-function pad2(value) {
-    return (value < 10 ? '0' : '') + value;
-}
-
-Vue.filter('time', value => {
-    if (!(value instanceof Date)) {
-        return value;
-    }
-    return pad2(value.getHours()) + ':' + pad2(value.getMinutes());
-});
-
-Vue.filter('date', value => {
-    if (!(value instanceof Date)) {
-        return value;
-    }
-    return pad2(value.getFullYear()) + '-' + pad2(value.getMonth() + 1) + '-' + pad2(value.getDate());
-});
-
-Vue.filter('duration', (start, end) => {
-    if (!(end instanceof Date)) {
-        end = new Date();
-    }
-    start = start.getTime();
-    end = end.getTime();
-    const secs = Math.floor((end - start) / 1000);
-    const hours = Math.floor(secs / (60 * 60));
-    const mins = Math.floor(secs / 60) - hours * 60;
-    if (hours === 0) {
-        return mins === 0 ? secs % 60 + 's' : mins + 'min';
-    } else {
-        return hours + 'h ' + mins + 'min';
-    }
-});
+Vue.filter('time', filters.time);
+Vue.filter('date', filters.date);
+Vue.filter('duration', filters.duration);
 
 function parseActivityInput(input) {
     const tagStart = input.indexOf('#');
