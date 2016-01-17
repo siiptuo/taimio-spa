@@ -10,14 +10,15 @@
     <body>
         <div id="app">
             <form method="POST" action="" class="current-activity-display">
-                <h1>
+                <h1 v-if="currentActivity">
                     {{ currentActivity.title }}
                     <ul class="tag-list">
                         <li v-for="tag in currentActivity.tags">{{ tag }}</li>
                     </ul>
                     {{ currentActivity.started_at | duration }}
                 </h1>
-                <button type="submit">Stop</button>
+                <h1 v-else>No activity</h1>
+                <button type="submit" :disabled="currentActivity === null">Stop</button>
             </form>
             <form method="POST" action="" class="start-activity-form">
                 <input type="text" name="title" placeholder="New activity...">
