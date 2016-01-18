@@ -9,7 +9,10 @@
     </head>
     <body>
         <template id="activities-summary-template">
-            <h3>{{ day.date | date }}</h3>
+            <h3>
+                {{ day.date | date }}
+                <span class="activity-summary-total-duration">{{ totalDuration  | duration }}</span>
+            </h3>
             <table class="activity-list">
                 <tr v-for="activity in day.activities" @click="clickActivity(activity)">
                     <td class="activity-list-time-column">{{ activity.started_at | time }}</a>

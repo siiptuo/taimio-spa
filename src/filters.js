@@ -17,12 +17,16 @@ export function date(value) {
 }
 
 export function duration(start, end) {
-    if (!(end instanceof Date)) {
-        end = new Date();
+    let diff = start;
+    if (start instanceof Date) {
+        if (!(end instanceof Date)) {
+            end = new Date();
+        }
+        diff = end.getTime() - start.getTime();
+    } else if (typeof start !== 'number') {
+        throw new Error('start must be Date or Number');
     }
-    start = start.getTime();
-    end = end.getTime();
-    const secs = Math.floor((end - start) / 1000);
+    const secs = Math.floor(diff / 1000);
     const hours = Math.floor(secs / (60 * 60));
     const mins = Math.floor(secs / 60) - hours * 60;
     if (hours === 0) {

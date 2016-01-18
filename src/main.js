@@ -8,6 +8,14 @@ Vue.filter('duration', filters.duration);
 
 Vue.component('activities-summary', {
     props: ['day'],
+    computed: {
+        totalDuration() {
+            return this.day.activities.reduce((sum, activity) => {
+                const end = activity.finished_at || new Date();
+                return sum + end.getTime() - activity.started_at.getTime();
+            }, 0);
+        }
+    },
     template: '#activities-summary-template',
     methods: {
         clickActivity(activity) {
