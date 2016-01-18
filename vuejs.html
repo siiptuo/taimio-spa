@@ -11,11 +11,11 @@
         <template id="activities-summary-template">
             <h3>{{ day.date | date }}</h3>
             <table class="activity-list">
-                <tr v-for="activity in day.activities">
-                    <td>{{ activity.started_at | time }}</a>
-                    <td>-</a>
-                    <td>{{ activity.finished_at | time }}</a>
-                    <td class="activity-list-title-column" @click="clickActivity(activity)">
+                <tr v-for="activity in day.activities" @click="clickActivity(activity)">
+                    <td class="activity-list-time-column">{{ activity.started_at | time }}</a>
+                    <td class="activity-list-time-column">-</a>
+                    <td class="activity-list-time-column">{{ activity.finished_at | time }}</a>
+                    <td class="activity-list-title-column">
                         {{ activity.title }}
                         <ul class="tag-list">
                             <li v-for="tag in activity.tags">{{ tag }}</li>

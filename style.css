@@ -64,9 +64,22 @@ label {
 }
 
 .activity-list {
-    border-spacing: 0.5em 0.5em;
-    border-collapse: separate;
+    border-spacing: 0;
+    border-collapse: collapse;
     width: 100%;
+    cursor: default;
+}
+
+.activity-list tr:hover {
+    background-color: #eee;
+}
+
+.activity-list td {
+    padding: 0.25em;
+}
+
+.activity-list-time-column {
+    color: #888;
 }
 
 .activity-list-title-column {
@@ -76,6 +89,7 @@ label {
 .activity-list-duration-column {
     white-space: nowrap;
     text-align: right;
+    color: #888;
 }
 
 .tag-list {
