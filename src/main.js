@@ -1,37 +1,10 @@
 import Vue from 'vue';
 import * as filters from './filters';
+import * as activity from './activity';
 
 Vue.filter('time', filters.time);
 Vue.filter('date', filters.date);
 Vue.filter('duration', filters.duration);
-
-function parseActivityInput(input) {
-    const tagStart = input.indexOf('#');
-    if (tagStart >= 0) {
-        return {
-            title: input.slice(0, tagStart - 1),
-            tags: input.slice(tagStart + 1).split(' #')
-        };
-    }
-    return {
-        title: input,
-        tags: []
-    };
-}
-
-function apiSaveActivity(activity) {
-    const isNew = typeof activity.id === 'undefined';
-    return fetch('/api/activities' + (isNew ? '' : '/' + activity.id), {
-        method: isNew ? 'POST' : 'PUT',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: serializeActivity(activity),
-    })
-        .then(response => response.json())
-        .then(unserializeActivity);
-}
 
 function init(data) {
     let currentActivity = null;
@@ -51,7 +24,7 @@ function init(data) {
         },
         methods: {
             startActivity() {
-                const parsedInput = parseActivityInput(this.newActivityInput);
+                const parsedInput = activity.parseInput(this.newActivityInput);
                 const newActivity = {
                     title: parsedInput.title,
                     tags: parsedInput.tags,
@@ -60,15 +33,15 @@ function init(data) {
                 };
                 if (this.currentActivity) {
                     this.currentActivity.finished_at = new Date();
-                    apiSaveActivity(this.currentActivity)
+                    activity.apiSave(this.currentActivity)
                         .then(() => { this.currentActivity = null; })
-                        .then(() => apiSaveActivity(newActivity))
+                        .then(() => activity.apiSave(newActivity))
                         .then(activity => {
                             this.days[0].activities.unshift(activity);
                             this.currentActivity = activity;
                         });
                 } else {
-                    apiSaveActivity(newActivity)
+                    activity.apiSave(newActivity)
                         .then(activity => {
                             this.days[0].activities.unshift(activity);
                             this.currentActivity = activity;
@@ -77,28 +50,10 @@ function init(data) {
             },
             stopActivity() {
                 this.currentActivity.finished_at = new Date();
-                apiSaveActivity(this.currentActivity)
+                activity.apiSave(this.currentActivity)
                     .then(() => { this.currentActivity = null; });
             }
         }
-    });
-}
-
-function unserializeActivity(data) {
-    data.started_at = new Date(data.started_at);
-    if (data.finished_at !== null) {
-        data.finished_at = new Date(data.finished_at);
-    }
-    return data;
-}
-
-function serializeActivity(activity) {
-    return JSON.stringify({
-        id: activity.id,
-        started_at: activity.started_at.toISOString(),
-        finished_at: activity.finished_at ? activity.finished_at.toISOString() : null,
-        title: activity.title,
-        tags: activity.tags
     });
 }
 
@@ -126,6 +81,6 @@ function groupActivitiesByDate(data) {
 
 fetch('api/activities')
     .then(response => response.json())
-    .then(data => data.map(unserializeActivity))
+    .then(data => data.map(activity.unserialize))
     .then(groupActivitiesByDate)
     .then(init);
