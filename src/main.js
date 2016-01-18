@@ -6,6 +6,73 @@ Vue.filter('time', filters.time);
 Vue.filter('date', filters.date);
 Vue.filter('duration', filters.duration);
 
+Vue.component('activities-summary', {
+    props: ['day'],
+    template: '#activities-summary-template',
+    methods: {
+        clickActivity(activity) {
+            this.$dispatch('click-activity', activity);
+        }
+    }
+});
+
+Vue.component('activity-editor', {
+    props: ['activity'],
+    template: '#activity-editor-template',
+    data() {
+        return {
+            started_at: this.activity.started_at.toISOString(),
+            finished_at: this.activity.finished_at !== null ? this.activity.finished_at.toISOString() : null,
+            ongoing: this.activity.finished_at === null,
+            input: this.activity.title + (this.activity.tags.length > 0 ? ' #' + this.activity.tags.join(' #') : '')
+        };
+    },
+    methods: {
+        save() {
+            const parsedInput = activity.parseInput(this.input);
+            this.activity.title = parsedInput.title;
+            this.activity.tags = parsedInput.tags;
+            this.activity.started_at = new Date(this.started_at);
+            this.activity.finished_at = this.ongoing ? null : new Date(this.finished_at);
+            this.$dispatch('save', this.activity);
+        },
+        cancel() {
+            this.$dispatch('cancel');
+        }
+    }
+});
+
+Vue.component('current-activity', {
+    props: ['activity'],
+    template: '#current-activity-template',
+    methods: {
+        stop() {
+            this.$dispatch('stop');
+        }
+    }
+});
+
+Vue.component('activity-switcher', {
+    data() {
+        return {
+            input: ''
+        };
+    },
+    template: '#activity-switcher-template',
+    methods: {
+        start() {
+            const parsedInput = activity.parseInput(this.input);
+            this.$dispatch('start', {
+                title: parsedInput.title,
+                tags: parsedInput.tags,
+                started_at: new Date(),
+                finished_at: null,
+            });
+            this.input = '';
+        }
+    }
+});
+
 function init(data) {
     let currentActivity = null;
     data.forEach(day => {
@@ -20,18 +87,10 @@ function init(data) {
         data: {
             days: data,
             currentActivity,
-            newActivityInput: '',
-            editActivityData: null
+            editActivity: null
         },
         methods: {
-            startActivity() {
-                const parsedInput = activity.parseInput(this.newActivityInput);
-                const newActivity = {
-                    title: parsedInput.title,
-                    tags: parsedInput.tags,
-                    started_at: new Date(),
-                    finished_at: null,
-                };
+            startActivity(newActivity) {
                 if (this.currentActivity) {
                     this.currentActivity.finished_at = new Date();
                     activity.apiSave(this.currentActivity)
@@ -54,31 +113,19 @@ function init(data) {
                 activity.apiSave(this.currentActivity)
                     .then(() => { this.currentActivity = null; });
             },
-            showEditActivity(activity) {
-                this.editActivityData = {
-                    activity,
-                    started_at: activity.started_at.toISOString(),
-                    finished_at: activity.finished_at.toISOString(),
-                    ongoing: false,
-                    input: activity.title + (activity.tags.length > 0 ? ' #' + activity.tags.join(' #') : '')
-                };
+            clickActivity(newActivity) {
+                this.editActivity = newActivity;
             },
-            cancelEditActivity() {
-                this.editActivityData = null;
+            cancelActivity() {
+                this.editActivity = null;
             },
-            editActivity() {
-                const parsedInput = activity.parseInput(this.editActivityData.input);
-                const newActivity = this.editActivityData.activity;
-                newActivity.title = parsedInput.title;
-                newActivity.tags = parsedInput.tags;
-                newActivity.started_at = new Date(this.editActivityData.started_at);
-                newActivity.finished_at = this.editActivityData.ongoing ? null : new Date(this.editActivityData.finished_at);
+            saveActivity(newActivity) {
                 activity.apiSave(newActivity)
                     .then(() => {
                         if (newActivity.finished_at === null) {
                             this.currentActivity = newActivity;
                         }
-                        this.editActivityData = null;
+                        this.editActivity = null;
                     });
             }
         }

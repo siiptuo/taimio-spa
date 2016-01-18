@@ -8,62 +8,71 @@
         <link rel="shortcut icon" href="/tiima.ico">
     </head>
     <body>
-        <div id="app">
-            <div class="dim" v-if="editActivityData">
-                <form @submit.prevent="editActivity" class="modal">
+        <template id="activities-summary-template">
+            <h3>{{ day.date | date }}</h3>
+            <table class="activity-list">
+                <tr v-for="activity in day.activities">
+                    <td>{{ activity.started_at | time }}</a>
+                    <td>-</a>
+                    <td>{{ activity.finished_at | time }}</a>
+                    <td class="activity-list-title-column" @click="clickActivity(activity)">
+                        {{ activity.title }}
+                        <ul class="tag-list">
+                            <li v-for="tag in activity.tags">{{ tag }}</li>
+                        </ul>
+                    </td>
+                    <td class="activity-list-duration-column">{{ activity.started_at | duration activity.finished_at }}</td>
+                </tr>
+            </table>
+        </template>
+        <template id="activity-editor-template">
+            <div class="dim">
+                <form @submit.prevent="save" class="modal">
                     <label>
                         Start time:
-                        <input type="datetime-local" v-model="editActivityData.started_at">
+                        <input type="datetime-local" v-model="started_at">
                     </label>
                     <label>
                         End time:
-                        <input type="datetime-local" v-model="editActivityData.finished_at" :disabled="editActivityData.ongoing">
+                        <input type="datetime-local" v-model="finished_at" :disabled="ongoing">
                     </label>
                     <label>
-                        <input type="checkbox" v-model="editActivityData.ongoing">
+                        <input type="checkbox" v-model="ongoing">
                         Ongoing
                     </label>
                     <label>
                         Content:
-                        <input type="text" v-model="editActivityData.input">
+                        <input type="text" v-model="input">
                     </label>
-                    <button @click="cancelEditActivity">Cancel</button>
+                    <button @click="cancel">Cancel</button>
                     <button type="submit">Save</button>
                 </form>
             </div>
-            <form @submit.prevent="stopActivity" class="current-activity-display">
-                <h1 v-if="currentActivity">
-                    {{ currentActivity.title }}
+        </template>
+        <template id="current-activity-template">
+            <form @submit.prevent="stop" class="current-activity-display">
+                <h1 v-if="activity">
+                    {{ activity.title }}
                     <ul class="tag-list">
-                        <li v-for="tag in currentActivity.tags">{{ tag }}</li>
+                        <li v-for="tag in activity.tags">{{ tag }}</li>
                     </ul>
-                    {{ currentActivity.started_at | duration }}
+                    {{ activity.started_at | duration }}
                 </h1>
                 <h1 v-else>No activity</h1>
-                <button type="submit" :disabled="currentActivity === null">Stop</button>
+                <button type="submit" :disabled="activity === null">Stop</button>
             </form>
-            <form @submit.prevent="startActivity" class="start-activity-form">
-                <input type="text" name="title" placeholder="New activity..." v-model="newActivityInput">
+        </template>
+        <template id="activity-switcher-template">
+            <form @submit.prevent="start" class="start-activity-form">
+                <input type="text" placeholder="New activity..." v-model="input">
                 <button type="submit">Start</button>
             </form>
-            <h2>Previous activities</h2>
-            <template v-for="day in days">
-                <h3>{{ day.date | date }}</h3>
-                <table class="activity-list">
-                    <tr v-for="activity in day.activities">
-                        <td>{{ activity.started_at | time }}</a>
-                        <td>-</a>
-                        <td>{{ activity.finished_at | time }}</a>
-                        <td class="activity-list-title-column" @click="showEditActivity(activity)">
-                            {{ activity.title }}
-                            <ul class="tag-list">
-                                <li v-for="tag in activity.tags">{{ tag }}</li>
-                            </ul>
-                        </td>
-                        <td class="activity-list-duration-column">{{ activity.started_at | duration activity.finished_at }}</td>
-                    </tr>
-                </table>
-            </template>
+        </template>
+        <div id="app">
+            <activity-editor :activity="editActivity" @save="saveActivity" @cancel="cancelActivity" v-if="editActivity"></activity-editor>
+            <current-activity :activity="currentActivity" @stop="stopActivity"></current-activity>
+            <activity-switcher @start="startActivity"></activity-switcher>
+            <activities-summary v-for="day in days" :day="day" @click-activity="clickActivity"></activities-summary>
         </div>
         <script src="bundle.js"></script>
     </body>
