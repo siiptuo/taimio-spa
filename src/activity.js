@@ -1,9 +1,10 @@
 export function parseInput(input) {
+    input = input.trim();
     const tagStart = input.indexOf('#');
     if (tagStart >= 0) {
         return {
-            title: input.slice(0, tagStart - 1),
-            tags: input.slice(tagStart + 1).split(' #')
+            title: input.slice(0, tagStart).trim(),
+            tags: input.slice(tagStart + 1).split(/\s*#/)
         };
     }
     return {
