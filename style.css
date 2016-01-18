@@ -93,3 +93,21 @@ label {
     border-radius: 2px;
     margin-left: 0.25em;
 }
+
+.dim {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.modal {
+    background-color: white;
+    padding: 1em;
+    max-width: 400px;
+    margin: 4em auto;
+    border-radius: 4px;
+    box-shadow: 1px 2px 8px rgba(0, 0, 0, 0.1);
+}

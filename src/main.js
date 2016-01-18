@@ -21,6 +21,7 @@ function init(data) {
             days: data,
             currentActivity,
             newActivityInput: '',
+            editActivityData: null
         },
         methods: {
             startActivity() {
@@ -52,6 +53,33 @@ function init(data) {
                 this.currentActivity.finished_at = new Date();
                 activity.apiSave(this.currentActivity)
                     .then(() => { this.currentActivity = null; });
+            },
+            showEditActivity(activity) {
+                this.editActivityData = {
+                    activity,
+                    started_at: activity.started_at.toISOString(),
+                    finished_at: activity.finished_at.toISOString(),
+                    ongoing: false,
+                    input: activity.title + (activity.tags.length > 0 ? ' #' + activity.tags.join(' #') : '')
+                };
+            },
+            cancelEditActivity() {
+                this.editActivityData = null;
+            },
+            editActivity() {
+                const parsedInput = activity.parseInput(this.editActivityData.input);
+                const newActivity = this.editActivityData.activity;
+                newActivity.title = parsedInput.title;
+                newActivity.tags = parsedInput.tags;
+                newActivity.started_at = new Date(this.editActivityData.started_at);
+                newActivity.finished_at = this.editActivityData.ongoing ? null : new Date(this.editActivityData.finished_at);
+                activity.apiSave(newActivity)
+                    .then(() => {
+                        if (newActivity.finished_at === null) {
+                            this.currentActivity = newActivity;
+                        }
+                        this.editActivityData = null;
+                    });
             }
         }
     });

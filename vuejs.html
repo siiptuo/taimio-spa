@@ -9,6 +9,28 @@
     </head>
     <body>
         <div id="app">
+            <div class="dim" v-if="editActivityData">
+                <form @submit.prevent="editActivity" class="modal">
+                    <label>
+                        Start time:
+                        <input type="datetime-local" v-model="editActivityData.started_at">
+                    </label>
+                    <label>
+                        End time:
+                        <input type="datetime-local" v-model="editActivityData.finished_at" :disabled="editActivityData.ongoing">
+                    </label>
+                    <label>
+                        <input type="checkbox" v-model="editActivityData.ongoing">
+                        Ongoing
+                    </label>
+                    <label>
+                        Content:
+                        <input type="text" v-model="editActivityData.input">
+                    </label>
+                    <button @click="cancelEditActivity">Cancel</button>
+                    <button type="submit">Save</button>
+                </form>
+            </div>
             <form @submit.prevent="stopActivity" class="current-activity-display">
                 <h1 v-if="currentActivity">
                     {{ currentActivity.title }}
@@ -32,7 +54,7 @@
                         <td>{{ activity.started_at | time }}</a>
                         <td>-</a>
                         <td>{{ activity.finished_at | time }}</a>
-                        <td class="activity-list-title-column">
+                        <td class="activity-list-title-column" @click="showEditActivity(activity)">
                             {{ activity.title }}
                             <ul class="tag-list">
                                 <li v-for="tag in activity.tags">{{ tag }}</li>
