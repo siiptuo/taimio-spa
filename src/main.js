@@ -159,7 +159,7 @@ function groupActivitiesByDate(data) {
             activities: dateActivityMap[date]
         });
     }
-    return days;
+    return days.sort((a, b) => b.date.getTime() - a.date.getTime());
 }
 
 fetch('api/activities')
