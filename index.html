@@ -33,11 +33,11 @@
                 <form @submit.prevent="save" class="modal">
                     <label>
                         Start time:
-                        <input type="datetime-local" v-model="started_at">
+                        <input type="datetime-local" v-model="started_at" step="1">
                     </label>
                     <label>
                         End time:
-                        <input type="datetime-local" v-model="finished_at" :disabled="ongoing">
+                        <input type="datetime-local" v-model="finished_at" :disabled="ongoing" step="1">
                     </label>
                     <label>
                         <input type="checkbox" v-model="ongoing">

@@ -24,13 +24,17 @@ Vue.component('activities-summary', {
     }
 });
 
+function parseLocalDate(input) {
+    return new Date(input.replace(/-/g, '/').replace('T', ' '));
+}
+
 Vue.component('activity-editor', {
     props: ['activity'],
     template: '#activity-editor-template',
     data() {
         return {
-            started_at: this.activity.started_at.toISOString(),
-            finished_at: this.activity.finished_at !== null ? this.activity.finished_at.toISOString() : null,
+            started_at: filters.localDateTime(this.activity.started_at),
+            finished_at: this.activity.finished_at !== null ? filters.localDateTime(this.activity.finished_at) : null,
             ongoing: this.activity.finished_at === null,
             input: this.activity.title + (this.activity.tags.length > 0 ? ' #' + this.activity.tags.join(' #') : '')
         };
@@ -40,8 +44,8 @@ Vue.component('activity-editor', {
             const parsedInput = activity.parseInput(this.input);
             this.activity.title = parsedInput.title;
             this.activity.tags = parsedInput.tags;
-            this.activity.started_at = new Date(this.started_at);
-            this.activity.finished_at = this.ongoing ? null : new Date(this.finished_at);
+            this.activity.started_at = parseLocalDate(this.started_at);
+            this.activity.finished_at = this.ongoing ? null : parseLocalDate(this.finished_at);
             this.$dispatch('save', this.activity);
         },
         cancel() {

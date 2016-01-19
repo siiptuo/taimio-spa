@@ -16,6 +16,14 @@ export function date(value) {
     return pad2(value.getFullYear()) + '-' + pad2(value.getMonth() + 1) + '-' + pad2(value.getDate());
 }
 
+export function localDateTime(value) {
+    if (!(value instanceof Date)) {
+        return '';
+    }
+    return pad2(value.getFullYear()) + '-' + pad2(value.getMonth() + 1) + '-' + pad2(value.getDate()) +
+        'T' + pad2(value.getHours()) + ':' + pad2(value.getMinutes()) + ':' + pad2(value.getSeconds());
+}
+
 export function duration(start, end) {
     let diff = start;
     if (start instanceof Date) {
