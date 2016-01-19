@@ -47,7 +47,7 @@
                         Content:
                         <input type="text" v-model="input">
                     </label>
-                    <button @click="cancel">Cancel</button>
+                    <button @click.prevent="cancel">Cancel</button>
                     <button type="submit">Save</button>
                 </form>
             </div>
