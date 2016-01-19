@@ -49,6 +49,27 @@ $app->get('/api/activities', function(Request $request, Response $response) {
     return $response->withJson($activities);
 });
 
+$app->get('/api/activities/{id}', function(Request $request, Response $response, array $args) {
+    $sth = $this->db->prepare('SELECT activity.*, json_agg(activity_tag.tag_id) AS tags FROM activity LEFT JOIN activity_tag ON activity_tag.activity_id = activity.id WHERE activity.id = ? GROUP BY activity.id ORDER BY started_at DESC');
+    $sth->execute([$args['id']]);
+    $row = $sth->fetch();
+    if ($row['tags'] === '[null]') {
+        $row['tags'] = [];
+    } else {
+        $tagIds = json_decode($row['tags']);
+        $row['tags'] = [];
+        foreach ($tagIds as $tagId) {
+            $row['tags'] = array_unique(array_merge($row['tags'], getTags($this->db, $tagId)));
+        }
+    }
+    $row['started_at'] = (new DateTime($row['started_at']))->format(DateTime::ISO8601);
+    if (isset($row['finished_at'])) {
+        $row['finished_at'] = (new DateTime($row['finished_at']))->format(DateTime::ISO8601);
+    }
+
+    return $response->withJson($row);
+});
+
 $app->post('/api/activities', function(Request $request, Response $response) {
     try {
         $this->db->beginTransaction();

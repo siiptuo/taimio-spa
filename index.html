@@ -29,28 +29,26 @@
             </table>
         </template>
         <template id="activity-editor-template">
-            <div class="dim">
-                <form @submit.prevent="save" class="modal">
-                    <label>
-                        Start time:
-                        <input type="datetime-local" v-model="started_at" step="1">
-                    </label>
-                    <label>
-                        End time:
-                        <input type="datetime-local" v-model="finished_at" :disabled="ongoing" step="1">
-                    </label>
-                    <label>
-                        <input type="checkbox" v-model="ongoing">
-                        Ongoing
-                    </label>
-                    <label>
-                        Content:
-                        <input type="text" v-model="input">
-                    </label>
-                    <button @click.prevent="cancel">Cancel</button>
-                    <button type="submit">Save</button>
-                </form>
-            </div>
+            <form @submit.prevent="save">
+                <label>
+                    Start time:
+                    <input type="datetime-local" v-model="started_at" step="1">
+                </label>
+                <label>
+                    End time:
+                    <input type="datetime-local" v-model="finished_at" :disabled="ongoing" step="1">
+                </label>
+                <label>
+                    <input type="checkbox" v-model="ongoing">
+                    Ongoing
+                </label>
+                <label>
+                    Content:
+                    <input type="text" v-model="input">
+                </label>
+                <button @click.prevent="cancel">Cancel</button>
+                <button type="submit">Save</button>
+            </form>
         </template>
         <template id="current-activity-template">
             <form @submit.prevent="stop" class="current-activity-display">
@@ -71,11 +69,13 @@
                 <button type="submit">Start</button>
             </form>
         </template>
-        <div id="app">
-            <activity-editor :activity="editActivity" @save="saveActivity" @cancel="cancelActivity" v-if="editActivity"></activity-editor>
+        <template id="main-template">
             <current-activity :activity="currentActivity" @stop="stopActivity"></current-activity>
             <activity-switcher @start="startActivity"></activity-switcher>
             <activities-summary v-for="day in days" :day="day" @click-activity="clickActivity"></activities-summary>
+        </template>
+        <div id="app">
+             <router-view></router-view>
         </div>
         <script src="bundle.js"></script>
     </body>

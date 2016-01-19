@@ -31,6 +31,12 @@ export function serialize(activity) {
     });
 }
 
+export function apiGet(id) {
+    return fetch(`/api/activities/${id}`)
+        .then(response => response.json())
+        .then(unserialize);
+}
+
 export function apiSave(activity) {
     const isNew = typeof activity.id === 'undefined';
     return fetch('/api/activities' + (isNew ? '' : '/' + activity.id), {

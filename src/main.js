@@ -1,6 +1,13 @@
 import Vue from 'vue';
+import VueRouter from 'vue-router';
 import * as filters from './filters';
 import * as activity from './activity';
+
+function parseLocalDate(input) {
+    return new Date(input.replace(/-/g, '/').replace('T', ' '));
+}
+
+Vue.use(VueRouter);
 
 Vue.filter('time', filters.time);
 Vue.filter('date', filters.date);
@@ -20,36 +27,6 @@ Vue.component('activities-summary', {
     methods: {
         clickActivity(activity) {
             this.$dispatch('click-activity', activity);
-        }
-    }
-});
-
-function parseLocalDate(input) {
-    return new Date(input.replace(/-/g, '/').replace('T', ' '));
-}
-
-Vue.component('activity-editor', {
-    props: ['activity'],
-    template: '#activity-editor-template',
-    data() {
-        return {
-            started_at: filters.localDateTime(this.activity.started_at),
-            finished_at: this.activity.finished_at !== null ? filters.localDateTime(this.activity.finished_at) : null,
-            ongoing: this.activity.finished_at === null,
-            input: this.activity.title + (this.activity.tags.length > 0 ? ' #' + this.activity.tags.join(' #') : '')
-        };
-    },
-    methods: {
-        save() {
-            const parsedInput = activity.parseInput(this.input);
-            this.activity.title = parsedInput.title;
-            this.activity.tags = parsedInput.tags;
-            this.activity.started_at = parseLocalDate(this.started_at);
-            this.activity.finished_at = this.ongoing ? null : parseLocalDate(this.finished_at);
-            this.$dispatch('save', this.activity);
-        },
-        cancel() {
-            this.$dispatch('cancel');
         }
     }
 });
@@ -85,64 +62,92 @@ Vue.component('activity-switcher', {
     }
 });
 
-function init(data) {
-    let currentActivity = null;
-    data.forEach(day => {
-        day.activities.forEach(activity => {
-            if (activity.finished_at === null) {
-                currentActivity = activity;
-            }
-        });
-    });
-    new Vue({
-        el: '#app',
-        data: {
-            days: data,
-            currentActivity,
-            editActivity: null
-        },
-        methods: {
-            startActivity(newActivity) {
-                if (this.currentActivity) {
-                    this.currentActivity.finished_at = new Date();
-                    activity.apiSave(this.currentActivity)
-                        .then(() => { this.currentActivity = null; })
-                        .then(() => activity.apiSave(newActivity))
-                        .then(activity => {
-                            this.days[0].activities.unshift(activity);
-                            this.currentActivity = activity;
-                        });
-                } else {
-                    activity.apiSave(newActivity)
-                        .then(activity => {
-                            this.days[0].activities.unshift(activity);
-                            this.currentActivity = activity;
-                        });
-                }
-            },
-            stopActivity() {
+const main = {
+    data() {
+        fetch('api/activities')
+            .then(response => response.json())
+            .then(data => data.map(activity.unserialize))
+            .then(data => {
+                this.currentActivity = data.find((d) => d.finished_at === null);
+                return data;
+            })
+            .then(groupActivitiesByDate)
+            .then(data => {
+                this.days = data;
+            });
+        return {
+            days: [],
+            currentActivity: null
+        };
+    },
+    template: '#main-template',
+    methods: {
+        startActivity(newActivity) {
+            if (this.currentActivity) {
                 this.currentActivity.finished_at = new Date();
                 activity.apiSave(this.currentActivity)
-                    .then(() => { this.currentActivity = null; });
-            },
-            clickActivity(newActivity) {
-                this.editActivity = newActivity;
-            },
-            cancelActivity() {
-                this.editActivity = null;
-            },
-            saveActivity(newActivity) {
+                    .then(() => { this.currentActivity = null; })
+                    .then(() => activity.apiSave(newActivity))
+                    .then(activity => {
+                        this.days[0].activities.unshift(activity);
+                        this.currentActivity = activity;
+                    });
+            } else {
                 activity.apiSave(newActivity)
-                    .then(() => {
-                        if (newActivity.finished_at === null) {
-                            this.currentActivity = newActivity;
-                        }
-                        this.editActivity = null;
+                    .then(activity => {
+                        this.days[0].activities.unshift(activity);
+                        this.currentActivity = activity;
                     });
             }
+        },
+        stopActivity() {
+            this.currentActivity.finished_at = new Date();
+            activity.apiSave(this.currentActivity)
+                .then(() => { this.currentActivity = null; });
+        },
+        clickActivity(newActivity) {
+            router.go({name: 'editActivity', params: {id: newActivity.id}});
         }
-    });
-}
+    }
+};
+
+const activityEditor = {
+    template: '#activity-editor-template',
+    data() {
+        activity.apiGet(this.$route.params.id)
+            .then(activity => {
+                this.activity = activity;
+                this.started_at = filters.localDateTime(this.activity.started_at),
+                this.finished_at = this.activity.finished_at !== null ? filters.localDateTime(this.activity.finished_at) : null,
+                this.ongoing = this.activity.finished_at === null,
+                this.input = this.activity.title + (this.activity.tags.length > 0 ? ' #' + this.activity.tags.join(' #') : '')
+            });
+        return {
+            activity: null,
+            started_at: '',
+            finished_at: '',
+            ongoing: false,
+            input: ''
+        };
+    },
+    methods: {
+        save() {
+            const parsedInput = activity.parseInput(this.input);
+            this.activity.title = parsedInput.title;
+            this.activity.tags = parsedInput.tags;
+            this.activity.started_at = parseLocalDate(this.started_at);
+            this.activity.finished_at = this.ongoing ? null : parseLocalDate(this.finished_at);
+
+            activity.apiSave(this.activity)
+                .then(() => {
+                    router.go({name: 'main'});
+               });
+        },
+        cancel() {
+            router.go({name: 'main'});
+        }
+    }
+};
 
 const millisecondsInDay = 1000 * 60 * 60 * 24;
 
@@ -166,8 +171,16 @@ function groupActivitiesByDate(data) {
     return days.sort((a, b) => b.date.getTime() - a.date.getTime());
 }
 
-fetch('api/activities')
-    .then(response => response.json())
-    .then(data => data.map(activity.unserialize))
-    .then(groupActivitiesByDate)
-    .then(init);
+const router = new VueRouter();
+router.map({
+    '/': {
+        name: 'main',
+        component: main
+    },
+    '/activity/:id': {
+        name: 'editActivity',
+        component: activityEditor
+    }
+});
+
+router.start({}, '#app');
