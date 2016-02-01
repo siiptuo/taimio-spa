@@ -1,4 +1,6 @@
-import * as filters from '../../src/filters';
+jest.dontMock('../src/filters');
+
+const filters = require('../src/filters');
 
 describe('time filter', () => {
     it('should format time', () => {

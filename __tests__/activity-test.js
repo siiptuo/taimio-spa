@@ -1,4 +1,6 @@
-import * as activity from '../../src/activity';
+jest.dontMock('../src/activity');
+
+const activity = require('../src/activity');
 
 describe('activity input parsing', () => {
     it('should parse empty input', () => {
