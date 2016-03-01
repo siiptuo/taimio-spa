@@ -26,6 +26,10 @@ export default class Main extends React.Component {
                     currentActivity: null,
                     selectedActivity: null,
                 });
+            })
+            .catch(error => {
+                alert('API error: ' + error.message);
+                console.error('API error', error);
             });
     }
 
@@ -41,6 +45,10 @@ export default class Main extends React.Component {
                         currentActivity: activity,
                         selectedActivity: null,
                     });
+                })
+                .catch(error => {
+                    alert('API error: ' + error.message);
+                    console.error('API error', error);
                 });
         } else {
             activity.apiSave(newActivity)
@@ -51,6 +59,10 @@ export default class Main extends React.Component {
                         currentActivity: activity,
                         selectedActivity: null,
                     });
+                })
+                .catch(error => {
+                    alert('API error: ' + error.message);
+                    console.error('API error', error);
                 });
         }
     }
@@ -72,6 +84,10 @@ export default class Main extends React.Component {
                     activities: this.state.activities,
                     currentActivity: activity.finished_at == null ? activity : this.state.currentActivity,
                     selectedActivity: null,
+                })
+                .catch(error => {
+                    alert('API error: ' + error.message);
+                    console.error('API error', error);
                 });
            });
     }
@@ -85,14 +101,16 @@ export default class Main extends React.Component {
     }
 
     componentDidMount() {
-        fetch('api/activities')
-            .then(response => response.json())
-            .then(data => data.map(activity.unserialize))
+        activity.apiList()
             .then(data => {
                 this.setState({
                     activities: data,
                     currentActivity: data.find(activity => activity.finished_at === null),
                 });
+            })
+            .catch(error => {
+                alert('API error: ' + error.message);
+                console.error('API error', error);
             });
     }
 

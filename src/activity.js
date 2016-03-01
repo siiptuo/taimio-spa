@@ -31,9 +31,31 @@ export function serialize(activity) {
     });
 }
 
+function checkStatus(response) {
+    if (response.status >= 200 && response.status < 300) {
+        return response;
+    } else {
+        const error = new Error(response.statusText);
+        error.response = response;
+        throw error;
+    }
+}
+
+function parseJSON(response) {
+    return response.json();
+}
+
+export function apiList() {
+    return fetch('api/activities')
+        .then(checkStatus)
+        .then(parseJSON)
+        .then(data => data.map(unserialize));
+}
+
 export function apiGet(id) {
     return fetch(`/api/activities/${id}`)
-        .then(response => response.json())
+        .then(checkStatus)
+        .then(parseJSON)
         .then(unserialize);
 }
 
@@ -47,6 +69,7 @@ export function apiSave(activity) {
         },
         body: serialize(activity),
     })
-        .then(response => response.json())
+        .then(checkStatus)
+        .then(parseJSON)
         .then(unserialize);
 }
