@@ -100,6 +100,15 @@ export default class Main extends React.Component {
         });
     }
 
+    handleActivityResume() {
+        this.handleActivityStart({
+            started_at: new Date(),
+            finished_at: null,
+            title: this.state.selectedActivity.title,
+            tags: this.state.selectedActivity.tags.slice(),
+        });
+    }
+
     componentDidMount() {
         activity.apiList()
             .then(data => {
@@ -119,7 +128,8 @@ export default class Main extends React.Component {
             this.state.selectedActivity ?
             <ActivityEditor activity={this.state.selectedActivity}
                 onSave={this.handleActivitySave.bind(this)}
-                onCancel={this.handleActivityCancel.bind(this)} /> :
+                onCancel={this.handleActivityCancel.bind(this)}
+                onResume={this.handleActivityResume.bind(this)} /> :
             <div>
                 <CurrentActivity activity={this.state.currentActivity} onActivityStop={this.handleActivityStop.bind(this)} />
                 <ActivitySwitcher onActivityStart={this.handleActivityStart.bind(this)} />

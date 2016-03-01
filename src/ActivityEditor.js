@@ -20,6 +20,11 @@ export default class ActivityEditor extends React.Component {
         };
     }
 
+    onResume(event) {
+        event.preventDefault();
+        this.props.onResume();
+    }
+
     onCancel(event) {
         event.preventDefault();
         this.props.onCancel();
@@ -100,6 +105,7 @@ export default class ActivityEditor extends React.Component {
                     <input type="text" value={this.state.input} onChange={this.onInputChange.bind(this)} />
                 </label>
                 <button onClick={this.onCancel.bind(this)}>Cancel</button>
+                {this.props.activity.finished_at ? <button onClick={this.onResume.bind(this)}>Resume</button> : null}
                 <button type="submit">Save</button>
             </form>
         );
