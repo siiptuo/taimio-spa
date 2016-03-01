@@ -111,3 +111,7 @@ label {
 .activity-summary-total-duration {
     float: right;
 }
+
+.action-area button:not(:last-child) {
+    margin-right: 0.5em;
+}

@@ -104,9 +104,11 @@ export default class ActivityEditor extends React.Component {
                     Activity:
                     <input type="text" value={this.state.input} onChange={this.onInputChange.bind(this)} />
                 </label>
-                <button onClick={this.onCancel.bind(this)}>Cancel</button>
-                {this.props.activity.finished_at ? <button onClick={this.onResume.bind(this)}>Resume</button> : null}
-                <button type="submit">Save</button>
+                <div className="action-area">
+                    <button onClick={this.onCancel.bind(this)}>Cancel</button>
+                    {this.props.activity.finished_at ? <button onClick={this.onResume.bind(this)}>Resume</button> : null}
+                    <button type="submit">Save</button>
+                </div>
             </form>
         );
     }
