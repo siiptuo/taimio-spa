@@ -109,6 +109,17 @@ export default class Main extends React.Component {
         });
     }
 
+    handleActivityRemove() {
+        activity.apiRemove(this.state.selectedActivity)
+            .then(() => {
+                this.setState({
+                    activities: this.state.activities.filter(activity => activity.id !== this.state.selectedActivity.id),
+                    currentActivity: this.state.currentActivity.id === this.state.selectedActivity.id ? null : this.state.currentActivity,
+                    selectedActivity: null
+                });
+            })
+    }
+
     componentDidMount() {
         activity.apiList()
             .then(data => {
@@ -129,7 +140,8 @@ export default class Main extends React.Component {
             <ActivityEditor activity={this.state.selectedActivity}
                 onSave={this.handleActivitySave.bind(this)}
                 onCancel={this.handleActivityCancel.bind(this)}
-                onResume={this.handleActivityResume.bind(this)} /> :
+                onResume={this.handleActivityResume.bind(this)}
+                onRemove={this.handleActivityRemove.bind(this)} /> :
             <div>
                 <CurrentActivity activity={this.state.currentActivity} onActivityStop={this.handleActivityStop.bind(this)} />
                 <ActivitySwitcher onActivityStart={this.handleActivityStart.bind(this)} />

@@ -73,3 +73,10 @@ export function apiSave(activity) {
         .then(parseJSON)
         .then(unserialize);
 }
+
+export function apiRemove(activity) {
+    return fetch(`/api/activities/${activity.id}`, {
+        method: 'DELETE',
+    })
+        .then(checkStatus);
+}

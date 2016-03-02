@@ -30,6 +30,11 @@ export default class ActivityEditor extends React.Component {
         this.props.onCancel();
     }
 
+    onRemove(event) {
+        event.preventDefault();
+        this.props.onRemove();
+    }
+
     onSubmit(event) {
         event.preventDefault();
         const parsedInput = activity.parseInput(this.state.input);
@@ -106,6 +111,7 @@ export default class ActivityEditor extends React.Component {
                 </label>
                 <div className="action-area">
                     <button onClick={this.onCancel.bind(this)}>Cancel</button>
+                    <button onClick={this.onRemove.bind(this)}>Remove</button>
                     {this.props.activity.finished_at ? <button onClick={this.onResume.bind(this)}>Resume</button> : null}
                     <button type="submit">Save</button>
                 </div>

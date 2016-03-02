@@ -186,4 +186,24 @@ $app->put('/api/activities/{id:\d+}', function(Request $request, Response $respo
     }
 });
 
+$app->delete('/api/activities/{id:\d+}', function(Request $request, Response $response, array $args) {
+    try {
+        $this->db->beginTransaction();
+
+        $sth = $this->db->prepare('DELETE FROM activity_tag WHERE activity_id = ?');
+        $sth->execute([$args['id']]);
+
+        $sth = $this->db->prepare('DELETE FROM activity WHERE id = ?');
+        $sth->execute([$args['id']]);
+
+        $this->db->commit();
+
+        return $response->withStatus(204);
+    } catch (PDOException $e) {
+        $this->db->rollBack();
+
+        return $response->withJson(['error' => $e->getMessage()], 500);
+    }
+});
+
 $app->run();
