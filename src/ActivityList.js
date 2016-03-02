@@ -1,6 +1,11 @@
 import React from 'react';
 import {duration, time} from './filters';
 
+const shortTimeFormat = new Intl.DateTimeFormat(navigator.language, {
+    hour: 'numeric',
+    minute: 'numeric'
+});
+
 export default class ActivityList extends React.Component {
     render() {
         return (
@@ -8,9 +13,11 @@ export default class ActivityList extends React.Component {
                 <tbody>
                     {this.props.activities.map(activity => (
                         <tr key={activity.id} onClick={this.props.onActivityClick.bind(null, activity)}>
-                            <td className="activity-list-time-column">{time(activity.started_at)}</td>
+                            <td className="activity-list-time-column">{shortTimeFormat.format(activity.started_at)}</td>
                             <td className="activity-list-time-column">-</td>
-                            <td className="activity-list-time-column">{time(activity.finished_at)}</td>
+                            <td className="activity-list-time-column">
+                                {activity.finished_at === null ? '' : shortTimeFormat.format(activity.finished_at)}
+                            </td>
                             <td className="activity-list-title-column">
                                 {activity.title}
                                 <ul className="tag-list">

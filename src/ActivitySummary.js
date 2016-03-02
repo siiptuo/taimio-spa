@@ -26,6 +26,12 @@ function groupActivitiesByDate(data) {
     return days.sort((a, b) => b.date.getTime() - a.date.getTime());
 }
 
+const shortDateFormat = new Intl.DateTimeFormat(navigator.language, {
+    weekday: 'short',
+    day:'numeric',
+    month: 'numeric'}
+);
+
 export default class ActivitySummary extends React.Component {
     render() {
         return (
@@ -33,7 +39,7 @@ export default class ActivitySummary extends React.Component {
                 {groupActivitiesByDate(this.props.activities).map(day => (
                     <div key={day.date.getTime()}>
                         <h3>
-                            {date(day.date)}
+                            {shortDateFormat.format(day.date)}
                             <span className="activity-summary-total-duration">
                                 {duration(day.activities.reduce((sum, activity) => {
                                     const end = activity.finished_at || new Date();
