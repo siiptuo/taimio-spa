@@ -4,11 +4,9 @@ import ActivityList from './ActivityList';
 
 import {date, duration} from './filters';
 
-const millisecondsInDay = 1000 * 60 * 60 * 24;
-
 function groupActivitiesByDate(data) {
     const dateActivityMap = data.reduce((obj, d) => {
-        const key = Math.floor(d.started_at.getTime() / millisecondsInDay);
+        const key = date(d.started_at);
         if (typeof obj[key] !== 'undefined') {
             obj[key].push(d);
         } else {
@@ -19,7 +17,7 @@ function groupActivitiesByDate(data) {
     const days = [];
     for (let date in dateActivityMap) {
         days.push({
-            date: new Date(date * millisecondsInDay),
+            date: new Date(date),
             activities: dateActivityMap[date]
         });
     }
