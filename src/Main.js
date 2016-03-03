@@ -107,6 +107,10 @@ export default class Main extends React.Component {
             })
     }
 
+    updateTime() {
+        this.forceUpdate();
+    }
+
     componentDidMount() {
         activity.apiList()
             .then(data => {
@@ -114,11 +118,16 @@ export default class Main extends React.Component {
                     activities: data,
                     currentActivity: data.find(activity => activity.finished_at === null),
                 });
+                this.timeUpdateInterval = setInterval(this.updateTime.bind(this), 15000);
             })
             .catch(error => {
                 alert('API error: ' + error.message);
                 console.error('API error', error);
             });
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timeUpdateInterval);
     }
 
     render() {

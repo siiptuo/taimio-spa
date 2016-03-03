@@ -38,7 +38,7 @@ export function duration(start, end) {
     const hours = Math.floor(secs / (60 * 60));
     const mins = Math.floor(secs / 60) - hours * 60;
     if (hours === 0) {
-        return mins === 0 ? `${secs % 60}s` : `${mins}min`;
+        return mins === 0 ? 'just now' : `${mins}min`;
     } else {
         return `${hours}h` + (mins !== 0 ? ` ${mins}min` : '');
     }
