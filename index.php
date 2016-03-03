@@ -130,7 +130,7 @@ $app->put('/api/activities/{id:\d+}', function(Request $request, Response $respo
     $data = $request->getParsedBody();
 
     $activity = [];
-    $activity['id'] = $args['id'];
+    $activity['id'] = intval($args['id']);
     $activity['title'] = $data['title'];
     $activity['started_at'] = $data['started_at'];
     $activity['finished_at'] = $data['finished_at'];

@@ -77,19 +77,19 @@ export default class Main extends React.Component {
 
     handleActivitySave(newActivity) {
         activity.apiSave(newActivity)
-            .then((activity) => {
+            .then(activity => {
                 const activityIndex = this.state.activities.findIndex(a => a.id === activity.id);
                 this.state.activities[activityIndex] = activity;
                 this.setState({
                     activities: this.state.activities,
                     currentActivity: activity.finished_at == null ? activity : this.state.currentActivity,
                     selectedActivity: null,
-                })
-                .catch(error => {
-                    alert('API error: ' + error.message);
-                    console.error('API error', error);
                 });
-           });
+            })
+            .catch(error => {
+                alert('API error: ' + error.message);
+                console.error('API error', error);
+            });
     }
 
     handleActivityCancel() {
