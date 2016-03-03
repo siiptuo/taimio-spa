@@ -34,37 +34,24 @@ export default class Main extends React.Component {
     }
 
     handleActivityStart(newActivity) {
+        const promises = [activity.apiSave(newActivity)];
         if (this.state.currentActivity) {
             this.state.currentActivity.finished_at = new Date();
-            activity.apiSave(this.state.currentActivity)
-                .then(() => activity.apiSave(newActivity))
-                .then(activity => {
-                    this.state.activities.unshift(activity);
-                    this.setState({
-                        activities: this.state.activities,
-                        currentActivity: activity,
-                        selectedActivity: null,
-                    });
-                })
-                .catch(error => {
-                    alert('API error: ' + error.message);
-                    console.error('API error', error);
-                });
-        } else {
-            activity.apiSave(newActivity)
-                .then(activity => {
-                    this.state.activities.unshift(activity);
-                    this.setState({
-                        activities: this.state.activities,
-                        currentActivity: activity,
-                        selectedActivity: null,
-                    });
-                })
-                .catch(error => {
-                    alert('API error: ' + error.message);
-                    console.error('API error', error);
-                });
+            promises.push(activity.apiSave(this.state.currentActivity));
         }
+        Promise.all(promises)
+            .then(([activity]) => {
+                this.state.activities.unshift(activity);
+                this.setState({
+                    activities: this.state.activities,
+                    currentActivity: activity,
+                    selectedActivity: null,
+                });
+            })
+            .catch(error => {
+                alert('API error: ' + error.message);
+                console.error('API error', error);
+            });
     }
 
     handleActivityClick(activity) {
