@@ -4,6 +4,7 @@ import ActivityEditor from './ActivityEditor';
 import CurrentActivity from './CurrentActivity';
 import ActivitySwitcher from './ActivitySwitcher';
 import ActivitySummary from './ActivitySummary';
+import ActivityStats from './ActivityStats';
 
 import * as activity from './activity';
 
@@ -14,6 +15,7 @@ export default class Main extends React.Component {
             activities: [],
             currentActivity: null,
             selectedActivity: null,
+            currentPage: 'main',
         };
     }
 
@@ -25,6 +27,7 @@ export default class Main extends React.Component {
                     activities: this.state.activities,
                     currentActivity: null,
                     selectedActivity: null,
+                    currentPage: this.state.currentPage,
                 });
             })
             .catch(error => {
@@ -46,6 +49,7 @@ export default class Main extends React.Component {
                     activities: this.state.activities,
                     currentActivity: activity,
                     selectedActivity: null,
+                    currentPage: this.state.currentPage,
                 });
             })
             .catch(error => {
@@ -59,6 +63,7 @@ export default class Main extends React.Component {
             activities: this.state.activities,
             currentActivity: this.state.currentActivity,
             selectedActivity: activity,
+            currentPage: this.state.currentPage,
         });
     }
 
@@ -71,6 +76,7 @@ export default class Main extends React.Component {
                     activities: this.state.activities,
                     currentActivity: activity.finished_at == null ? activity : this.state.currentActivity,
                     selectedActivity: null,
+                    currentPage: this.state.currentPage,
                 });
             })
             .catch(error => {
@@ -84,6 +90,7 @@ export default class Main extends React.Component {
             activities: this.state.activities,
             currentActivity: this.state.currentActivity,
             selectedActivity: null,
+            currentPage: this.state.currentPage,
         });
     }
 
@@ -102,9 +109,20 @@ export default class Main extends React.Component {
                 this.setState({
                     activities: this.state.activities.filter(activity => activity.id !== this.state.selectedActivity.id),
                     currentActivity: this.state.currentActivity.id === this.state.selectedActivity.id ? null : this.state.currentActivity,
-                    selectedActivity: null
+                    selectedActivity: null,
+                    currentPage: this.state.currentPage,
                 });
             })
+    }
+
+    handlePageChange(event, page) {
+        event.preventDefault();
+        this.setState({
+            activities: this.state.activities,
+            currentActivity: this.state.currentActivity,
+            selectedActivity: this.state.selectedActivity,
+            currentPage: page,
+        });
     }
 
     updateTime() {
@@ -117,6 +135,7 @@ export default class Main extends React.Component {
                 this.setState({
                     activities: data,
                     currentActivity: data.find(activity => activity.finished_at === null),
+                    currentPage: this.state.currentPage,
                 });
                 this.timeUpdateInterval = setInterval(this.updateTime.bind(this), 15000);
             })
@@ -139,9 +158,17 @@ export default class Main extends React.Component {
                 onResume={this.handleActivityResume.bind(this)}
                 onRemove={this.handleActivityRemove.bind(this)} /> :
             <div>
-                <CurrentActivity activity={this.state.currentActivity} onActivityStop={this.handleActivityStop.bind(this)} />
-                <ActivitySwitcher onActivityStart={this.handleActivityStart.bind(this)} />
-                <ActivitySummary activities={this.state.activities} onActivityClick={this.handleActivityClick.bind(this)} />
+                <ul className="tabs">
+                    <li><a href="main" className={this.state.currentPage === 'main' ? 'selected' : ''} onClick={(event) => this.handlePageChange(event, 'main')}>Main</a></li>
+                    <li><a href="stats" className={this.state.currentPage === 'stats' ? 'selected' : ''} onClick={(event) => this.handlePageChange(event, 'stats')}>Stats</a></li>
+                </ul>
+                {this.state.currentPage === 'main' ? (
+                    <div>
+                        <CurrentActivity activity={this.state.currentActivity} onActivityStop={this.handleActivityStop.bind(this)} />
+                        <ActivitySwitcher onActivityStart={this.handleActivityStart.bind(this)} />
+                        <ActivitySummary activities={this.state.activities} onActivityClick={this.handleActivityClick.bind(this)} />
+                    </div>
+                    ) : <ActivityStats activities={this.state.activities} />}
             </div>
         );
     }

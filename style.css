@@ -115,3 +115,54 @@ label {
 .action-area button:not(:last-child) {
     margin-right: 0.5em;
 }
+
+.activity-stats {
+    width: 100%;
+}
+
+.activity-stats-title {
+    font-weight: normal;
+    text-align: right;
+    width: 1%;
+}
+
+.activity-stats-duration {
+    position: relative;
+}
+
+.activity-stats-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background-color: #eee;
+    z-index: -1;
+    text-align: right;
+    white-space: nowrap;
+    color: #666;
+}
+
+.tabs {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 1em;
+}
+
+.tabs li {
+    display: inline-block;
+}
+
+.tabs a {
+    display: inline-block;
+    padding: 0.5em;
+    color: black;
+    background-color: #eee;
+    margin-right: 0.5em;
+    text-decoration: none;
+}
+
+.tabs a.selected {
+    color: white;
+    background-color: #333;
+}
