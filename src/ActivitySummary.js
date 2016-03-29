@@ -1,4 +1,5 @@
 import React from 'react';
+import { hashHistory } from 'react-router';
 
 import ActivityList from './ActivityList';
 
@@ -31,6 +32,10 @@ const shortDateFormat = new Intl.DateTimeFormat(navigator.language, {
 );
 
 export default class ActivitySummary extends React.Component {
+    onActivityClick(activity) {
+        hashHistory.push(`/activity/${activity.id}`);
+    }
+
     render() {
         if (this.props.loading) {
             return <div>Loading...</div>;
@@ -48,7 +53,7 @@ export default class ActivitySummary extends React.Component {
                                 }, 0))}
                             </span>
                         </h3>
-                        <ActivityList activities={day.activities} onActivityClick={this.props.onActivityClick} />
+                        <ActivityList activities={day.activities} onActivityClick={this.onActivityClick} />
                     </div>
                 ))}
             </div>

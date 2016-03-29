@@ -1,4 +1,5 @@
 import React from 'react';
+import { hashHistory } from 'react-router';
 
 import {localDateTime} from './filters';
 import * as activity from './activity';
@@ -10,41 +11,28 @@ function parseLocalDate(input) {
 export default class ActivityEditor extends React.Component {
     constructor(props) {
         super(props);
-
-        const ongoing = this.props.activity.finished_at == null;
         this.state = {
-            ongoing,
-            started_at: localDateTime(this.props.activity.started_at),
-            finished_at: localDateTime(ongoing ? new Date() : this.props.activity.finished_at),
-            input: this.props.activity.title + (this.props.activity.tags.length > 0 ? ' #' + this.props.activity.tags.join(' #') : '')
+            loading: true,
         };
     }
 
-    onResume(event) {
-        event.preventDefault();
-        this.props.onResume();
-    }
-
-    onCancel(event) {
-        event.preventDefault();
-        this.props.onCancel();
-    }
-
-    onRemove(event) {
-        event.preventDefault();
-        this.props.onRemove();
-    }
-
-    onSubmit(event) {
-        event.preventDefault();
-        const parsedInput = activity.parseInput(this.state.input);
-        this.props.onSave({
-            id: this.props.activity.id,
-            title: parsedInput.title,
-            tags: parsedInput.tags,
-            started_at: parseLocalDate(this.state.started_at),
-            finished_at: this.state.ongoing ? null : parseLocalDate(this.state.finished_at),
-        });
+    componentDidMount() {
+        activity.apiGet(this.props.params.id)
+            .then(activity => {
+                const ongoing = activity.finished_at == null;
+                this.setState({
+                    activity,
+                    ongoing,
+                    loading: false,
+                    started_at: localDateTime(activity.started_at),
+                    finished_at: localDateTime(ongoing ? new Date() : activity.finished_at),
+                    input: activity.title + (activity.tags.length > 0 ? ' #' + activity.tags.join(' #') : '')
+                });
+            })
+            .catch(error => {
+                alert('API error: ' + error.message);
+                console.error('API error', error);
+            });
     }
 
     onStartedAtChange(event) {
@@ -53,6 +41,8 @@ export default class ActivityEditor extends React.Component {
             finished_at: this.state.finished_at,
             ongoing: this.state.ongoing,
             input: this.state.input,
+            loading: this.state.loading,
+            activity: this.state.activity,
         });
     }
 
@@ -62,6 +52,8 @@ export default class ActivityEditor extends React.Component {
             finished_at: event.target.value,
             ongoing: this.state.ongoing,
             input: this.state.input,
+            loading: this.state.loading,
+            activity: this.state.activity,
         });
     }
 
@@ -71,6 +63,8 @@ export default class ActivityEditor extends React.Component {
             finished_at: this.state.finished_at,
             ongoing: event.target.checked,
             input: this.state.input,
+            loading: this.state.loading,
+            activity: this.state.activity,
         });
     }
 
@@ -80,12 +74,55 @@ export default class ActivityEditor extends React.Component {
             finished_at: this.state.finished_at,
             ongoing: this.state.ongoing,
             input: event.target.value,
+            loading: this.state.loading,
+            activity: this.state.activity,
         });
     }
 
+    onSave() {
+        const parsedInput = activity.parseInput(this.state.input);
+        const newActivity = {
+            id: this.state.activity.id,
+            title: parsedInput.title,
+            tags: parsedInput.tags,
+            started_at: parseLocalDate(this.state.started_at),
+            finished_at: this.state.ongoing ? null : parseLocalDate(this.state.finished_at),
+        };
+        activity.apiSave(newActivity)
+            .then(activity => {
+                hashHistory.push('/');
+            })
+            .catch(error => {
+                alert('API error: ' + error.message);
+                console.error('API error', error);
+            });
+    }
+
+    onCancel() {
+        hashHistory.push('/');
+    }
+
+    onResume() {
+        alert('TODO');
+    }
+
+    onRemove() {
+        activity.apiRemove(this.state.activity)
+            .then(() => {
+                hashHistory.push('/');
+            })
+            .catch(error => {
+                alert('API error: ' + error.message);
+                console.error('API error', error);
+            });
+    }
+
     render() {
+        if (this.state.loading) {
+            return <div>Loading...</div>;
+        }
         return (
-            <form onSubmit={this.onSubmit.bind(this)}>
+            <form>
                 <label>
                     Start time:
                     <input type="datetime-local"
@@ -112,8 +149,8 @@ export default class ActivityEditor extends React.Component {
                 <div className="action-area">
                     <button onClick={this.onCancel.bind(this)}>Cancel</button>
                     <button onClick={this.onRemove.bind(this)}>Remove</button>
-                    {this.props.activity.finished_at ? <button onClick={this.onResume.bind(this)}>Resume</button> : null}
-                    <button type="submit">Save</button>
+                    {this.state.activity.finished_at ? <button onClick={this.onResume.bind(this)}>Resume</button> : null}
+                    <button onClick={this.onSave.bind(this)}>Save</button>
                 </div>
             </form>
         );

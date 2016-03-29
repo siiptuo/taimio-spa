@@ -1,13 +1,36 @@
 import React from 'react';
 
 import {duration} from './filters';
+import * as activity from './activity';
 
 export default class ActivityStats extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            activities: [],
+            loading: true,
+        };
+    }
+
+    componentDidMount() {
+        activity.apiList()
+            .then(data => {
+                this.setState({
+                    activities: data,
+                    loading: false,
+                });
+            })
+            .catch(error => {
+                alert('API error: ' + error.message);
+                console.error('API error', error);
+            });
+    }
+
     render() {
-        if (this.props.activities.length === 0) {
+        if (this.state.loading) {
             return <span>Loading...</span>;
         }
-        const tagsObj = this.props.activities.reduce((obj, activity) => {
+        const tagsObj = this.state.activities.reduce((obj, activity) => {
             // FIXME: sometimes API return tags in an object?
             if (!Array.isArray(activity.tags)) {
                 return obj;
