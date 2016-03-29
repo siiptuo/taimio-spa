@@ -34,8 +34,9 @@ export default class ActivitySwitcher extends React.Component {
                 <input type="text"
                     placeholder="Activity title #tag1 #tag2"
                     value={this.state.input}
-                    onChange={this.handleInputChange.bind(this)} />
-                <button type="submit">Start</button>
+                    onChange={this.handleInputChange.bind(this)}
+                    disabled={this.props.loading} />
+                <button type="submit" disabled={this.props.loading}>Start</button>
             </form>
         );
     }

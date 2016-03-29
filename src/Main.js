@@ -16,6 +16,7 @@ export default class Main extends React.Component {
             currentActivity: null,
             selectedActivity: null,
             currentPage: 'main',
+            loading: true,
         };
     }
 
@@ -28,6 +29,7 @@ export default class Main extends React.Component {
                     currentActivity: null,
                     selectedActivity: null,
                     currentPage: this.state.currentPage,
+                    loading: this.state.loading,
                 });
             })
             .catch(error => {
@@ -50,6 +52,7 @@ export default class Main extends React.Component {
                     currentActivity: activity,
                     selectedActivity: null,
                     currentPage: this.state.currentPage,
+                    loading: this.state.loading,
                 });
             })
             .catch(error => {
@@ -64,6 +67,7 @@ export default class Main extends React.Component {
             currentActivity: this.state.currentActivity,
             selectedActivity: activity,
             currentPage: this.state.currentPage,
+            loading: this.state.loading,
         });
     }
 
@@ -77,6 +81,7 @@ export default class Main extends React.Component {
                     currentActivity: activity.finished_at == null ? activity : this.state.currentActivity,
                     selectedActivity: null,
                     currentPage: this.state.currentPage,
+                    loading: this.state.loading,
                 });
             })
             .catch(error => {
@@ -91,6 +96,7 @@ export default class Main extends React.Component {
             currentActivity: this.state.currentActivity,
             selectedActivity: null,
             currentPage: this.state.currentPage,
+            loading: this.state.loading,
         });
     }
 
@@ -111,6 +117,7 @@ export default class Main extends React.Component {
                     currentActivity: this.state.currentActivity.id === this.state.selectedActivity.id ? null : this.state.currentActivity,
                     selectedActivity: null,
                     currentPage: this.state.currentPage,
+                    loading: this.state.loading,
                 });
             })
     }
@@ -122,6 +129,7 @@ export default class Main extends React.Component {
             currentActivity: this.state.currentActivity,
             selectedActivity: this.state.selectedActivity,
             currentPage: page,
+            loading: this.state.loading,
         });
     }
 
@@ -136,6 +144,7 @@ export default class Main extends React.Component {
                     activities: data,
                     currentActivity: data.find(activity => activity.finished_at === null),
                     currentPage: this.state.currentPage,
+                    loading: false,
                 });
                 this.timeUpdateInterval = setInterval(this.updateTime.bind(this), 15000);
             })
@@ -164,9 +173,14 @@ export default class Main extends React.Component {
                 </ul>
                 {this.state.currentPage === 'main' ? (
                     <div>
-                        <CurrentActivity activity={this.state.currentActivity} onActivityStop={this.handleActivityStop.bind(this)} />
-                        <ActivitySwitcher onActivityStart={this.handleActivityStart.bind(this)} />
-                        <ActivitySummary activities={this.state.activities} onActivityClick={this.handleActivityClick.bind(this)} />
+                        <CurrentActivity activity={this.state.currentActivity}
+                                         onActivityStop={this.handleActivityStop.bind(this)}
+                                         loading={this.state.loading} />
+                        <ActivitySwitcher onActivityStart={this.handleActivityStart.bind(this)}
+                                          loading={this.state.loading} />
+                        <ActivitySummary activities={this.state.activities}
+                                         onActivityClick={this.handleActivityClick.bind(this)}
+                                         loading={this.state.loading} />
                     </div>
                     ) : <ActivityStats activities={this.state.activities} />}
             </div>

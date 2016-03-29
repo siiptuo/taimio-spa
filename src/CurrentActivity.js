@@ -17,11 +17,11 @@ export default class CurrentActivity extends React.Component {
                 </ul>
                 {duration(this.props.activity.started_at)}
             </h1> :
-            <h1>No activity</h1>;
+            <h1>{this.props.loading ? 'Loading...' : 'No activity'}</h1>;
         return (
             <form className="current-activity-display" onSubmit={this.handleStop.bind(this)}>
                 {activityHeader}
-                <button type="submit" disabled={!hasActivity}>Stop</button>
+                <button type="submit" disabled={!hasActivity || this.props.loading}>Stop</button>
             </form>
         );
     }

@@ -32,6 +32,9 @@ const shortDateFormat = new Intl.DateTimeFormat(navigator.language, {
 
 export default class ActivitySummary extends React.Component {
     render() {
+        if (this.props.loading) {
+            return <div>Loading...</div>;
+        }
         return (
             <div>
                 {groupActivitiesByDate(this.props.activities).map(day => (
