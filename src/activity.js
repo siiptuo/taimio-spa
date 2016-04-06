@@ -45,15 +45,17 @@ function parseJSON(response) {
     return response.json();
 }
 
+const API_ROOT = 'http://api.tiima.dev';
+
 export function apiList() {
-    return fetch('api/activities')
+    return fetch(`${API_ROOT}/activities`)
         .then(checkStatus)
         .then(parseJSON)
         .then(data => data.map(unserialize));
 }
 
 export function apiGet(id) {
-    return fetch(`/api/activities/${id}`)
+    return fetch(`${API_ROOT}/activities/${id}`)
         .then(checkStatus)
         .then(parseJSON)
         .then(unserialize);
@@ -61,7 +63,7 @@ export function apiGet(id) {
 
 export function apiSave(activity) {
     const isNew = typeof activity.id === 'undefined';
-    return fetch('/api/activities' + (isNew ? '' : '/' + activity.id), {
+    return fetch(`${API_ROOT}/activities${isNew ? '' : `/${activity.id}`}`, {
         method: isNew ? 'POST' : 'PUT',
         headers: {
             'Accept': 'application/json',
@@ -75,7 +77,7 @@ export function apiSave(activity) {
 }
 
 export function apiRemove(activity) {
-    return fetch(`/api/activities/${activity.id}`, {
+    return fetch(`${API_ROOT}/activities/${activity.id}`, {
         method: 'DELETE',
     })
         .then(checkStatus);
