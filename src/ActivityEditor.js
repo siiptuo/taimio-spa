@@ -1,5 +1,5 @@
 import React from 'react';
-import { hashHistory } from 'react-router';
+import { browserHistory } from 'react-router';
 
 import {localDateTime} from './filters';
 import * as activity from './activity';
@@ -90,7 +90,7 @@ export default class ActivityEditor extends React.Component {
         };
         activity.apiSave(newActivity)
             .then(activity => {
-                hashHistory.push('/');
+                browserHistory.push('/');
             })
             .catch(error => {
                 alert('API error: ' + error.message);
@@ -99,7 +99,7 @@ export default class ActivityEditor extends React.Component {
     }
 
     onCancel() {
-        hashHistory.push('/');
+        browserHistory.push('/');
     }
 
     onResume() {
@@ -109,7 +109,7 @@ export default class ActivityEditor extends React.Component {
     onRemove() {
         activity.apiRemove(this.state.activity)
             .then(() => {
-                hashHistory.push('/');
+                browserHistory.push('/');
             })
             .catch(error => {
                 alert('API error: ' + error.message);

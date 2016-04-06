@@ -1,5 +1,5 @@
 import React from 'react';
-import { hashHistory } from 'react-router';
+import { browserHistory } from 'react-router';
 
 import ActivityList from './ActivityList';
 
@@ -33,7 +33,7 @@ const shortDateFormat = new Intl.DateTimeFormat(navigator.language, {
 
 export default class ActivitySummary extends React.Component {
     onActivityClick(activity) {
-        hashHistory.push(`/activity/${activity.id}`);
+        browserHistory.push(`/activity/${activity.id}`);
     }
 
     render() {
