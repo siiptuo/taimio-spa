@@ -38,6 +38,7 @@ $app->get('/api/activities', function(Request $request, Response $response) {
             foreach ($tagIds as $tagId) {
                 $row['tags'] = array_unique(array_merge($row['tags'], getTags($this->db, $tagId)));
             }
+            $row['tags'] = array_values($row['tags']);
         }
         $row['started_at'] = (new DateTime($row['started_at']))->format(DateTime::ISO8601);
         if (isset($row['finished_at'])) {
@@ -61,6 +62,7 @@ $app->get('/api/activities/{id}', function(Request $request, Response $response,
         foreach ($tagIds as $tagId) {
             $row['tags'] = array_unique(array_merge($row['tags'], getTags($this->db, $tagId)));
         }
+        $row['tags'] = array_values($row['tags']);
     }
     $row['started_at'] = (new DateTime($row['started_at']))->format(DateTime::ISO8601);
     if (isset($row['finished_at'])) {

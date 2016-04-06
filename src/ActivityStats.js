@@ -31,10 +31,6 @@ export default class ActivityStats extends React.Component {
             return <span>Loading...</span>;
         }
         const tagsObj = this.state.activities.reduce((obj, activity) => {
-            // FIXME: sometimes API return tags in an object?
-            if (!Array.isArray(activity.tags)) {
-                return obj;
-            }
             for (let tag of activity.tags) {
                 const finished_at = activity.finished_at != null ? activity.finished_at.getTime() : Date.now();
                 const value = finished_at - activity.started_at.getTime();
