@@ -1,9 +1,23 @@
+@import (inline) 'node_modules/normalize.css/normalize.css';
+
+@blue: #4a90e2;
+@gray: #f2f2f2;
+
+@width: 400px;
+
 body {
     font-family: sans-serif;
     font-size: 14px;
-    max-width: 400px;
+    background-color: @gray;
+}
+
+section, nav {
+    max-width: @width;
     margin: 0 auto;
-    padding: 1em;
+}
+
+header {
+    background-color: @blue;
 }
 
 h1, h2 {
@@ -71,11 +85,12 @@ label {
 }
 
 .activity-list tr:hover {
-    background-color: #eee;
+    background-color: #f8f8f8;
 }
 
 .activity-list td {
-    padding: 0.25em;
+    padding: 0.5em 0.25em;
+    border-bottom: 1px solid #d4d4d4;
 }
 
 .activity-list-time-column {
@@ -101,7 +116,8 @@ label {
 
 .tag-list li {
     display: inline-block;
-    background-color: orange;
+    background-color: @blue;
+    color: white;
     padding: 0.25em;
     font-size: 0.75em;
     border-radius: 2px;
@@ -135,11 +151,10 @@ label {
     top: 0;
     left: 0;
     bottom: 0;
-    background-color: #eee;
+    background-color: @blue;
     z-index: -1;
     text-align: right;
     white-space: nowrap;
-    color: #666;
 }
 
 .tabs {
@@ -156,13 +171,23 @@ label {
 .tabs a {
     display: inline-block;
     padding: 0.5em;
-    color: black;
-    background-color: #eee;
-    margin-right: 0.5em;
+    color: white;
     text-decoration: none;
 }
 
 .tabs a.selected {
     color: white;
-    background-color: #333;
+    background-color: darken(@blue, 10%);
+}
+
+.activity-summary-day {
+    background-color: white;
+    margin-top: 1em;
+
+    h3 {
+        background-color: @blue;
+        color: white;
+        padding: 0.5em;
+        margin: 0;
+    }
 }
