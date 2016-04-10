@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {duration} from './filters';
+import { duration } from './filters';
 import * as activity from './activity';
 
 export default class ActivityStats extends React.Component {
@@ -32,7 +32,9 @@ export default class ActivityStats extends React.Component {
         }
         const tagsObj = this.state.activities.reduce((obj, activity) => {
             for (let tag of activity.tags) {
-                const finished_at = activity.finished_at != null ? activity.finished_at.getTime() : Date.now();
+                const finished_at = activity.finished_at != null ?
+                    activity.finished_at.getTime() :
+                    Date.now();
                 const value = finished_at - activity.started_at.getTime();
                 if (typeof obj[tag] === 'undefined') {
                     obj[tag] = value;
@@ -58,7 +60,10 @@ export default class ActivityStats extends React.Component {
                         <tr key={tag.name}>
                             <th className="activity-stats-title">{tag.name}</th>
                             <td className="activity-stats-duration">
-                                <div className="activity-stats-bar" style={{width: `${tag.duration / maxDuration * 100}%`}}>
+                                <div
+                                    className="activity-stats-bar"
+                                    style={{ width: `${tag.duration / maxDuration * 100}%` }}
+                                >
                                     {duration(tag.duration)}
                                 </div>
                             </td>

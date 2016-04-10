@@ -4,12 +4,12 @@ export function parseInput(input) {
     if (tagStart >= 0) {
         return {
             title: input.slice(0, tagStart).trim(),
-            tags: input.slice(tagStart + 1).split(/\s*#/)
+            tags: input.slice(tagStart + 1).split(/\s*#/),
         };
     }
     return {
         title: input,
-        tags: []
+        tags: [],
     };
 }
 
@@ -27,18 +27,17 @@ export function serialize(activity) {
         started_at: activity.started_at.toISOString(),
         finished_at: activity.finished_at ? activity.finished_at.toISOString() : null,
         title: activity.title,
-        tags: activity.tags
+        tags: activity.tags,
     });
 }
 
 function checkStatus(response) {
-    if (response.status >= 200 && response.status < 300) {
-        return response;
-    } else {
+    if (response.status < 200 || response.status >= 300) {
         const error = new Error(response.statusText);
         error.response = response;
         throw error;
     }
+    return response;
 }
 
 function parseJSON(response) {
@@ -67,7 +66,7 @@ export function apiSave(activity) {
         method: isNew ? 'POST' : 'PUT',
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
         body: serialize(activity),
     })

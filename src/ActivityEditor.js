@@ -1,7 +1,7 @@
 import React from 'react';
 import { browserHistory } from 'react-router';
 
-import {localDateTime} from './filters';
+import { localDateTime } from './filters';
 import * as activity from './activity';
 
 function parseLocalDate(input) {
@@ -14,6 +14,14 @@ export default class ActivityEditor extends React.Component {
         this.state = {
             loading: true,
         };
+        this.onStartedAtChange = this.onStartedAtChange.bind(this);
+        this.onFinishedAtChange = this.onFinishedAtChange.bind(this);
+        this.onOngoingChange = this.onOngoingChange.bind(this);
+        this.onInputChange = this.onInputChange.bind(this);
+        this.onSave = this.onSave.bind(this);
+        this.onCancel = this.onCancel.bind(this);
+        this.onResume = this.onResume.bind(this);
+        this.onRemove = this.onRemove.bind(this);
     }
 
     componentDidMount() {
@@ -26,7 +34,7 @@ export default class ActivityEditor extends React.Component {
                     loading: false,
                     started_at: localDateTime(activity.started_at),
                     finished_at: localDateTime(ongoing ? new Date() : activity.finished_at),
-                    input: activity.title + (activity.tags.length > 0 ? ' #' + activity.tags.join(' #') : '')
+                    input: activity.title + (activity.tags.length > 0 ? ' #' + activity.tags.join(' #') : ''),
                 });
             })
             .catch(error => {
@@ -125,34 +133,51 @@ export default class ActivityEditor extends React.Component {
             <form>
                 <label>
                     Start time:
-                    <input type="datetime-local"
+                    <input
+                        type="datetime-local"
                         step="1"
                         value={this.state.started_at}
-                        onChange={this.onStartedAtChange.bind(this)} />
+                        onChange={this.onStartedAtChange}
+                    />
                 </label>
                 <label>
                     End time:
-                    <input type="datetime-local"
+                    <input
+                        type="datetime-local"
                         step="1"
                         value={this.state.finished_at}
                         disabled={this.state.ongoing}
-                        onChange={this.onFinishedAtChange.bind(this)} />
+                        onChange={this.onFinishedAtChange}
+                    />
                 </label>
                 <label>
-                    <input type="checkbox" checked={this.state.ongoing} onChange={this.onOngoingChange.bind(this)} />
+                    <input
+                        type="checkbox"
+                        checked={this.state.ongoing}
+                        onChange={this.onOngoingChange}
+                    />
                     Ongoing
                 </label>
                 <label>
                     Activity:
-                    <input type="text" value={this.state.input} onChange={this.onInputChange.bind(this)} />
+                    <input
+                        type="text" value={this.state.input}
+                        onChange={this.onInputChange}
+                    />
                 </label>
                 <div className="action-area">
-                    <button onClick={this.onCancel.bind(this)}>Cancel</button>
-                    <button onClick={this.onRemove.bind(this)}>Remove</button>
-                    {this.state.activity.finished_at ? <button onClick={this.onResume.bind(this)}>Resume</button> : null}
-                    <button onClick={this.onSave.bind(this)}>Save</button>
+                    <button onClick={this.onCancel}>Cancel</button>
+                    <button onClick={this.onRemove}>Remove</button>
+                    {this.state.activity.finished_at ?
+                        <button onClick={this.onResume}>Resume</button> :
+                        null}
+                    <button onClick={this.onSave}>Save</button>
                 </div>
             </form>
         );
     }
 }
+
+ActivityEditor.propTypes = {
+    params: React.PropTypes.object.isRequired,
+};

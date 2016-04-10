@@ -1,10 +1,8 @@
 import React from 'react';
 
-import ActivityEditor from './ActivityEditor';
 import CurrentActivity from './CurrentActivity';
 import ActivitySwitcher from './ActivitySwitcher';
 import ActivitySummary from './ActivitySummary';
-import ActivityStats from './ActivityStats';
 
 import * as activity from './activity';
 
@@ -16,6 +14,28 @@ export default class Main extends React.Component {
             currentActivity: null,
             loading: true,
         };
+        this.handleActivityStop = this.handleActivityStop.bind(this);
+        this.handleActivityStart = this.handleActivityStart.bind(this);
+    }
+
+    componentDidMount() {
+        activity.apiList()
+            .then(data => {
+                this.setState({
+                    activities: data,
+                    currentActivity: data.find(activity => activity.finished_at === null),
+                    loading: false,
+                });
+                this.timeUpdateInterval = setInterval(this.updateTime.bind(this), 15000);
+            })
+            .catch(error => {
+                alert('API error: ' + error.message);
+                console.error('API error', error);
+            });
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timeUpdateInterval);
     }
 
     handleActivityStop(newActivity) {
@@ -59,36 +79,22 @@ export default class Main extends React.Component {
         this.forceUpdate();
     }
 
-    componentDidMount() {
-        activity.apiList()
-            .then(data => {
-                this.setState({
-                    activities: data,
-                    currentActivity: data.find(activity => activity.finished_at === null),
-                    loading: false,
-                });
-                this.timeUpdateInterval = setInterval(this.updateTime.bind(this), 15000);
-            })
-            .catch(error => {
-                alert('API error: ' + error.message);
-                console.error('API error', error);
-            });
-    }
-
-    componentWillUnmount() {
-        clearInterval(this.timeUpdateInterval);
-    }
-
     render() {
         return (
             <div>
-                <CurrentActivity activity={this.state.currentActivity}
-                                 onActivityStop={this.handleActivityStop.bind(this)}
-                                 loading={this.state.loading} />
-                <ActivitySwitcher onActivityStart={this.handleActivityStart.bind(this)}
-                                  loading={this.state.loading} />
-                <ActivitySummary activities={this.state.activities}
-                                 loading={this.state.loading} />
+                <CurrentActivity
+                    activity={this.state.currentActivity}
+                    onActivityStop={this.handleActivityStop}
+                    loading={this.state.loading}
+                />
+                <ActivitySwitcher
+                    onActivityStart={this.handleActivityStart}
+                    loading={this.state.loading}
+                />
+                <ActivitySummary
+                    activities={this.state.activities}
+                    loading={this.state.loading}
+                />
             </div>
         );
     }

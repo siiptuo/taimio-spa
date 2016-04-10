@@ -6,22 +6,30 @@ export function time(value) {
     if (!(value instanceof Date)) {
         return '';
     }
-    return pad2(value.getHours()) + ':' + pad2(value.getMinutes());
+    return `${pad2(value.getHours())}:${pad2(value.getMinutes())}`;
 }
 
 export function date(value) {
     if (!(value instanceof Date)) {
         return '';
     }
-    return pad2(value.getFullYear()) + '-' + pad2(value.getMonth() + 1) + '-' + pad2(value.getDate());
+    const year = pad2(value.getFullYear());
+    const month = pad2(value.getMonth() + 1);
+    const date = pad2(value.getDate());
+    return `${year}-${month}-${date}`;
 }
 
 export function localDateTime(value) {
     if (!(value instanceof Date)) {
         return '';
     }
-    return pad2(value.getFullYear()) + '-' + pad2(value.getMonth() + 1) + '-' + pad2(value.getDate()) +
-        'T' + pad2(value.getHours()) + ':' + pad2(value.getMinutes()) + ':' + pad2(value.getSeconds());
+    const year = pad2(value.getFullYear());
+    const month = pad2(value.getMonth() + 1);
+    const date = pad2(value.getDate());
+    const hours = pad2(value.getHours());
+    const minutes = pad2(value.getMinutes());
+    const seconds = pad2(value.getSeconds());
+    return `${year}-${month}-${date}T${hours}:${minutes}:${seconds}`;
 }
 
 export function duration(start, end) {
@@ -39,7 +47,6 @@ export function duration(start, end) {
     const mins = Math.floor(secs / 60) - hours * 60;
     if (hours === 0) {
         return mins === 0 ? 'just now' : `${mins}min`;
-    } else {
-        return `${hours}h` + (mins !== 0 ? ` ${mins}min` : '');
     }
+    return `${hours}h${mins !== 0 ? ` ${mins}min` : ''}`;
 }

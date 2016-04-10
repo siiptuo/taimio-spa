@@ -3,7 +3,7 @@ import { browserHistory } from 'react-router';
 
 import ActivityList from './ActivityList';
 
-import {date, duration} from './filters';
+import { date, duration } from './filters';
 
 function groupActivitiesByDate(data) {
     const dateActivityMap = data.reduce((obj, d) => {
@@ -19,7 +19,7 @@ function groupActivitiesByDate(data) {
     for (let date in dateActivityMap) {
         days.push({
             date: new Date(date),
-            activities: dateActivityMap[date]
+            activities: dateActivityMap[date],
         });
     }
     return days.sort((a, b) => b.date.getTime() - a.date.getTime());
@@ -27,9 +27,9 @@ function groupActivitiesByDate(data) {
 
 const shortDateFormat = new Intl.DateTimeFormat(navigator.language, {
     weekday: 'short',
-    day:'numeric',
-    month: 'numeric'}
-);
+    day: 'numeric',
+    month: 'numeric',
+});
 
 export default class ActivitySummary extends React.Component {
     onActivityClick(activity) {
@@ -53,10 +53,18 @@ export default class ActivitySummary extends React.Component {
                                 }, 0))}
                             </span>
                         </h3>
-                        <ActivityList activities={day.activities} onActivityClick={this.onActivityClick} />
+                        <ActivityList
+                            activities={day.activities}
+                            onActivityClick={this.onActivityClick}
+                        />
                     </div>
                 ))}
             </div>
         );
     }
 }
+
+ActivitySummary.propTypes = {
+    loading: React.PropTypes.bool.isRequired,
+    activities: React.PropTypes.array.isRequired,
+};
