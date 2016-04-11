@@ -7,6 +7,7 @@ const App = (props) => (
             <nav>
                 <ul className="tabs">
                     <IndexLink to="/" activeClassName="selected">Main</IndexLink>
+                    <Link to="/list" activeClassName="selected">List</Link>
                     <Link to="/stats" activeClassName="selected">Stats</Link>
                 </ul>
             </nav>

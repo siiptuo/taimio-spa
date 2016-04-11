@@ -45,7 +45,7 @@ export default class ActivitySummary extends React.Component {
                 {groupActivitiesByDate(this.props.activities).map(day => (
                     <div className="activity-summary-day" key={day.date.getTime()}>
                         <h3>
-                            {shortDateFormat.format(day.date)}
+                            {this.props.title || shortDateFormat.format(day.date)}
                             <span className="activity-summary-total-duration">
                                 {duration(day.activities.reduce((sum, activity) => {
                                     const end = activity.finished_at || new Date();
@@ -67,4 +67,5 @@ export default class ActivitySummary extends React.Component {
 ActivitySummary.propTypes = {
     loading: React.PropTypes.bool.isRequired,
     activities: React.PropTypes.array.isRequired,
+    title: React.PropTypes.string,
 };

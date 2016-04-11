@@ -6,6 +6,12 @@ import ActivitySummary from './ActivitySummary';
 
 import * as activity from './activity';
 
+function onDate(date, reference) {
+    return date.getYear() === reference.getYear()
+        && date.getMonth() === reference.getMonth()
+        && date.getDate() === reference.getDate();
+}
+
 export default class Main extends React.Component {
     constructor(props) {
         super(props);
@@ -22,7 +28,7 @@ export default class Main extends React.Component {
         activity.apiList()
             .then(data => {
                 this.setState({
-                    activities: data,
+                    activities: data.filter(activity => onDate(activity.started_at, new Date())),
                     currentActivity: data.find(activity => activity.finished_at === null),
                     loading: false,
                 });
@@ -94,6 +100,7 @@ export default class Main extends React.Component {
                 <ActivitySummary
                     activities={this.state.activities}
                     loading={this.state.loading}
+                    title="Today"
                 />
             </div>
         );
