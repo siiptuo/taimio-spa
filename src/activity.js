@@ -1,3 +1,5 @@
+import { getRequest, postRequest, putRequest, deleteRequest } from './api';
+
 export function parseInput(input) {
     input = input.trim();
     const tagStart = input.indexOf('#');
@@ -31,53 +33,27 @@ export function serialize(activity) {
     });
 }
 
-function checkStatus(response) {
-    if (response.status < 200 || response.status >= 300) {
-        const error = new Error(response.statusText);
-        error.response = response;
-        throw error;
-    }
-    return response;
-}
-
-function parseJSON(response) {
-    return response.json();
-}
-
-const API_ROOT = 'http://api.tiima.dev';
-
 export function apiList() {
-    return fetch(`${API_ROOT}/activities`)
-        .then(checkStatus)
-        .then(parseJSON)
+    return getRequest('activities')
         .then(data => data.map(unserialize));
 }
 
 export function apiGet(id) {
-    return fetch(`${API_ROOT}/activities/${id}`)
-        .then(checkStatus)
-        .then(parseJSON)
+    return getRequest(`activities/${id}`)
         .then(unserialize);
 }
 
 export function apiSave(activity) {
     const isNew = typeof activity.id === 'undefined';
-    return fetch(`${API_ROOT}/activities${isNew ? '' : `/${activity.id}`}`, {
-        method: isNew ? 'POST' : 'PUT',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: serialize(activity),
-    })
-        .then(checkStatus)
-        .then(parseJSON)
-        .then(unserialize);
+    if (isNew) {
+        return postRequest('activities', serialize(activity))
+            .then(unserialize);
+    } else {
+        return putRequest(`activities/${activity.id}`, serialize(activity))
+            .then(unserialize);
+    }
 }
 
 export function apiRemove(activity) {
-    return fetch(`${API_ROOT}/activities/${activity.id}`, {
-        method: 'DELETE',
-    })
-        .then(checkStatus);
+    return deleteRequest(`activities/${activity.id}`);
 }
