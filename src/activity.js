@@ -33,8 +33,25 @@ export function serialize(activity) {
     });
 }
 
-export function apiList() {
-    return getRequest('activities')
+function fixedEncodeURIComponent(str) {
+    return encodeURIComponent(str).replace(/[!'()*]/g, function(c) {
+        return '%' + c.charCodeAt(0).toString(16);
+    });
+}
+
+function createQueryParams(params) {
+    if (!params || Object.keys(params).length === 0) {
+        return '';
+    }
+    const pairs = [];
+    for (let key in params) {
+        pairs.push(key + '=' + fixedEncodeURIComponent(params[key]));
+    }
+    return '?' + pairs.join('&');
+}
+
+export function apiList(params) {
+    return getRequest('activities' + createQueryParams(params))
         .then(data => data.map(unserialize));
 }
 

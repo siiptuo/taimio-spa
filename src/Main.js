@@ -5,6 +5,7 @@ import ActivitySwitcher from './ActivitySwitcher';
 import ActivitySummary from './ActivitySummary';
 
 import * as activity from './activity';
+import * as filters from './filters';
 
 function onDate(date, reference) {
     return date.getYear() === reference.getYear()
@@ -25,7 +26,8 @@ export default class Main extends React.Component {
     }
 
     componentDidMount() {
-        activity.apiList()
+        const today = filters.date(new Date());
+        activity.apiList({ start_date: today, end_date: today })
             .then(data => {
                 this.setState({
                     activities: data.filter(activity => onDate(activity.started_at, new Date())),
