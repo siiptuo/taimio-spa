@@ -42,10 +42,10 @@ export default class Login extends React.Component {
     }
 }
 
-Login.propTypes = {
-    location: React.PropTypes.object,
+Login.contextTypes = {
+    router: React.PropTypes.object,
 };
 
-Login.contextTypes = {
-    router: React.PropTypes.func.isRequired,
+Login.propTypes = {
+    location: React.PropTypes.object,
 };

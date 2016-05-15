@@ -1,5 +1,4 @@
 import React from 'react';
-import { browserHistory } from 'react-router';
 
 import ActivityList from './ActivityList';
 
@@ -32,8 +31,14 @@ const shortDateFormat = new Intl.DateTimeFormat(navigator.language, {
 });
 
 export default class ActivitySummary extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.onActivityClick = this.onActivityClick.bind(this);
+    }
+
     onActivityClick(activity) {
-        browserHistory.push(`/activity/${activity.id}`);
+        this.context.router.push(`/activity/${activity.id}`);
     }
 
     render() {
@@ -63,6 +68,10 @@ export default class ActivitySummary extends React.Component {
         );
     }
 }
+
+ActivitySummary.contextTypes = {
+    router: React.PropTypes.object,
+};
 
 ActivitySummary.propTypes = {
     loading: React.PropTypes.bool.isRequired,
