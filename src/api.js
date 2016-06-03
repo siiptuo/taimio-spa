@@ -13,7 +13,7 @@ function parseJSON(response) {
     return response.json();
 }
 
-const API_ROOT = 'http://api.taimio.dev';
+const API_ROOT = process.env.NODE_ENV === 'production' ? 'http://api.taim.io' : 'http://api.taimio.dev';
 
 export function getRequest(url) {
     return fetch(`${API_ROOT}/${url}`, {
