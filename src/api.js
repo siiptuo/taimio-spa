@@ -13,7 +13,7 @@ function parseJSON(response) {
     return response.json();
 }
 
-const API_ROOT = 'http://api.tiima.dev';
+const API_ROOT = 'http://api.taimio.dev';
 
 export function getRequest(url) {
     return fetch(`${API_ROOT}/${url}`, {

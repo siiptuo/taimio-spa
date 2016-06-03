@@ -26,7 +26,7 @@ describe('CurrentActivity', () => {
             started_at: new Date(2016, 1, 1, 19, 45),
             finished_at: null,
             title: 'Hello world',
-            tags: ['tiima', 'test'],
+            tags: ['taimio', 'test'],
         };
 
         const _Date = Date;
@@ -48,7 +48,7 @@ describe('CurrentActivity', () => {
             <h1>
                 Hello world
                 <ul className="tag-list">
-                    <li key="tiima">tiima</li>
+                    <li key="taimio">taimio</li>
                     <li key="test">test</li>
                 </ul>
                 15min
@@ -62,7 +62,7 @@ describe('CurrentActivity', () => {
             started_at: new Date(2016, 1, 1, 19, 45),
             finished_at: null,
             title: 'Hello world',
-            tags: ['tiima', 'test'],
+            tags: ['taimio', 'test'],
         };
         const mockActivityStop = jest.genMockFunction();
         const currentActivity = ReactTestUtils.renderIntoDocument(

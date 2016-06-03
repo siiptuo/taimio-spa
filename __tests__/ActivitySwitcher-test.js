@@ -47,13 +47,13 @@ describe('ActivitySwitcher', () => {
         const mockActivityStart = jest.genMockFunction();
         const wrapper = renderComponent(false, mockActivityStart);
 
-        wrapper.find('input').simulate('change', { target: { value: 'Hello World #tiima' } });
+        wrapper.find('input').simulate('change', { target: { value: 'Hello World #taimio' } });
         wrapper.simulate('submit', { preventDefault: () => {} });
 
         expect(mockActivityStart).toBeCalled();
         const activity = mockActivityStart.mock.calls[0][0];
         expect(activity.title).toBe('Hello World');
-        expect(activity.tags).toEqual(['tiima']);
+        expect(activity.tags).toEqual(['taimio']);
         // expect(activity.started_at).toBe();
         expect(activity.finished_at).toBeNull();
     });

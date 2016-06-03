@@ -1,5 +1,5 @@
 {
-  "name": "tiima",
+  "name": "taimio-spa",
   "version": "1.0.0",
   "description": "time tracking software",
   "main": "src/main.js",
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/siiptuo/tiima.git"
+    "url": "git+https://github.com/siiptuo/taimio-spa.git"
   },
   "author": "Tuomas Siipola <siiptuo@kapsi.fi>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/siiptuo/tiima/issues"
+    "url": "https://github.com/siiptuo/taimio-spa/issues"
   },
-  "homepage": "https://github.com/siiptuo/tiima#readme",
+  "homepage": "https://github.com/siiptuo/taimio-spa#readme",
   "dependencies": {
     "babel-preset-react": "^6.3.13",
     "babelify": "^7.2.0",
