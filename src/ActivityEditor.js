@@ -86,7 +86,8 @@ export default class ActivityEditor extends React.Component {
         });
     }
 
-    onSave() {
+    onSave(event) {
+        event.preventDefault();
         const parsedInput = activity.parseInput(this.state.input);
         const newActivity = {
             id: this.state.activity.id,
@@ -105,15 +106,18 @@ export default class ActivityEditor extends React.Component {
             });
     }
 
-    onCancel() {
+    onCancel(event) {
+        event.preventDefault();
         this.context.router.push('/');
     }
 
-    onResume() {
+    onResume(event) {
+        event.preventDefault();
         alert('TODO');
     }
 
-    onRemove() {
+    onRemove(event) {
+        event.preventDefault();
         activity.apiRemove(this.state.activity)
             .then(() => {
                 this.context.router.push('/');

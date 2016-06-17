@@ -62,6 +62,5 @@ export function deleteRequest(url) {
             'Authorization': `Bearer ${auth.getToken()}`,
         },
     })
-        .then(checkStatus)
-        .then(parseJSON);
+        .then(checkStatus);
 };
