@@ -113,7 +113,14 @@ export default class ActivityEditor extends React.Component {
 
     onResume(event) {
         event.preventDefault();
-        alert('TODO');
+        activity.apiResume(this.state.activity)
+            .then(() => {
+                this.context.router.push('/');
+            })
+            .catch(error => {
+                alert('API error: ' + error.message);
+                console.error('API error', error);
+            });
     }
 
     onRemove(event) {

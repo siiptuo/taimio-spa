@@ -50,6 +50,11 @@ function createQueryParams(params) {
     return '?' + pairs.join('&');
 }
 
+export function getCurrentActivity() {
+    return apiList()
+        .then(activities => activities.find(activity => activity.finished_at == null));
+}
+
 export function apiList(params) {
     return getRequest('activities' + createQueryParams(params))
         .then(data => data.map(unserialize));
@@ -73,4 +78,21 @@ export function apiSave(activity) {
 
 export function apiRemove(activity) {
     return deleteRequest(`activities/${activity.id}`);
+}
+
+export function apiResume(activity) {
+    const newActivity = Object.assign({}, activity, {
+        started_at: new Date(),
+        finished_at: null,
+    });
+    delete newActivity.id;
+    return getCurrentActivity()
+        .then(currentActivity => {
+            const promises = [apiSave(newActivity)];
+            if (currentActivity) {
+                currentActivity.finished_at = newActivity.started_at;
+                promises.push(apiSave(currentActivity));
+            }
+            return Promise.all(promises);
+        });
 }
