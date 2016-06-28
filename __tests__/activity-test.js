@@ -8,7 +8,7 @@ describe('activity input parsing', () => {
             activity.parseInput('')
         ).toEqual({
             title: '',
-            tags: []
+            tags: [],
         });
     });
 
@@ -17,7 +17,7 @@ describe('activity input parsing', () => {
             activity.parseInput('   ')
         ).toEqual({
             title: '',
-            tags: []
+            tags: [],
         });
     });
 
@@ -26,7 +26,7 @@ describe('activity input parsing', () => {
             activity.parseInput('hello world')
         ).toEqual({
             title: 'hello world',
-            tags: []
+            tags: [],
         });
     });
 
@@ -35,7 +35,7 @@ describe('activity input parsing', () => {
             activity.parseInput('hello world #tag1 #tag2')
         ).toEqual({
             title: 'hello world',
-            tags: ['tag1', 'tag2']
+            tags: ['tag1', 'tag2'],
         });
     });
 
@@ -44,7 +44,7 @@ describe('activity input parsing', () => {
             activity.parseInput('   hello world   #tag1  #tag2 #tag3    ')
         ).toEqual({
             title: 'hello world',
-            tags: ['tag1', 'tag2', 'tag3']
+            tags: ['tag1', 'tag2', 'tag3'],
         });
     });
 
@@ -53,7 +53,7 @@ describe('activity input parsing', () => {
             activity.parseInput('hello world#tag1#tag2#tag3')
         ).toEqual({
             title: 'hello world',
-            tags: ['tag1', 'tag2', 'tag3']
+            tags: ['tag1', 'tag2', 'tag3'],
         });
     });
 });
@@ -64,12 +64,12 @@ describe('activity serialization', () => {
             title: 'hello world',
             tags: ['tag1', 'tag2'],
             started_at: new Date(Date.UTC(2015, 0, 18, 14, 0)),
-            finished_at: new Date(Date.UTC(2015, 0, 18, 15, 0))
+            finished_at: new Date(Date.UTC(2015, 0, 18, 15, 0)),
         }))).toEqual({
             title: 'hello world',
             tags: ['tag1', 'tag2'],
             started_at: '2015-01-18T14:00:00.000Z',
-            finished_at: '2015-01-18T15:00:00.000Z'
+            finished_at: '2015-01-18T15:00:00.000Z',
         });
     });
 
@@ -78,12 +78,12 @@ describe('activity serialization', () => {
             title: 'hello world',
             tags: ['tag1', 'tag2'],
             started_at: new Date(Date.UTC(2015, 0, 18, 14, 0)),
-            finished_at: null
+            finished_at: null,
         }))).toEqual({
             title: 'hello world',
             tags: ['tag1', 'tag2'],
             started_at: '2015-01-18T14:00:00.000Z',
-            finished_at: null
+            finished_at: null,
         });
     });
 
@@ -92,12 +92,12 @@ describe('activity serialization', () => {
             title: 'hello world',
             tags: ['tag1', 'tag2'],
             started_at: '2015-01-18T14:00:00.000Z',
-            finished_at: '2015-01-18T15:00:00.000Z'
+            finished_at: '2015-01-18T15:00:00.000Z',
         })).toEqual({
             title: 'hello world',
             tags: ['tag1', 'tag2'],
             started_at: new Date(Date.UTC(2015, 0, 18, 14, 0)),
-            finished_at: new Date(Date.UTC(2015, 0, 18, 15, 0))
+            finished_at: new Date(Date.UTC(2015, 0, 18, 15, 0)),
         });
     });
 
@@ -106,12 +106,12 @@ describe('activity serialization', () => {
             title: 'hello world',
             tags: ['tag1', 'tag2'],
             started_at: '2015-01-18T14:00:00.000Z',
-            finished_at: null
+            finished_at: null,
         })).toEqual({
             title: 'hello world',
             tags: ['tag1', 'tag2'],
             started_at: new Date(Date.UTC(2015, 0, 18, 14, 0)),
-            finished_at: null
+            finished_at: null,
         });
     });
 });

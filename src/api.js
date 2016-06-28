@@ -21,11 +21,11 @@ export function getRequest(url) {
         headers: {
             'Accept': 'application/json',
             'Authorization': `Bearer ${auth.getToken()}`,
-        }
+        },
     })
         .then(checkStatus)
         .then(parseJSON);
-};
+}
 
 export function postRequest(url, data) {
     return fetch(`${API_ROOT}/${url}`, {
@@ -39,7 +39,7 @@ export function postRequest(url, data) {
     })
         .then(checkStatus)
         .then(parseJSON);
-};
+}
 
 export function putRequest(url, data) {
     return fetch(`${API_ROOT}/${url}`, {
@@ -53,7 +53,7 @@ export function putRequest(url, data) {
     })
         .then(checkStatus)
         .then(parseJSON);
-};
+}
 
 export function deleteRequest(url) {
     return fetch(`${API_ROOT}/${url}`, {
@@ -63,4 +63,4 @@ export function deleteRequest(url) {
         },
     })
         .then(checkStatus);
-};
+}

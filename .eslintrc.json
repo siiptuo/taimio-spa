@@ -1,7 +1,12 @@
 {
     "extends": "airbnb",
+    "env": {
+        "browser": true,
+        "jest": true
+    },
     "rules": {
-        "indent": [2, 4],
-        "react/jsx-indent-props": [2, 4]
+        "quote-props": ["error", "consistent"],
+        "indent": ["error", 4],
+        "react/jsx-indent-props": ["error", 4]
     }
 }
