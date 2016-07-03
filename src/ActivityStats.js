@@ -5,7 +5,7 @@ import { duration } from './filters';
 
 import { fetchActivitiesIfNeeded } from './actions';
 
-function countActivitiesByHour(activities) {
+export function countActivitiesByHour(activities) {
     const hours = new Array(24).fill(0);
     for (const activity of activities) {
         hours[activity.started_at.getHours()]++;
@@ -58,7 +58,7 @@ class DayDonut extends React.Component {
     }
 }
 
-function sumTagDurations(activities) {
+export function sumTagDurations(activities) {
     return activities.reduce((obj, activity) => {
         for (let tag of activity.tags) {
             const finished_at = activity.finished_at != null ?
