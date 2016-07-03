@@ -16,6 +16,10 @@ section, nav {
     margin: 0 auto;
 }
 
+section {
+    padding: 1em;
+}
+
 header {
     background-color: @blue;
 }
@@ -63,6 +67,7 @@ label {
 
 .start-activity-form {
     display: flex;
+    margin-bottom: 1em;
 }
 
 .start-activity-form input {
@@ -161,7 +166,6 @@ label {
     list-style-type: none;
     padding: 0;
     margin: 0;
-    margin-bottom: 1em;
 }
 
 .tabs li {
@@ -170,7 +174,7 @@ label {
 
 .tabs a {
     display: inline-block;
-    padding: 0.5em;
+    padding: 1em;
     color: white;
     text-decoration: none;
 }
@@ -183,6 +187,10 @@ label {
 .activity-summary-day {
     background-color: white;
     margin-top: 1em;
+
+    &:first-child {
+        margin-top: 0;
+    }
 
     h3 {
         background-color: @blue;
