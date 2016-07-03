@@ -5,6 +5,59 @@ import { duration } from './filters';
 
 import { fetchActivitiesIfNeeded } from './actions';
 
+function countActivitiesByHour(activities) {
+    const hours = new Array(24).fill(0);
+    for (const activity of activities) {
+        hours[activity.started_at.getHours()]++;
+    }
+    return hours;
+}
+
+class DayDonut extends React.Component {
+    render() {
+        const hours = countActivitiesByHour(this.props.activities);
+        const maxHours = Math.max.apply(null, hours);
+        const innerRadius = 0;
+        const outerRadius = 100;
+        const radius = (outerRadius + innerRadius) / 2;
+        const center = 100;
+        const paths = [];
+        const delta = 360 / 24;
+        for (let angle = -delta / 2; angle < 360; angle += delta) {
+            paths.push([
+                'M',
+                center + radius * Math.cos((angle + delta - 90) * Math.PI / 180),
+                center + radius * Math.sin((angle + delta - 90) * Math.PI / 180),
+                'A',
+                radius, radius, 0, 0, 0,
+                center + radius * Math.cos((angle - 90) * Math.PI / 180),
+                center + radius * Math.sin((angle - 90) * Math.PI / 180),
+            ].join(' '));
+        }
+        return (
+            <svg width={200} height={200}>
+                {paths.map((path, i) => (
+                    <g key={i} className="day-donut">
+                        <path
+                            d={path}
+                            stroke="#4a90e2"
+                            strokeWidth={outerRadius - innerRadius}
+                            fill="none"
+                            opacity={hours[i] / maxHours}
+                        />
+                        <text
+                            x={center + 90 * Math.cos((i * delta - 90) * Math.PI / 180)}
+                            y={center + 90 * Math.sin((i * delta - 90) * Math.PI / 180)}
+                        >
+                            {i === 0 ? 24 : i}
+                        </text>
+                    </g>
+                ))}
+            </svg>
+        );
+    }
+}
+
 export class ActivityStats extends React.Component {
     componentDidMount() {
         this.props.dispatch(fetchActivitiesIfNeeded());
@@ -42,23 +95,26 @@ export class ActivityStats extends React.Component {
         tags.sort((a, b) => b.duration - a.duration);
         const maxDuration = tags[0].duration;
         return (
-            <table className="activity-stats">
-                <tbody>
-                    {tags.map(tag => (
-                        <tr key={tag.name}>
-                            <th className="activity-stats-title">{tag.name}</th>
-                            <td className="activity-stats-duration">
-                                <div
-                                    className="activity-stats-bar"
-                                    style={{ width: `${tag.duration / maxDuration * 100}%` }}
-                                >
-                                    {duration(tag.duration)}
-                                </div>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <div>
+                <DayDonut activities={this.props.activities} />
+                <table className="activity-stats">
+                    <tbody>
+                        {tags.map(tag => (
+                            <tr key={tag.name}>
+                                <th className="activity-stats-title">{tag.name}</th>
+                                <td className="activity-stats-duration">
+                                    <div
+                                        className="activity-stats-bar"
+                                        style={{ width: `${tag.duration / maxDuration * 100}%` }}
+                                    >
+                                        {duration(tag.duration)}
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         );
     }
 }
