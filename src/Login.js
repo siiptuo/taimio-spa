@@ -31,7 +31,7 @@ export default class Login extends React.Component {
     render() {
         return (
             <div>
-                <form onSubmit={this.handleSubmit}>
+                <form className="login-form" onSubmit={this.handleSubmit}>
                     <input ref="username" placeholder="Username" />
                     <input ref="password" type="password" placeholder="Password" />
                     {this.state.error && <p className="error">{this.state.error}</p>}
