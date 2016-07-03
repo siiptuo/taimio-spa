@@ -23,7 +23,7 @@ class DayDonut extends React.Component {
         const center = 100;
         const paths = [];
         const delta = 360 / 24;
-        for (let angle = -delta / 2; angle < 360; angle += delta) {
+        for (let angle = -delta / 2; angle < 360 - delta / 2; angle += delta) {
             paths.push([
                 'M',
                 center + radius * Math.cos((angle + delta - 90) * Math.PI / 180),
