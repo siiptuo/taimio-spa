@@ -5,7 +5,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactTestUtils from 'react-addons-test-utils';
 
-const CurrentActivity = require('../src/CurrentActivity').default;
+const CurrentActivity = require('../src/CurrentActivity').CurrentActivity;
 
 describe('CurrentActivity', () => {
     it('displays no activity', () => {
@@ -59,6 +59,7 @@ describe('CurrentActivity', () => {
 
     it('changes after click', () => {
         const testActivity = {
+            id: 1,
             started_at: new Date(2016, 1, 1, 19, 45),
             finished_at: null,
             title: 'Hello world',
@@ -69,6 +70,6 @@ describe('CurrentActivity', () => {
             <CurrentActivity loading={false} activity={testActivity} onActivityStop={mockActivityStop} />
         );
         ReactTestUtils.Simulate.submit(ReactDOM.findDOMNode(currentActivity));
-        expect(mockActivityStop).toBeCalledWith(testActivity);
+        expect(mockActivityStop).toBeCalledWith(1);
     });
 });
