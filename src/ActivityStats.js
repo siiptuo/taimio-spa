@@ -1,36 +1,24 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { duration } from './filters';
-import * as activity from './activity';
 
-export default class ActivityStats extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            activities: [],
-            loading: true,
-        };
-    }
+import { fetchActivitiesIfNeeded } from './actions';
 
+export class ActivityStats extends React.Component {
     componentDidMount() {
-        activity.apiList()
-            .then(data => {
-                this.setState({
-                    activities: data,
-                    loading: false,
-                });
-            })
-            .catch(error => {
-                alert('API error: ' + error.message);
-                console.error('API error', error);
-            });
+        this.props.dispatch(fetchActivitiesIfNeeded());
     }
 
     render() {
-        if (this.state.loading) {
+        console.log(this.props);
+        if (this.props.loading) {
             return <span>Loading...</span>;
         }
-        const tagsObj = this.state.activities.reduce((obj, activity) => {
+        if (this.props.activities.length === 0) {
+            return <span>No data yet</span>;
+        }
+        const tagsObj = this.props.activities.reduce((obj, activity) => {
             for (let tag of activity.tags) {
                 const finished_at = activity.finished_at != null ?
                     activity.finished_at.getTime() :
@@ -74,3 +62,18 @@ export default class ActivityStats extends React.Component {
         );
     }
 }
+
+ActivityStats.propTypes = {
+    dispatch: React.PropTypes.func.isRequired,
+    activities: React.PropTypes.array.isRequired,
+    loading: React.PropTypes.bool.isRequired,
+};
+
+function mapStateToProps(state) {
+    return {
+        activities: state.activities.activities,
+        loading: state.activities.isFetching,
+    };
+}
+
+export default connect(mapStateToProps)(ActivityStats);

@@ -76,8 +76,8 @@ export function apiSave(activity) {
     }
 }
 
-export function apiRemove(activity) {
-    return deleteRequest(`activities/${activity.id}`);
+export function apiRemove(activityId) {
+    return deleteRequest(`activities/${activityId}`);
 }
 
 export function apiResume(activity) {

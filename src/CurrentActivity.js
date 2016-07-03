@@ -1,7 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
+import { stopActivity } from './actions';
 import { duration } from './filters';
 
-export default class CurrentActivity extends React.Component {
+export class CurrentActivity extends React.Component {
     constructor(props) {
         super(props);
         this.handleStop = this.handleStop.bind(this);
@@ -9,7 +12,7 @@ export default class CurrentActivity extends React.Component {
 
     handleStop(event) {
         event.preventDefault();
-        this.props.onActivityStop(this.props.activity);
+        this.props.onActivityStop(this.props.activity.id);
     }
 
     render() {
@@ -37,3 +40,20 @@ CurrentActivity.propTypes = {
     onActivityStop: React.PropTypes.func.isRequired,
     loading: React.PropTypes.bool.isRequired,
 };
+
+function mapStateToProps(state) {
+    return {
+        activity: state.activities.activities.find(activity => !activity.finished_at),
+        loading: state.activities.isFetching,
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        onActivityStop(id) {
+            dispatch(stopActivity(id));
+        },
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CurrentActivity);

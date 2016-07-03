@@ -1,6 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
+import { createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import thunkMiddleware from 'redux-thunk';
+
+import taimioStore from './reducers';
+import * as auth from './auth';
 
 import App from './App';
 import Main from './Main';
@@ -9,8 +15,6 @@ import ActivityStats from './ActivityStats';
 import ActivityEditor from './ActivityEditor';
 import Login from './Login';
 import Logout from './Logout';
-
-import * as auth from './auth';
 
 function requireAuth(nextState, replace) {
     if (!auth.isLoggedIn()) {
@@ -21,16 +25,29 @@ function requireAuth(nextState, replace) {
     }
 }
 
+const logger = store => next => action => {
+    console.group(action.type);
+    console.info('dispatching', action);
+    const result = next(action);
+    console.log('next state', store.getState());
+    console.groupEnd(action.type);
+    return result;
+};
+
+const store = createStore(taimioStore, applyMiddleware(thunkMiddleware, logger));
+
 ReactDOM.render(
-    <Router history={browserHistory}>
-        <Route path="/" component={App}>
-            <IndexRoute component={Main} onEnter={requireAuth} />
-            <Route path="/list" component={List} onEnter={requireAuth} />
-            <Route path="/stats" component={ActivityStats} onEnter={requireAuth} />
-            <Route path="/activity/:id" component={ActivityEditor} onEnter={requireAuth} />
-            <Route path="/login" component={Login} />
-            <Route path="/logout" component={Logout} />
-        </Route>
-    </Router>,
+    <Provider store={store}>
+        <Router history={browserHistory}>
+            <Route path="/" component={App}>
+                <IndexRoute component={Main} onEnter={requireAuth} />
+                <Route path="/list" component={List} onEnter={requireAuth} />
+                <Route path="/stats" component={ActivityStats} onEnter={requireAuth} />
+                <Route path="/activity/:id" component={ActivityEditor} onEnter={requireAuth} />
+                <Route path="/login" component={Login} />
+                <Route path="/logout" component={Logout} />
+            </Route>
+        </Router>
+    </Provider>,
     document.getElementById('app')
 );

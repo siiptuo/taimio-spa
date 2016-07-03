@@ -1,8 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { startActivity } from './actions';
 
 import * as activity from './activity';
 
-export default class ActivitySwitcher extends React.Component {
+export class ActivitySwitcher extends React.Component {
     constructor(props) {
         super(props);
         this.state = { input: '' };
@@ -20,13 +22,8 @@ export default class ActivitySwitcher extends React.Component {
         if (!input) {
             return;
         }
-        const parsedInput = activity.parseInput(input);
-        this.props.onActivityStart({
-            title: parsedInput.title,
-            tags: parsedInput.tags,
-            started_at: new Date(),
-            finished_at: null,
-        });
+        const { title, tags } = activity.parseInput(input);
+        this.props.onActivityStart(title, tags);
         this.setState({ input: '' });
     }
 
@@ -49,3 +46,19 @@ ActivitySwitcher.propTypes = {
     onActivityStart: React.PropTypes.func.isRequired,
     loading: React.PropTypes.bool.isRequired,
 };
+
+function mapStateToProps(state) {
+    return {
+        loading: state.activities.isFetching,
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        onActivityStart(title, tags) {
+            dispatch(startActivity(title, tags));
+        },
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ActivitySwitcher);

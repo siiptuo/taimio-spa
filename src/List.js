@@ -1,50 +1,36 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
+import { fetchActivitiesIfNeeded } from './actions';
 
 import ActivitySummary from './ActivitySummary';
 
-import * as activity from './activity';
-
-export default class Main extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            activities: [],
-            loading: true,
-        };
-    }
-
+class List extends React.Component {
     componentDidMount() {
-        activity.apiList()
-            .then(data => {
-                this.setState({
-                    activities: data,
-                    loading: false,
-                });
-                this.timeUpdateInterval = setInterval(this.updateTime.bind(this), 15000);
-            })
-            .catch(error => {
-                alert('API error: ' + error.message);
-                console.error('API error', error);
-            });
-    }
-
-    componentWillUnmount() {
-        clearInterval(this.timeUpdateInterval);
-    }
-
-    updateTime() {
-        this.forceUpdate();
+        this.props.dispatch(fetchActivitiesIfNeeded());
     }
 
     render() {
         return (
-            <div>
-                <ActivitySummary
-                    activities={this.state.activities}
-                    loading={this.state.loading}
-                    header="Tänään"
-                />
-            </div>
+            <ActivitySummary
+                activities={this.props.activities}
+                loading={this.props.loading}
+            />
         );
     }
 }
+
+List.propTypes = {
+    dispatch: React.PropTypes.func.isRequired,
+    activities: React.PropTypes.array.isRequired,
+    loading: React.PropTypes.bool.isRequired,
+};
+
+function mapStateToProps(state) {
+    return {
+        activities: state.activities.activities,
+        loading: state.activities.isFetching,
+    };
+}
+
+export default connect(mapStateToProps)(List);

@@ -1,17 +1,26 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import { localDateTime } from './filters';
 import * as activity from './activity';
+import { updateActivity, resumeActivity, removeActivity } from './actions';
 
 function parseLocalDate(input) {
     return new Date(input.replace(/-/g, '/').replace('T', ' '));
 }
 
-export default class ActivityEditor extends React.Component {
+export class ActivityEditor extends React.Component {
     constructor(props) {
         super(props);
+        const { activity } = props;
+        const ongoing = activity.finished_at == null;
         this.state = {
-            loading: true,
+            loading: false,
+            ongoing,
+            loading: false,
+            started_at: localDateTime(activity.started_at),
+            finished_at: localDateTime(ongoing ? new Date() : activity.finished_at),
+            input: activity.title + (activity.tags.length > 0 ? ' #' + activity.tags.join(' #') : ''),
         };
         this.onStartedAtChange = this.onStartedAtChange.bind(this);
         this.onFinishedAtChange = this.onFinishedAtChange.bind(this);
@@ -24,22 +33,6 @@ export default class ActivityEditor extends React.Component {
     }
 
     componentDidMount() {
-        activity.apiGet(this.props.params.id)
-            .then(activity => {
-                const ongoing = activity.finished_at == null;
-                this.setState({
-                    activity,
-                    ongoing,
-                    loading: false,
-                    started_at: localDateTime(activity.started_at),
-                    finished_at: localDateTime(ongoing ? new Date() : activity.finished_at),
-                    input: activity.title + (activity.tags.length > 0 ? ' #' + activity.tags.join(' #') : ''),
-                });
-            })
-            .catch(error => {
-                alert('API error: ' + error.message);
-                console.error('API error', error);
-            });
     }
 
     onStartedAtChange(event) {
@@ -49,7 +42,6 @@ export default class ActivityEditor extends React.Component {
             ongoing: this.state.ongoing,
             input: this.state.input,
             loading: this.state.loading,
-            activity: this.state.activity,
         });
     }
 
@@ -60,7 +52,6 @@ export default class ActivityEditor extends React.Component {
             ongoing: this.state.ongoing,
             input: this.state.input,
             loading: this.state.loading,
-            activity: this.state.activity,
         });
     }
 
@@ -71,7 +62,6 @@ export default class ActivityEditor extends React.Component {
             ongoing: event.target.checked,
             input: this.state.input,
             loading: this.state.loading,
-            activity: this.state.activity,
         });
     }
 
@@ -82,28 +72,20 @@ export default class ActivityEditor extends React.Component {
             ongoing: this.state.ongoing,
             input: event.target.value,
             loading: this.state.loading,
-            activity: this.state.activity,
         });
     }
 
     onSave(event) {
         event.preventDefault();
-        const parsedInput = activity.parseInput(this.state.input);
-        const newActivity = {
-            id: this.state.activity.id,
-            title: parsedInput.title,
-            tags: parsedInput.tags,
+        const { title, tags } = activity.parseInput(this.state.input);
+        this.props.dispatch(updateActivity({
+            id: this.props.activity.id,
+            title,
+            tags,
             started_at: parseLocalDate(this.state.started_at),
             finished_at: this.state.ongoing ? null : parseLocalDate(this.state.finished_at),
-        };
-        activity.apiSave(newActivity)
-            .then(activity => {
-                this.context.router.push('/');
-            })
-            .catch(error => {
-                alert('API error: ' + error.message);
-                console.error('API error', error);
-            });
+        }));
+        this.context.router.push('/');
     }
 
     onCancel(event) {
@@ -113,26 +95,14 @@ export default class ActivityEditor extends React.Component {
 
     onResume(event) {
         event.preventDefault();
-        activity.apiResume(this.state.activity)
-            .then(() => {
-                this.context.router.push('/');
-            })
-            .catch(error => {
-                alert('API error: ' + error.message);
-                console.error('API error', error);
-            });
+        this.props.dispatch(resumeActivity(this.props.activity.id));
+        this.context.router.push('/');
     }
 
     onRemove(event) {
         event.preventDefault();
-        activity.apiRemove(this.state.activity)
-            .then(() => {
-                this.context.router.push('/');
-            })
-            .catch(error => {
-                alert('API error: ' + error.message);
-                console.error('API error', error);
-            });
+        this.props.dispatch(removeActivity(this.props.activity.id));
+        this.context.router.push('/');
     }
 
     render() {
@@ -178,7 +148,7 @@ export default class ActivityEditor extends React.Component {
                 <div className="action-area">
                     <button onClick={this.onCancel}>Cancel</button>
                     <button onClick={this.onRemove}>Remove</button>
-                    {this.state.activity.finished_at ?
+                    {this.props.activity.finished_at ?
                         <button onClick={this.onResume}>Resume</button> :
                         null}
                     <button onClick={this.onSave}>Save</button>
@@ -194,4 +164,14 @@ ActivityEditor.contextTypes = {
 
 ActivityEditor.propTypes = {
     params: React.PropTypes.object.isRequired,
+    activity: React.PropTypes.object.isRequired,
+    dispatch: React.PropTypes.func.isRequired,
 };
+
+function mapStateToProps(state, ownProps) {
+    return {
+        activity: state.activities.activities.find(a => a.id == ownProps.params.id),
+    };
+}
+
+export default connect(mapStateToProps)(ActivityEditor);
