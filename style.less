@@ -141,6 +141,22 @@ label {
     width: 100%;
 }
 
+.activity-stats-container {
+    cursor: pointer;
+
+    &:hover .activity-stats-bar {
+        background-color: lighten(@blue, 5%);
+    }
+
+    &.selected {
+        color: blue;
+
+        .activity-stats-bar {
+            background-color: lighten(@blue, 10%);
+        }
+    }
+}
+
 .activity-stats-title {
     font-weight: normal;
     text-align: right;
@@ -160,6 +176,7 @@ label {
     z-index: -1;
     text-align: right;
     white-space: nowrap;
+    transition: width 300ms ease-out;
 }
 
 .tabs {
@@ -210,6 +227,10 @@ label {
         width: 100%;
         background-color: lightgreen;
     }
+}
+
+.day-donut path {
+    transition: opacity 300ms ease-out;
 }
 
 .day-donut text {

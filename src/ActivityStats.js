@@ -58,49 +58,76 @@ class DayDonut extends React.Component {
     }
 }
 
+function sumTagDurations(activities) {
+    return activities.reduce((obj, activity) => {
+        for (let tag of activity.tags) {
+            const finished_at = activity.finished_at != null ?
+                activity.finished_at.getTime() :
+                Date.now();
+            const value = finished_at - activity.started_at.getTime();
+            if (typeof obj[tag] === 'undefined') {
+                obj[tag] = value;
+            } else {
+                obj[tag] += value;
+            }
+        }
+        return obj;
+    }, {});
+}
+
 export class ActivityStats extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { selectedTags: new Set() };
+    }
+
     componentDidMount() {
         this.props.dispatch(fetchActivitiesIfNeeded());
     }
 
+    toggleTag(tagName) {
+        const selectedTags = new Set(this.state.selectedTags);
+        if (this.state.selectedTags.has(tagName)) {
+            selectedTags.delete(tagName);
+        } else {
+            selectedTags.add(tagName);
+        }
+        this.setState({ selectedTags });
+    }
+
     render() {
-        console.log(this.props);
         if (this.props.loading) {
             return <span>Loading...</span>;
         }
         if (this.props.activities.length === 0) {
             return <span>No data yet</span>;
         }
-        const tagsObj = this.props.activities.reduce((obj, activity) => {
-            for (let tag of activity.tags) {
-                const finished_at = activity.finished_at != null ?
-                    activity.finished_at.getTime() :
-                    Date.now();
-                const value = finished_at - activity.started_at.getTime();
-                if (typeof obj[tag] === 'undefined') {
-                    obj[tag] = value;
-                } else {
-                    obj[tag] += value;
-                }
-            }
-            return obj;
-        }, {});
+        const allActivities = this.props.activities;
+        const allTagsObj = sumTagDurations(allActivities);
+        const activities = (this.state.selectedTags.size === 0) ? allActivities :
+            allActivities.filter(activity => Array.from(this.state.selectedTags).every(tag => activity.tags.includes(tag)));
+        const tagsObj = sumTagDurations(activities);
         const tags = [];
-        for (let tag in tagsObj) {
+        for (let tag in allTagsObj) {
             tags.push({
                 name: tag,
-                duration: tagsObj[tag],
+                duration: tagsObj[tag] || 0,
+                totalDuration: allTagsObj[tag],
             });
         }
-        tags.sort((a, b) => b.duration - a.duration);
-        const maxDuration = tags[0].duration;
+        tags.sort((a, b) => b.totalDuration - a.totalDuration);
+        const maxDuration = Math.max.apply(null, tags.map(tag => tag.duration));
         return (
             <div>
-                <DayDonut activities={this.props.activities} />
+                <DayDonut activities={activities} />
                 <table className="activity-stats">
                     <tbody>
                         {tags.map(tag => (
-                            <tr key={tag.name}>
+                            <tr
+                                key={tag.name}
+                                onClick={this.toggleTag.bind(this, tag.name)}
+                                className={'activity-stats-container' + (this.state.selectedTags.has(tag.name) ? ' selected' : '')}
+                            >
                                 <th className="activity-stats-title">{tag.name}</th>
                                 <td className="activity-stats-duration">
                                     <div
