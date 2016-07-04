@@ -23,7 +23,7 @@ export class CurrentActivity extends React.Component {
                 <ul className="tag-list">
                     {this.props.activity.tags.map(tag => <li key={tag}>{tag}</li>)}
                 </ul>
-                {duration(this.props.activity.started_at)}
+                {duration(this.props.activity.started_at, true)}
             </h1> :
             <h1>{this.props.loading ? 'Loading...' : 'No activity'}</h1>;
         return (

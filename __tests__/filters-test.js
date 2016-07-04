@@ -30,15 +30,31 @@ describe('duration filter', () => {
     it('should format no difference', () => {
         expect(filters.duration(
             new Date(2015, 0, 17, 23, 41, 0),
-            new Date(2015, 0, 17, 23, 41, 0)
+            new Date(2015, 0, 17, 23, 41, 0),
+            true
         )).toBe('just now');
     });
 
     it('should format seconds', () => {
         expect(filters.duration(
             new Date(2015, 0, 17, 23, 41, 0),
-            new Date(2015, 0, 17, 23, 41, 15)
+            new Date(2015, 0, 17, 23, 41, 15),
+            true
         )).toBe('just now');
+    });
+
+    it('should format no difference', () => {
+        expect(filters.duration(
+            new Date(2015, 0, 17, 23, 41, 0),
+            new Date(2015, 0, 17, 23, 41, 0)
+        )).toBe('0s');
+    });
+
+    it('should format seconds', () => {
+        expect(filters.duration(
+            new Date(2015, 0, 17, 23, 41, 0),
+            new Date(2015, 0, 17, 23, 41, 15)
+        )).toBe('15s');
     });
 
     it('should format one minute', () => {

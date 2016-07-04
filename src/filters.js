@@ -32,7 +32,7 @@ export function localDateTime(value) {
     return `${year}-${month}-${date}T${hours}:${minutes}:${seconds}`;
 }
 
-export function duration(start, end) {
+export function duration(start, end, realTime = false) {
     let diff = start;
     if (start instanceof Date) {
         if (!(end instanceof Date)) {
@@ -46,7 +46,10 @@ export function duration(start, end) {
     const hours = Math.floor(secs / (60 * 60));
     const mins = Math.floor(secs / 60) - hours * 60;
     if (hours === 0) {
-        return mins === 0 ? 'just now' : `${mins}min`;
+        if (mins === 0) {
+            return realTime ? 'just now' : `${secs}s`;
+        }
+        return `${mins}min`;
     }
     return `${hours}h${mins !== 0 ? ` ${mins}min` : ''}`;
 }

@@ -29,7 +29,7 @@ const ActivityList = (props) => (
                         </ul>
                     </td>
                     <td className="activity-list-duration-column">
-                        {duration(activity.started_at, activity.finished_at)}
+                        {duration(activity.started_at, activity.finished_at, !activity.finished_at)}
                     </td>
                 </tr>
             ))}
