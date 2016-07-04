@@ -6,11 +6,16 @@ import { duration } from './filters';
 import { fetchActivitiesIfNeeded } from './actions';
 
 export function countActivitiesByHour(activities) {
-    const hours = new Array(24).fill(0);
+    const result = new Array(24).fill(0);
     for (const activity of activities) {
-        hours[activity.started_at.getHours()]++;
+        const start = activity.started_at.getHours();
+        const duration = (activity.finished_at.getTime() - activity.started_at.getTime());
+        const hours = Math.ceil(duration / (60 * 60 * 1000));
+        for (let i = 0; i < hours; i++) {
+            result[(start + i) % 24]++;
+        }
     }
-    return hours;
+    return result;
 }
 
 class DayDonut extends React.Component {

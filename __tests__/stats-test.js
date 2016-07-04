@@ -18,6 +18,21 @@ const activities = [
         started_at: new Date(2016, 6, 4, 12, 0),
         finished_at: new Date(2016, 6, 4, 13, 0),
     },
+    {
+        tags: [],
+        started_at: new Date(2016, 6, 4, 14, 0),
+        finished_at: new Date(2016, 6, 4, 17, 0),
+    },
+    {
+        tags: [],
+        started_at: new Date(2016, 6, 4, 23, 0),
+        finished_at: new Date(2016, 6, 5, 1, 0),
+    },
+    {
+        tags: [],
+        started_at: new Date(2016, 6, 5, 15, 0),
+        finished_at: new Date(2016, 6, 5, 18, 0),
+    },
 ];
 
 describe('sumTagDurations', () => {
@@ -34,8 +49,8 @@ describe('countActivitiesByHour', () => {
     it('should calculate correctly', () => {
         const hours = stats.countActivitiesByHour(activities);
         expect(hours).toEqual([
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0,
-            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0,
+            1, 0, 1, 2, 2, 1, 0, 0, 0, 0, 0, 1,
         ]);
     });
 });
