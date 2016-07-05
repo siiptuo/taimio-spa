@@ -66,10 +66,7 @@ class DayDonut extends React.Component {
 export function sumTagDurations(activities) {
     return activities.reduce((obj, activity) => {
         for (let tag of activity.tags) {
-            const finished_at = activity.finished_at != null ?
-                activity.finished_at.getTime() :
-                Date.now();
-            const value = finished_at - activity.started_at.getTime();
+            const value = activity.finished_at.getTime() - activity.started_at.getTime();
             if (typeof obj[tag] === 'undefined') {
                 obj[tag] = value;
             } else {
@@ -159,7 +156,7 @@ ActivityStats.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        activities: state.activities.activities,
+        activities: state.activities.activities.filter(activity => activity.finished_at),
         loading: state.activities.isFetching,
     };
 }
