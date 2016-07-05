@@ -1,5 +1,5 @@
 import React from 'react';
-import { duration } from './filters';
+import Duration from './Duration';
 
 const shortTimeFormat = new Intl.DateTimeFormat(navigator.language, {
     hour: 'numeric',
@@ -29,7 +29,7 @@ const ActivityList = (props) => (
                         </ul>
                     </td>
                     <td className="activity-list-duration-column">
-                        {duration(activity.started_at, activity.finished_at, !activity.finished_at)}
+                        <Duration startTime={activity.started_at} endTime={activity.finished_at} />
                     </td>
                 </tr>
             ))}

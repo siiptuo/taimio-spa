@@ -30,6 +30,31 @@ const shortDateFormat = new Intl.DateTimeFormat(navigator.language, {
     month: 'numeric',
 });
 
+export default class ActivityDurationSum extends React.Component {
+    constructor(props) {
+        super(props);
+        if (this.props.activities.some(activity => !!activity.finished_at)) {
+            this.interval = setInterval(() => { this.forceUpdate(); }, 1000);
+        }
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
+    render() {
+        const durationSum = this.props.activities.reduce((sum, activity) => {
+            const finishedAt = activity.finished_at || new Date();
+            return sum + finishedAt.getTime() - activity.started_at.getTime();
+        }, 0);
+        return <span>{duration(durationSum)}</span>;
+    }
+}
+
+ActivityDurationSum.propTypes = {
+    activities: React.PropTypes.array.isRequired,
+};
+
 export default class ActivitySummary extends React.Component {
     constructor(props) {
         super(props);
@@ -52,10 +77,7 @@ export default class ActivitySummary extends React.Component {
                         <h3>
                             {this.props.title || shortDateFormat.format(day.date)}
                             <span className="activity-summary-total-duration">
-                                {duration(day.activities.reduce((sum, activity) => {
-                                    const end = activity.finished_at || new Date();
-                                    return sum + end.getTime() - activity.started_at.getTime();
-                                }, 0))}
+                                <ActivityDurationSum activities={day.activities} />
                             </span>
                         </h3>
                         <ActivityList

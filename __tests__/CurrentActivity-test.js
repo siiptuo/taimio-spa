@@ -1,4 +1,5 @@
 jest.dontMock('../src/CurrentActivity');
+jest.dontMock('../src/Duration');
 jest.dontMock('../src/filters');
 
 import React from 'react';
@@ -6,6 +7,7 @@ import ReactDOM from 'react-dom';
 import ReactTestUtils from 'react-addons-test-utils';
 
 const CurrentActivity = require('../src/CurrentActivity').CurrentActivity;
+const Duration = require('../src/Duration').default;
 
 describe('CurrentActivity', () => {
     it('displays no activity', () => {
@@ -29,18 +31,9 @@ describe('CurrentActivity', () => {
             tags: ['taimio', 'test'],
         };
 
-        const _Date = Date;
-        function MockDate() {
-            return new _Date(2016, 1, 1, 20);
-        }
-        MockDate.prototype = _Date.prototype;
-        Date = MockDate;
-
         const renderer = ReactTestUtils.createRenderer();
         renderer.render(<CurrentActivity loading={false} activity={testActivity} />);
         const result = renderer.getRenderOutput();
-
-        Date = _Date;
 
         expect(result.type).toBe('form');
         expect(result.props.className).toBe('current-activity-display');
@@ -51,7 +44,7 @@ describe('CurrentActivity', () => {
                     <li key="taimio">taimio</li>
                     <li key="test">test</li>
                 </ul>
-                15min
+                <Duration startTime={testActivity.started_at} endTime={null} />
             </h1>,
             <button type="submit" disabled={false}>Stop</button>
         ]);
