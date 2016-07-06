@@ -50,6 +50,22 @@ input[type='text'] {
     width: 100%;
 }
 
+input[type='search'] {
+    width: 100%;
+    padding-left: 2em;
+}
+
+.search-container {
+    margin-bottom: 1em;
+    position: relative;
+}
+
+.search-container::before {
+    content: '🔍';
+    position: absolute;
+    padding: 0.5em;
+}
+
 label {
     display: block;
     margin-bottom: 0.5em;
