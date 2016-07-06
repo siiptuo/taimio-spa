@@ -63,6 +63,47 @@ class DayDonut extends React.Component {
     }
 }
 
+function countActivitiesByDay(activities) {
+    return activities.reduce((result, activity) => {
+        result[activity.started_at.getDay()]++;
+        return result;
+    }, new Array(7).fill(0));
+}
+
+class DayTable extends React.Component {
+    render() {
+        const labels = ['su', 'ma', 'ti', 'ke', 'to', 'pe', 'la'];
+        const counts = countActivitiesByDay(this.props.activities);
+        const maxCount = Math.max.apply(null, counts);
+
+        // Move sunday at end of the week.
+        labels.push(labels.shift());
+        counts.push(counts.shift());
+
+        return (
+            <table className="day-table">
+                <tr>
+                    {labels.map(label => <th>{label}</th>)}
+                </tr>
+                <tr>
+                    {counts.map(count => {
+                        const size = 2 * count / maxCount + 'em';
+                        return (
+                            <td>
+                                <div
+                                    className="day-table-circle"
+                                    style={{ width: size, height: size }}
+                                    title={`${count} activities`}
+                                />
+                            </td>
+                        );
+                    })}
+                </tr>
+            </table>
+        );
+    }
+}
+
 export function sumTagDurations(activities) {
     return activities.reduce((obj, activity) => {
         for (let tag of activity.tags) {
@@ -122,6 +163,7 @@ export class ActivityStats extends React.Component {
         return (
             <div>
                 <DayDonut activities={activities} />
+                <DayTable activities={activities} />
                 <table className="activity-stats">
                     <tbody>
                         {tags.map(tag => (
