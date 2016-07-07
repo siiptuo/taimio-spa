@@ -63,51 +63,66 @@ class DayDonut extends React.Component {
     }
 }
 
-function countActivityDurationsByDay(activities) {
-    return activities.reduce((result, activity) => {
-        const duration = activity.finished_at.getTime() - activity.started_at.getTime();
-        result[activity.started_at.getDay()] += duration;
-        return result;
-    }, new Array(7).fill(0));
+function groupActivitiesByDayOfTheWeek(activities) {
+    const result = new Array(7);
+    for (let i = 0; i < 7; i++) {
+        result[i] = [];
+    }
+    for (const activity of activities) {
+        result[activity.started_at.getDay()].push(activity);
+    }
+    return result;
+}
+
+function getActivityDuration(activity) {
+    return activity.finished_at.getTime() - activity.started_at.getTime();
+}
+
+function sumActivityDurations(activities) {
+    return activities.reduce((sum, activity) => sum + getActivityDuration(activity), 0);
 }
 
 class DayTable extends React.Component {
     render() {
         const labels = ['su', 'ma', 'ti', 'ke', 'to', 'pe', 'la'];
-        const durations = countActivityDurationsByDay(this.props.activities);
-        const maxDuration = Math.max.apply(null, durations);
+        const durations = groupActivitiesByDayOfTheWeek(this.props.activities)
+            .map(activities => ({ activities, durationSum: sumActivityDurations(activities) }));
+        const maxDuration = Math.max.apply(null, durations.map(d => d.durationSum));
 
         // Move sunday at end of the week.
         labels.push(labels.shift());
         durations.push(durations.shift());
 
+        const columns = durations.map((d, i) => {
+            const size = d.durationSum / maxDuration;
+            const count = d.activities.length;
+            const title = count === 0 ?
+                'No activities' :
+                `${count} ${count === 1 ? 'activity' : 'activities'}: ${duration(d.durationSum)}`;
+            return (
+                <td key={i} title={title}>
+                    <div className="day-table-header">{labels[i]}</div>
+                    <div
+                        className="day-table-circle"
+                        style={{ transform: `scale(${size})` }}
+                    />
+                </td>
+            );
+        });
+
         return (
             <table className="day-table">
-                <thead>
-                    <tr>
-                        {labels.map(label => <th key={label}>{label}</th>)}
-                    </tr>
-                </thead>
                 <tbody>
-                    <tr>
-                        {durations.map((d, i) => {
-                            const size = `${2 * d / maxDuration}em`;
-                            return (
-                                <td key={i}>
-                                    <div
-                                        className="day-table-circle"
-                                        style={{ width: size, height: size }}
-                                        title={duration(d)}
-                                    />
-                                </td>
-                            );
-                        })}
-                    </tr>
+                    <tr>{columns}</tr>
                 </tbody>
             </table>
         );
     }
 }
+
+DayTable.propTypes = {
+    activities: React.PropTypes.array.isRequired,
+};
 
 export function sumTagDurations(activities) {
     return activities.reduce((obj, activity) => {

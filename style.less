@@ -260,15 +260,28 @@ label {
     text-align: center;
 }
 
-.day-table td {
-    width: 2em;
-    height: 2em;
+.day-table td:hover {
+    .day-table-header {
+        color: black;
+    }
+
+    .day-table-circle {
+        background-color: lighten(@blue, 5%);
+    }
+}
+
+.day-table-header {
+    color: gray;
+    font-weight: bold;
+    margin-bottom: 0.25em;
 }
 
 .day-table-circle {
     display: inline-block;
+    width: 2em;
+    height: 2em;
     background-color: @blue;
     border-radius: 50%;
     vertical-align: middle;
-    transition: width 300ms ease-out, height 300ms ease-out;
+    transition: transform 300ms ease-out;
 }
