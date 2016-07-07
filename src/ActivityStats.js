@@ -63,9 +63,10 @@ class DayDonut extends React.Component {
     }
 }
 
-function countActivitiesByDay(activities) {
+function countActivityDurationsByDay(activities) {
     return activities.reduce((result, activity) => {
-        result[activity.started_at.getDay()]++;
+        const duration = activity.finished_at.getTime() - activity.started_at.getTime();
+        result[activity.started_at.getDay()] += duration;
         return result;
     }, new Array(7).fill(0));
 }
@@ -73,12 +74,12 @@ function countActivitiesByDay(activities) {
 class DayTable extends React.Component {
     render() {
         const labels = ['su', 'ma', 'ti', 'ke', 'to', 'pe', 'la'];
-        const counts = countActivitiesByDay(this.props.activities);
-        const maxCount = Math.max.apply(null, counts);
+        const durations = countActivityDurationsByDay(this.props.activities);
+        const maxDuration = Math.max.apply(null, durations);
 
         // Move sunday at end of the week.
         labels.push(labels.shift());
-        counts.push(counts.shift());
+        durations.push(durations.shift());
 
         return (
             <table className="day-table">
@@ -86,14 +87,14 @@ class DayTable extends React.Component {
                     {labels.map(label => <th>{label}</th>)}
                 </tr>
                 <tr>
-                    {counts.map(count => {
-                        const size = 2 * count / maxCount + 'em';
+                    {durations.map(d => {
+                        const size = 2 * d / maxDuration + 'em';
                         return (
                             <td>
                                 <div
                                     className="day-table-circle"
                                     style={{ width: size, height: size }}
-                                    title={`${count} activities`}
+                                    title={duration(d)}
                                 />
                             </td>
                         );
