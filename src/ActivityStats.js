@@ -83,23 +83,27 @@ class DayTable extends React.Component {
 
         return (
             <table className="day-table">
-                <tr>
-                    {labels.map(label => <th>{label}</th>)}
-                </tr>
-                <tr>
-                    {durations.map(d => {
-                        const size = 2 * d / maxDuration + 'em';
-                        return (
-                            <td>
-                                <div
-                                    className="day-table-circle"
-                                    style={{ width: size, height: size }}
-                                    title={duration(d)}
-                                />
-                            </td>
-                        );
-                    })}
-                </tr>
+                <thead>
+                    <tr>
+                        {labels.map(label => <th key={label}>{label}</th>)}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {durations.map((d, i) => {
+                            const size = `${2 * d / maxDuration}em`;
+                            return (
+                                <td key={i}>
+                                    <div
+                                        className="day-table-circle"
+                                        style={{ width: size, height: size }}
+                                        title={duration(d)}
+                                    />
+                                </td>
+                            );
+                        })}
+                    </tr>
+                </tbody>
             </table>
         );
     }
