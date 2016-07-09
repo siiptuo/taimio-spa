@@ -33,7 +33,7 @@ const shortDateFormat = new Intl.DateTimeFormat(navigator.language, {
 export default class ActivityDurationSum extends React.Component {
     constructor(props) {
         super(props);
-        if (this.props.activities.some(activity => !!activity.finished_at)) {
+        if (this.props.activities.some(activity => !activity.finished_at)) {
             this.interval = setInterval(() => { this.forceUpdate(); }, 1000);
         }
     }
