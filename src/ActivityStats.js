@@ -48,7 +48,7 @@ class DayDonut extends React.Component {
                             stroke="#4a90e2"
                             strokeWidth={outerRadius - innerRadius}
                             fill="none"
-                            opacity={hours[i] / maxHours}
+                            opacity={maxHours === 0 ? 0 : hours[i] / maxHours}
                         />
                         <text
                             x={center + 90 * Math.cos((i * delta - 90) * Math.PI / 180)}
@@ -94,7 +94,7 @@ class DayTable extends React.Component {
         durations.push(durations.shift());
 
         const columns = durations.map((d, i) => {
-            const size = d.durationSum / maxDuration;
+            const size = maxDuration === 0 ? 0 : d.durationSum / maxDuration;
             const count = d.activities.length;
             const title = count === 0 ?
                 'No activities' :
@@ -196,7 +196,7 @@ export class ActivityStats extends React.Component {
                                 <td className="activity-stats-duration">
                                     <div
                                         className="activity-stats-bar"
-                                        style={{ width: `${tag.duration / maxDuration * 100}%` }}
+                                        style={{ width: `${maxDuration === 0 ? 0 : tag.duration / maxDuration * 100}%` }}
                                     >
                                         {duration(tag.duration)}
                                     </div>
