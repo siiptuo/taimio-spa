@@ -71,6 +71,29 @@ label {
     margin-bottom: 0.5em;
 }
 
+fieldset {
+    display: flex;
+    align-items: center;
+    border: none;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 0.5em;
+
+    input[type='date'] {
+        width: 8em;
+        flex-grow: 1;
+    }
+
+    input[type='time'] {
+        width: 6em;
+        margin: 0 0.5em;
+    }
+
+    label {
+        margin: 0;
+    }
+}
+
 .current-activity-display {
     display: flex;
     margin-bottom: 1em;

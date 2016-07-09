@@ -2,11 +2,14 @@ function pad2(value) {
     return (value < 10 ? '0' : '') + value;
 }
 
-export function time(value) {
+export function time(value, showSeconds = false) {
     if (!(value instanceof Date)) {
         return '';
     }
-    return `${pad2(value.getHours())}:${pad2(value.getMinutes())}`;
+    const hour = pad2(value.getHours());
+    const min = pad2(value.getMinutes());
+    const sec = pad2(value.getSeconds());
+    return showSeconds ? `${hour}:${min}:${sec}` : `${hour}:${min}`;
 }
 
 export function date(value) {
