@@ -99,31 +99,36 @@ export class ActivityEditor extends React.Component {
             <form>
                 <fieldset>
                     <legend>Time</legend>
-                    <input
-                        type="date"
-                        value={this.state.startedAtDate}
-                        onChange={this.onStartedAtDateChange}
-                    />
-                    <input
-                        type="time"
-                        value={this.state.startedAtTime}
-                        onChange={this.onStartedAtTimeChange}
-                    />
-                    -
-                    <input
-                        type="time"
-                        value={this.state.finishedAtTime}
-                        disabled={this.state.ongoing}
-                        onChange={this.onFinishedAtTimeChange}
-                    />
-                    <label>
+                    <div className="time-input">
                         <input
-                            type="checkbox"
-                            checked={this.state.ongoing}
-                            onChange={this.onOngoingChange}
+                            type="date"
+                            value={this.state.startedAtDate}
+                            size={10}
+                            onChange={this.onStartedAtDateChange}
                         />
-                        Ongoing
-                    </label>
+                        <input
+                            type="time"
+                            value={this.state.startedAtTime}
+                            size={5}
+                            onChange={this.onStartedAtTimeChange}
+                        />
+                        -
+                        <input
+                            type="time"
+                            value={this.state.finishedAtTime}
+                            disabled={this.state.ongoing}
+                            size={5}
+                            onChange={this.onFinishedAtTimeChange}
+                        />
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={this.state.ongoing}
+                                onChange={this.onOngoingChange}
+                            />
+                            Ongoing
+                        </label>
+                    </div>
                 </fieldset>
                 <label>
                     Activity:

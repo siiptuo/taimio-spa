@@ -72,22 +72,17 @@ label {
 }
 
 fieldset {
-    display: flex;
-    align-items: center;
     border: none;
     padding: 0;
     margin: 0;
     margin-bottom: 0.5em;
+}
 
-    input[type='date'] {
-        width: 8em;
-        flex-grow: 1;
-    }
-
-    input[type='time'] {
-        width: 6em;
-        margin: 0 0.5em;
-    }
+.time-input {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
 
     label {
         margin: 0;
