@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { date, time } from './filters';
 import * as activity from './activity';
-import { updateActivity, resumeActivity, removeActivity } from './actions';
+import { fetchActivity, updateActivity, resumeActivity, removeActivity } from './actions';
 
 function parseLocalDate(input) {
     return new Date(input.replace(/-/g, '/').replace('T', ' '));
@@ -12,15 +12,8 @@ function parseLocalDate(input) {
 export class ActivityEditor extends React.Component {
     constructor(props) {
         super(props);
-        const { activity } = props;
-        const ongoing = activity.finished_at == null;
         this.state = {
-            ongoing,
-            loading: false,
-            startedAtDate: date(activity.started_at),
-            startedAtTime: time(activity.started_at, true),
-            finishedAtTime: time(ongoing ? new Date() : activity.finished_at, true),
-            input: activity.title + (activity.tags.length > 0 ? ' #' + activity.tags.join(' #') : ''),
+            loading: true,
         };
         this.onStartedAtDateChange = this.onStartedAtDateChange.bind(this);
         this.onStartedAtTimeChange = this.onStartedAtTimeChange.bind(this);
@@ -31,6 +24,21 @@ export class ActivityEditor extends React.Component {
         this.onCancel = this.onCancel.bind(this);
         this.onResume = this.onResume.bind(this);
         this.onRemove = this.onRemove.bind(this);
+    }
+
+    componentDidMount() {
+        this.props.dispatch(fetchActivity(this.props.params.id)).then(activity => {
+            const ongoing = activity.finished_at == null;
+            this.setState({
+                activity,
+                ongoing,
+                loading: false,
+                startedAtDate: date(activity.started_at),
+                startedAtTime: time(activity.started_at, true),
+                finishedAtTime: time(ongoing ? new Date() : activity.finished_at, true),
+                input: activity.title + (activity.tags.length > 0 ? ' #' + activity.tags.join(' #') : ''),
+            });
+        });
     }
 
     onStartedAtDateChange(event) {
@@ -65,7 +73,7 @@ export class ActivityEditor extends React.Component {
             }
         }
         this.props.dispatch(updateActivity({
-            id: this.props.activity.id,
+            id: this.state.activity.id,
             title,
             tags,
             started_at: startedAt,
@@ -81,13 +89,13 @@ export class ActivityEditor extends React.Component {
 
     onResume(event) {
         event.preventDefault();
-        this.props.dispatch(resumeActivity(this.props.activity.id));
+        this.props.dispatch(resumeActivity(this.state.activity.id));
         this.context.router.push('/');
     }
 
     onRemove(event) {
         event.preventDefault();
-        this.props.dispatch(removeActivity(this.props.activity.id));
+        this.props.dispatch(removeActivity(this.state.activity.id));
         this.context.router.push('/');
     }
 
@@ -140,7 +148,7 @@ export class ActivityEditor extends React.Component {
                 <div className="action-area">
                     <button onClick={this.onCancel}>Cancel</button>
                     <button onClick={this.onRemove}>Remove</button>
-                    {this.props.activity.finished_at ?
+                    {this.state.activity.finished_at ?
                         <button onClick={this.onResume}>Resume</button> :
                         null}
                     <button onClick={this.onSave}>Save</button>
@@ -156,14 +164,7 @@ ActivityEditor.contextTypes = {
 
 ActivityEditor.propTypes = {
     params: React.PropTypes.object.isRequired,
-    activity: React.PropTypes.object.isRequired,
     dispatch: React.PropTypes.func.isRequired,
 };
 
-function mapStateToProps(state, ownProps) {
-    return {
-        activity: state.activities.activities.find(a => a.id == ownProps.params.id),
-    };
-}
-
-export default connect(mapStateToProps)(ActivityEditor);
+export default connect()(ActivityEditor);

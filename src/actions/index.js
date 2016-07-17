@@ -44,6 +44,16 @@ function getCurrentActivity() {
     };
 }
 
+export function fetchActivity(id) {
+    return (dispatch, getState) => {
+        return dispatch(fetchActivitiesIfNeeded())
+            .then(() => {
+                const activities = getState().activities.activities;
+                return activities.find(activity => activity.id == id);
+            });
+    };
+}
+
 function updateActivitySuccess(activity) {
     return {
         type: 'UPDATE_ACTIVITY_SUCCESS',
