@@ -2,11 +2,11 @@
   "name": "taimio-spa",
   "version": "1.0.0",
   "description": "time tracking software",
-  "main": "src/main.js",
+  "main": "src/index.js",
   "scripts": {
     "build": "npm run build-js && npm run build-css",
-    "build-js": "browserify src/main.js -g [ babelify ] -g [ envify --NODE_ENV production ] -g [ uglifyify] -o public/bundle.js",
-    "watch-js": "watchify src/main.js -t [ babelify ] -o public/bundle.js -v",
+    "build-js": "browserify src/index.js -g [ babelify ] -g [ envify --NODE_ENV production ] -g [ uglifyify] -o public/bundle.js",
+    "watch-js": "watchify src/index.js -t [ babelify ] -o public/bundle.js -v",
     "build-css": "lessc --clean-css=\"--s1 --advanced --compatibility=ie8\" --autoprefix=\"ie >= 8\" style.less public/style.css",
     "test": "jest",
     "lint": "eslint src/**/*.js"
