@@ -2,27 +2,7 @@ import React from 'react';
 
 import ActivityList from './ActivityList';
 
-import { date, duration } from './filters';
-
-function groupActivitiesByDate(data) {
-    const dateActivityMap = data.reduce((obj, d) => {
-        const key = date(d.started_at);
-        if (typeof obj[key] !== 'undefined') {
-            obj[key].push(d);
-        } else {
-            obj[key] = [d];
-        }
-        return obj;
-    }, {});
-    const days = [];
-    for (let date in dateActivityMap) {
-        days.push({
-            date: new Date(date),
-            activities: dateActivityMap[date],
-        });
-    }
-    return days.sort((a, b) => b.date.getTime() - a.date.getTime());
-}
+import { duration } from './filters';
 
 const shortDateFormat = new Intl.DateTimeFormat(navigator.language, {
     weekday: 'short',
@@ -67,25 +47,20 @@ export default class ActivitySummary extends React.Component {
     }
 
     render() {
-        if (this.props.loading) {
-            return <div>Loading...</div>;
-        }
         return (
-            <div>
-                {groupActivitiesByDate(this.props.activities).map(day => (
-                    <div className="activity-summary-day" key={day.date.getTime()}>
-                        <h3>
-                            {this.props.title || shortDateFormat.format(day.date)}
-                            <span className="activity-summary-total-duration">
-                                <ActivityDurationSum activities={day.activities} />
-                            </span>
-                        </h3>
-                        <ActivityList
-                            activities={day.activities}
-                            onActivityClick={this.onActivityClick}
-                        />
-                    </div>
-                ))}
+            <div className={"activity-summary-day" + (this.props.activities.length === 0 ? ' inactive' : '')}>
+                <h3>
+                    {this.props.title || shortDateFormat.format(this.props.date)}
+                    <span className="activity-summary-total-duration">
+                        {this.props.activities.length === 0 ?
+                            "No activities" :
+                            <ActivityDurationSum activities={this.props.activities} />}
+                    </span>
+                </h3>
+                <ActivityList
+                    activities={this.props.activities}
+                    onActivityClick={this.onActivityClick}
+                />
             </div>
         );
     }
@@ -96,7 +71,7 @@ ActivitySummary.contextTypes = {
 };
 
 ActivitySummary.propTypes = {
-    loading: React.PropTypes.bool.isRequired,
     activities: React.PropTypes.array.isRequired,
     title: React.PropTypes.string,
+    date: React.PropTypes.instanceOf(Date).isRequired,
 };

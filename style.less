@@ -249,6 +249,11 @@ fieldset {
         padding: 0.5em;
         margin: 0;
     }
+
+    &.inactive h3 {
+        background-color: silver;
+        font-size: 75%;
+    }
 }
 
 .login-form {
@@ -302,4 +307,22 @@ fieldset {
     border-radius: 50%;
     vertical-align: middle;
     transition: transform 300ms ease-out;
+}
+
+.date-filter {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1em;
+
+    .start-date {
+        flex-grow: 1;
+        text-align: right;
+        margin-right: 1em;
+    }
+
+    .end-date {
+        flex-grow: 1;
+        text-align: left;
+        margin-left: 1em;
+    }
 }
