@@ -86,7 +86,7 @@ export class ActivityEditor extends React.Component {
             started_at: startedAt,
             finished_at: finishedAt,
         }));
-        this.context.router.push('/');
+        this.goBack();
     }
 
     onCancel(event) {
