@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { fetchActivitiesIfNeeded } from './actions';
 import { parseInput } from './activity';
 import ActivitySummary from './ActivitySummary';
+import { date } from './filters';
 
 function getStartOfDay(date) {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -42,8 +43,6 @@ function genDateRange(startDate, endDate) {
 class List extends React.Component {
     constructor(props) {
         super(props);
-        const [startDate, endDate] = getWeekRange(new Date());
-        this.state = { title: '', tags: [], startDate, endDate };
         this.handleSearchInput = this.handleSearchInput.bind(this);
         this.handleNextWeek = this.handleMove.bind(this, 7);
         this.handlePreviousWeek = this.handleMove.bind(this, -7);
@@ -53,26 +52,52 @@ class List extends React.Component {
         this.props.dispatch(fetchActivitiesIfNeeded());
     }
 
+    getLocationState() {
+        let [start, end] = getWeekRange(new Date());
+
+        if ('start' in this.props.location.query && 'end' in this.props.location.query) {
+            start = getStartOfDay(new Date(this.props.location.query.start));
+            end = getEndOfDay(new Date(this.props.location.query.end));
+        }
+
+        return { start, end, search: parseInput(this.props.location.query.search || '') };
+    }
+
     handleSearchInput(event) {
-        this.setState(parseInput(event.target.value));
+        this.context.router.push({
+            pathname: this.props.location.pathname,
+            query: Object.assign({}, this.props.location.query, {
+                search: event.target.value,
+            }),
+        });
     }
 
     handleMove(days) {
-        const startDate = new Date(this.state.startDate.getTime());
+        const locationState = this.getLocationState();
+
+        const startDate = new Date(locationState.start.getTime());
         startDate.setDate(startDate.getDate() + days);
 
-        const endDate = new Date(this.state.endDate.getTime());
+        const endDate = new Date(locationState.end.getTime());
         endDate.setDate(endDate.getDate() + days);
 
-        this.setState({ startDate, endDate });
+        this.context.router.push({
+            pathname: this.props.location.pathname,
+            query: Object.assign({}, this.props.location.query, {
+                start: date(startDate),
+                end: date(endDate),
+            }),
+        });
     }
 
     render() {
-        const activities = this.props.activities
-            .filter(activity => activity.title.includes(this.state.title) &&
-                    this.state.tags.every(tag => activity.tags.includes(tag)));
+        const { search, start: startDate, end: endDate } = this.getLocationState();
 
-        const dates = genDateRange(this.state.startDate, this.state.endDate).reverse();
+        const activities = this.props.activities
+            .filter(activity => activity.title.includes(search.title) &&
+                    search.tags.every(tag => activity.tags.includes(tag)));
+
+        const dates = genDateRange(startDate, endDate).reverse();
 
         return (
             <div>
@@ -80,15 +105,15 @@ class List extends React.Component {
                     <input
                         type="search"
                         placeholder="Search activities by title and tags..."
-                        value={this.state.search}
+                        value={this.props.location.query.search}
                         onInput={this.handleSearchInput}
                     />
                 </div>
                 <div className="date-filter">
                     <button onClick={this.handlePreviousWeek}>{'<'}</button>
-                    <span className="start-date">{this.state.startDate.toLocaleDateString()}</span>
+                    <span className="start-date">{startDate.toLocaleDateString()}</span>
                     <span>-</span>
-                    <span className="end-date">{this.state.endDate.toLocaleDateString()}</span>
+                    <span className="end-date">{endDate.toLocaleDateString()}</span>
                     <button onClick={this.handleNextWeek}>{'>'}</button>
                 </div>
                 {this.props.loading ? 'Loading...' : dates.map(date => {
@@ -108,10 +133,15 @@ class List extends React.Component {
     }
 }
 
+List.contextTypes = {
+    router: React.PropTypes.object,
+};
+
 List.propTypes = {
     dispatch: React.PropTypes.func.isRequired,
     activities: React.PropTypes.array.isRequired,
     loading: React.PropTypes.bool.isRequired,
+    location: React.PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {
