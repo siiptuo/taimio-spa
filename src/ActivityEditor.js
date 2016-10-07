@@ -4,9 +4,16 @@ import { connect } from 'react-redux';
 import { date, time } from './filters';
 import * as activity from './activity';
 import { fetchActivity, updateActivity, resumeActivity, removeActivity } from './actions';
+import { getWeekRange } from './List';
 
 function parseLocalDate(input) {
     return new Date(input.replace(/-/g, '/').replace('T', ' '));
+}
+
+function isOnSameDay(date1, date2) {
+    return date1.getFullYear() === date2.getFullYear() &&
+        date1.getMonth() === date2.getMonth() &&
+        date1.getDate() === date2.getDate();
 }
 
 export class ActivityEditor extends React.Component {
@@ -84,19 +91,38 @@ export class ActivityEditor extends React.Component {
 
     onCancel(event) {
         event.preventDefault();
-        this.context.router.push('/');
+        this.goBack();
     }
 
     onResume(event) {
         event.preventDefault();
         this.props.dispatch(resumeActivity(this.state.activity.id));
-        this.context.router.push('/');
+        this.goBack();
     }
 
     onRemove(event) {
         event.preventDefault();
         this.props.dispatch(removeActivity(this.state.activity.id));
-        this.context.router.push('/');
+        this.goBack();
+    }
+
+    goBack() {
+        // Simply go back if there is history.
+        if (this.props.location.action === 'PUSH') {
+            this.context.router.goBack();
+        } else {
+            // Try to be smart when there is no history by always going to a page with the activity
+            // listed.
+            if (isOnSameDay(this.state.activity.started_at, new Date())) {
+                this.context.router.push('/');
+            } else {
+                const [start, end] = getWeekRange(this.state.activity.started_at).map(date);
+                this.context.router.push({
+                    pathname: '/list',
+                    query: { start, end },
+                });
+            }
+        }
     }
 
     render() {
@@ -165,6 +191,7 @@ ActivityEditor.contextTypes = {
 ActivityEditor.propTypes = {
     params: React.PropTypes.object.isRequired,
     dispatch: React.PropTypes.func.isRequired,
+    location: React.PropTypes.object.isRequired,
 };
 
 export default connect()(ActivityEditor);

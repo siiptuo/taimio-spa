@@ -25,7 +25,7 @@ function getWeekday(date) {
     return (weekday === 0 ? 7 : weekday) - 1;
 }
 
-function getWeekRange(date) {
+export function getWeekRange(date) {
     const weekday = getWeekday(date);
     return [getStartOfDay(diffDays(date, -weekday)), getEndOfDay(diffDays(date, 6 - weekday))];
 }
