@@ -1,9 +1,11 @@
 @import (inline) 'node_modules/normalize.css/normalize.css';
 
-@blue: #4a90e2;
+@brand-color: #2ecc71;
 @gray: #f2f2f2;
+@tag-color: #009688;
 
-@width: 400px;
+@radius: 4px;
+@width: 500px;
 
 body {
     font-family: sans-serif;
@@ -21,7 +23,7 @@ section {
 }
 
 header {
-    background-color: @blue;
+    background-color: @brand-color;
 }
 
 h1, h2 {
@@ -29,20 +31,20 @@ h1, h2 {
 }
 
 button {
-    border: 1px solid silver;
-    background-color: #eee;
-    border-radius: 4px;
-    padding: 0.5em;
-    font: inherit;
+    background-color: @brand-color;
+    border: none;
+    border-bottom: 1px solid darken(@brand-color, 10%);
+    border-radius: @radius;
+    padding: 0.75rem;
 }
 
 input {
-    padding: 0.5em;
+    padding: 1rem;
     background-color: white;
-    border: 1px solid silver;
-    border-radius: 4px;
-    font: inherit;
+    border: none;
+    border-bottom: 1px solid silver;
     box-sizing: border-box;
+    border-radius: @radius;
 }
 
 input[type='datetime-local'],
@@ -52,18 +54,18 @@ input[type='text'] {
 
 input[type='search'] {
     width: 100%;
-    padding-left: 2em;
+    padding-left: 3rem;
 }
 
 .search-container {
-    margin-bottom: 1em;
+    margin-bottom: 1rem;
     position: relative;
 }
 
 .search-container::before {
     content: '🔍';
     position: absolute;
-    padding: 0.5em;
+    padding: 1rem;
 }
 
 label {
@@ -92,44 +94,114 @@ fieldset {
 .current-activity-display {
     display: flex;
     margin-bottom: 1em;
+
+    > * {
+        padding: 1rem;
+        background-color: white;
+        border-bottom: 1px solid silver;
+    }
+
+    button {
+        background: none;
+        background-color: white;
+        border: none;
+        border-left: 1px solid silver;
+        border-bottom: 1px solid silver;
+        border-radius: 0;
+        border-top-right-radius: @radius;
+        border-bottom-right-radius: @radius;
+        color: rgba(0, 0, 0, 0.5);
+
+        &:not(:disabled):hover {
+            color: black;
+        }
+    }
 }
 
-.current-activity-display h1 {
+.current-activity {
     flex-grow: 1;
-    margin: 0;
+}
+
+.current-activity-duration {
+    color: gray;
+    margin-top: 0.25rem;
+}
+
+.current-activity-status {
+    width: 2.25rem;
+    background-color: @brand-color;
+    border-top-left-radius: @radius;
+    border-bottom-left-radius: @radius;
+    border-color: darken(@brand-color, 10%);
+
+    .no-activity & {
+        background-color: #888;
+        border-color: #555;
+    }
+}
+
+.no-activity {
+    color: #555;
+    line-height: 2.25rem;
 }
 
 .start-activity-form {
-    display: flex;
     margin-bottom: 1em;
+    position: relative;
 }
 
 .start-activity-form input {
-    flex: 1;
-    border-right: none;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    width: 100%;
 }
 
 .start-activity-form button {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
+    border: 0;
+    background: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 3rem;
+    opacity: 0.5;
+
+    &:hover {
+        opacity: 1;
+    }
 }
 
 .activity-list {
     border-spacing: 0;
-    border-collapse: collapse;
     width: 100%;
     cursor: default;
 }
 
-.activity-list tr:hover {
+.activity-list tr:hover td {
     background-color: #f8f8f8;
 }
 
-.activity-list td {
-    padding: 0.5em 0.25em;
+
+.activity-list tr td {
+    padding: 0.5rem 0.5rem;
     border-bottom: 1px solid #d4d4d4;
+    background-color: white;
+
+    &:first-child {
+        padding-left: 0.5rem;
+    }
+
+    &:last-child {
+        padding-right: 0.5rem;
+    }
+}
+
+.activity-list tr:last-child {
+    td:first-child {
+        border-bottom-left-radius: @radius;
+    }
+
+    td:last-child {
+        border-bottom-right-radius: @radius;
+    }
 }
 
 .activity-list-time-column {
@@ -150,21 +222,22 @@ fieldset {
     list-style-type: none;
     padding: 0;
     margin: 0;
-    display: inline-block;
+    display: inline;
 }
 
 .tag-list li {
     display: inline-block;
-    background-color: @blue;
+    background-color: @tag-color;
     color: white;
-    padding: 0.25em;
-    font-size: 0.75em;
+    padding: 0.25rem;
+    font-size: 0.75rem;
     border-radius: 2px;
     margin-left: 0.25em;
 }
 
 .activity-summary-total-duration {
     float: right;
+    font-weight: normal;
 }
 
 .action-area button:not(:last-child) {
@@ -179,14 +252,14 @@ fieldset {
     cursor: pointer;
 
     &:hover .activity-stats-bar {
-        background-color: lighten(@blue, 5%);
+        background-color: lighten(@brand-color, 5%);
     }
 
     &.selected {
         color: blue;
 
         .activity-stats-bar {
-            background-color: lighten(@blue, 10%);
+            background-color: lighten(@brand-color, 10%);
         }
     }
 }
@@ -206,37 +279,66 @@ fieldset {
     top: 0;
     left: 0;
     bottom: 0;
-    background-color: @blue;
+    background-color: @brand-color;
     z-index: -1;
     text-align: right;
     white-space: nowrap;
     transition: width 300ms ease-out;
 }
 
-.tabs {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+nav {
+    display: flex;
+    align-items: center;
 }
 
-.tabs li {
-    display: inline-block;
+nav img {
+    height: 24px;
+    margin-right: 1rem;
 }
 
-.tabs a {
+.spacer {
+    flex: 1;
+}
+
+nav a {
     display: inline-block;
-    padding: 1em;
     color: white;
     text-decoration: none;
+    background-repeat: no-repeat;
+    background-position: 1rem 50%;
+    background-size: auto 40%;
+    padding: 1rem;
+
+    border-right: 1px solid darken(@brand-color, 7%);
 }
 
-.tabs a.selected {
+nav a:first-of-type,
+.spacer + a {
+    border-left: 1px solid darken(@brand-color, 7%);
+}
+
+nav a.selected {
     color: white;
-    background-color: darken(@blue, 10%);
+    background-color: darken(@brand-color, 5%);
+}
+
+.item-icon {
+    padding-left: 3rem;
+}
+
+.item-main {
+    background-image: url(/clock.svg);
+}
+
+.item-list {
+    background-image: url(/list.svg);
+}
+
+.item-stats {
+    background-image: url(/stats.svg);
 }
 
 .activity-summary-day {
-    background-color: white;
     margin-top: 1em;
 
     &:first-child {
@@ -244,15 +346,20 @@ fieldset {
     }
 
     h3 {
-        background-color: @blue;
+        background-color: @brand-color;
         color: white;
-        padding: 0.5em;
+        padding: 0.75rem;
         margin: 0;
+        border-top-right-radius: @radius;
+        border-top-left-radius: @radius;
     }
 
     &.inactive h3 {
         background-color: silver;
         font-size: 75%;
+        padding: 0.5rem;
+        border-bottom-right-radius: @radius;
+        border-bottom-left-radius: @radius;
     }
 }
 
@@ -270,6 +377,8 @@ fieldset {
 
 .day-donut path {
     transition: opacity 300ms ease-out;
+    stroke: @brand-color;
+    fill: none;
 }
 
 .day-donut text {
@@ -289,7 +398,7 @@ fieldset {
     }
 
     .day-table-circle {
-        background-color: lighten(@blue, 5%);
+        background-color: lighten(@brand-color, 5%);
     }
 }
 
@@ -303,7 +412,7 @@ fieldset {
     display: inline-block;
     width: 2em;
     height: 2em;
-    background-color: @blue;
+    background-color: @brand-color;
     border-radius: 50%;
     vertical-align: middle;
     transition: transform 300ms ease-out;

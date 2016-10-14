@@ -50,9 +50,9 @@ export function duration(start, end, realTime = false) {
     const mins = Math.floor(secs / 60) - hours * 60;
     if (hours === 0) {
         if (mins === 0) {
-            return realTime ? 'just now' : `${secs}s`;
+            return realTime ? 'just now' : `${secs} s`;
         }
-        return `${mins}min`;
+        return `${mins} min`;
     }
-    return `${hours}h${mins !== 0 ? ` ${mins}min` : ''}`;
+    return `${hours} h ${mins !== 0 ? ` ${mins} min` : ''}`;
 }

@@ -36,7 +36,7 @@ export class ActivitySwitcher extends React.Component {
                     onChange={this.handleInputChange}
                     disabled={this.props.loading}
                 />
-                <button type="submit" disabled={this.props.loading}>Start</button>
+                <button type="submit" disabled={this.props.loading}>&#9654;</button>
             </form>
         );
     }

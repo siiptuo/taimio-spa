@@ -19,14 +19,14 @@ export default class App extends React.Component {
             <div>
                 <header>
                     <nav>
-                        <ul className="tabs">
-                            <IndexLink to="/" activeClassName="selected">Main</IndexLink>
-                            <Link to="/list" activeClassName="selected">List</Link>
-                            <Link to="/stats" activeClassName="selected">Stats</Link>
-                            {this.state.loggedIn ?
-                                <Link to="/logout" activeClassName="selected" style={{ float: 'right' }}>Logout</Link> :
-                                <Link to="/login" activeClassName="selected" style={{ float: 'right' }}>Login</Link>}
-                        </ul>
+                        <img src="/logo-white.svg" alt="Taimio" />
+                        <IndexLink to="/" activeClassName="selected" className="item-icon item-main">Main</IndexLink>
+                        <Link to="/list" activeClassName="selected" className="item-icon item-list">List</Link>
+                        <Link to="/stats" activeClassName="selected" className="item-icon item-stats">Stats</Link>
+                        <div className="spacer" />
+                        {this.state.loggedIn ?
+                            <Link to="/logout" activeClassName="selected" style={{ float: 'right' }}>Logout</Link> :
+                            <Link to="/login" activeClassName="selected" style={{ float: 'right' }}>Login</Link>}
                     </nav>
                 </header>
                 <section>

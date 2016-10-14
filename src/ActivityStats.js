@@ -45,9 +45,7 @@ class DayDonut extends React.Component {
                     <g key={i} className="day-donut">
                         <path
                             d={path}
-                            stroke="#4a90e2"
                             strokeWidth={outerRadius - innerRadius}
-                            fill="none"
                             opacity={maxHours === 0 ? 0 : hours[i] / maxHours}
                         />
                         <text
