@@ -1,5 +1,3 @@
-jest.dontMock('../src/filters');
-
 const filters = require('../src/filters');
 
 describe('time filter', () => {

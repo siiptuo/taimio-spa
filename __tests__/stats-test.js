@@ -1,5 +1,3 @@
-jest.dontMock('../src/ActivityStats');
-
 const stats = require('../src/ActivityStats');
 
 const activities = [

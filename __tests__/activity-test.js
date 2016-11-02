@@ -1,5 +1,3 @@
-jest.dontMock('../src/activity');
-
 const activity = require('../src/activity');
 
 describe('activity input parsing', () => {

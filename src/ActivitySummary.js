@@ -10,7 +10,7 @@ const shortDateFormat = new Intl.DateTimeFormat(navigator.language, {
     month: 'numeric',
 });
 
-export default class ActivityDurationSum extends React.Component {
+export class ActivityDurationSum extends React.Component {
     constructor(props) {
         super(props);
         if (this.props.activities.some(activity => !activity.finished_at)) {

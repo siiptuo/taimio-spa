@@ -1,6 +1,3 @@
-jest.dontMock('../src/ActivitySwitcher');
-jest.dontMock('../src/activity');
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactTestUtils from 'react-addons-test-utils';
