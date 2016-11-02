@@ -16,10 +16,11 @@ describe('CurrentActivity', () => {
         const result = renderer.getRenderOutput();
 
         expect(result.type).toBe('form');
-        expect(result.props.className).toBe('current-activity-display');
+        expect(result.props.className).toBe('current-activity-display no-activity');
         expect(result.props.children).toEqual([
-            <h1>No activity</h1>,
-            <button type="submit" disabled={true}>Stop</button>
+            <div className="current-activity-status" />,
+            <div className="current-activity">No activity</div>,
+            <button type="submit" disabled={true}>&#10003; Complete</button>,
         ]);
     });
 
@@ -38,15 +39,20 @@ describe('CurrentActivity', () => {
         expect(result.type).toBe('form');
         expect(result.props.className).toBe('current-activity-display');
         expect(result.props.children).toEqual([
-            <h1>
-                Hello world
-                <ul className="tag-list">
-                    <li key="taimio">taimio</li>
-                    <li key="test">test</li>
-                </ul>
-                <Duration startTime={testActivity.started_at} endTime={null} />
-            </h1>,
-            <button type="submit" disabled={false}>Stop</button>
+            <div className="current-activity-status" />,
+            <div className="current-activity">
+                <div className="current-activity-title">
+                    Hello world
+                    <ul className="tag-list">
+                        <li key="taimio">taimio</li>
+                        <li key="test">test</li>
+                    </ul>
+                </div>
+                <div className="current-activity-duration">
+                    <Duration startTime={testActivity.started_at} endTime={null} />
+                </div>
+            </div>,
+            <button type="submit" disabled={false}>&#10003; Complete</button>
         ]);
     });
 
@@ -58,11 +64,11 @@ describe('CurrentActivity', () => {
             title: 'Hello world',
             tags: ['taimio', 'test'],
         };
-        const mockActivityStop = jest.genMockFunction();
+        const mockDispatch = jest.genMockFunction();
         const currentActivity = ReactTestUtils.renderIntoDocument(
-            <CurrentActivity loading={false} activity={testActivity} onActivityStop={mockActivityStop} />
+            <CurrentActivity loading={false} activity={testActivity} dispatch={mockDispatch} />
         );
         ReactTestUtils.Simulate.submit(ReactDOM.findDOMNode(currentActivity));
-        expect(mockActivityStop).toBeCalledWith(1);
+        expect(mockDispatch.mock.calls.length).toBe(2);
     });
 });

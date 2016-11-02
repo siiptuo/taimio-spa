@@ -54,5 +54,5 @@ export function duration(start, end, realTime = false) {
         }
         return `${mins} min`;
     }
-    return `${hours} h ${mins !== 0 ? ` ${mins} min` : ''}`;
+    return `${hours} h${mins !== 0 ? ` ${mins} min` : ''}`;
 }

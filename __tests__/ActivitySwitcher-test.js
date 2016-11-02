@@ -33,7 +33,6 @@ describe('ActivitySwitcher', () => {
     it('contains a start button', () => {
         const button = renderComponent(false).find('button');
         expect(button.length).toBe(1);
-        expect(button.text()).toBe('Start');
         expect(button.prop('disabled')).toBe(false);
     });
 

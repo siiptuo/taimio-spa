@@ -47,59 +47,59 @@ describe('duration filter', () => {
         expect(filters.duration(
             new Date(2015, 0, 17, 23, 41, 0),
             new Date(2015, 0, 17, 23, 41, 0)
-        )).toBe('0s');
+        )).toBe('0 s');
     });
 
     it('should format seconds', () => {
         expect(filters.duration(
             new Date(2015, 0, 17, 23, 41, 0),
             new Date(2015, 0, 17, 23, 41, 15)
-        )).toBe('15s');
+        )).toBe('15 s');
     });
 
     it('should format one minute', () => {
         expect(filters.duration(
             new Date(2015, 0, 17, 23, 41, 0),
             new Date(2015, 0, 17, 23, 42, 0)
-        )).toBe('1min');
+        )).toBe('1 min');
     });
 
     it('should format minutes', () => {
         expect(filters.duration(
             new Date(2015, 0, 17, 23, 41, 0),
             new Date(2015, 0, 17, 23, 50, 15)
-        )).toBe('9min');
+        )).toBe('9 min');
     });
 
     it('should format one hour', () => {
         expect(filters.duration(
             new Date(2015, 0, 17, 23, 41, 0),
             new Date(2015, 0, 18, 0, 41, 15)
-        )).toBe('1h');
+        )).toBe('1 h');
     });
 
     it('should format hours and minutes', () => {
         expect(filters.duration(
             new Date(2015, 0, 17, 23, 41, 0),
             new Date(2015, 0, 18, 0, 51, 15)
-        )).toBe('1h 10min');
+        )).toBe('1 h 10 min');
     });
 
     it('should format many hours', () => {
         expect(filters.duration(
             new Date(2015, 0, 17, 23, 41, 0),
             new Date(2015, 0, 18, 1, 41, 15)
-        )).toBe('2h');
+        )).toBe('2 h');
     });
 
     it('should format many hours and minutes', () => {
         expect(filters.duration(
             new Date(2015, 0, 17, 23, 41, 0),
             new Date(2015, 0, 18, 2, 20, 15)
-        )).toBe('2h 39min');
+        )).toBe('2 h 39 min');
     });
 
     it('should format duration from now if end not defined', () => {
-        expect(filters.duration(new Date(Date.now() - 60 * 1000))).toBe('1min');
+        expect(filters.duration(new Date(Date.now() - 60 * 1000))).toBe('1 min');
     });
 });
