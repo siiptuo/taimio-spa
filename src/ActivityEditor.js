@@ -19,9 +19,7 @@ function isOnSameDay(date1, date2) {
 export class ActivityEditor extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            loading: true,
-        };
+        this.state = {};
         this.onStartedAtDateChange = this.onStartedAtDateChange.bind(this);
         this.onStartedAtTimeChange = this.onStartedAtTimeChange.bind(this);
         this.onFinishedAtTimeChange = this.onFinishedAtTimeChange.bind(this);
@@ -33,19 +31,27 @@ export class ActivityEditor extends React.Component {
         this.onRemove = this.onRemove.bind(this);
     }
 
-    componentDidMount() {
-        this.props.dispatch(fetchActivity(this.props.params.id)).then(activity => {
-            const ongoing = activity.finished_at == null;
-            this.setState({
-                activity,
-                ongoing,
-                loading: false,
-                startedAtDate: date(activity.started_at),
-                startedAtTime: time(activity.started_at, true),
-                finishedAtTime: time(ongoing ? new Date() : activity.finished_at, true),
-                input: activity.title + (activity.tags.length > 0 ? ' #' + activity.tags.join(' #') : ''),
-            });
+    setActivityState(activity) {
+        const ongoing = activity.finished_at == null;
+        this.setState({
+            ongoing,
+            startedAtDate: date(activity.started_at),
+            startedAtTime: time(activity.started_at, true),
+            finishedAtTime: time(ongoing ? new Date() : activity.finished_at, true),
+            input: activity.title + (activity.tags.length > 0 ? ' #' + activity.tags.join(' #') : ''),
         });
+    }
+
+    componentDidMount() {
+        if (this.props.activity) {
+            this.setActivityState(this.props.activity);
+        } else {
+            this.props.dispatch(fetchActivity(this.props.params.id));
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        this.setActivityState(nextProps.activity);
     }
 
     onStartedAtDateChange(event) {
@@ -80,7 +86,7 @@ export class ActivityEditor extends React.Component {
             }
         }
         this.props.dispatch(updateActivity({
-            id: this.state.activity.id,
+            id: this.props.activity.id,
             title,
             tags,
             started_at: startedAt,
@@ -96,13 +102,13 @@ export class ActivityEditor extends React.Component {
 
     onResume(event) {
         event.preventDefault();
-        this.props.dispatch(resumeActivity(this.state.activity.id));
+        this.props.dispatch(resumeActivity(this.props.activity.id));
         this.goBack();
     }
 
     onRemove(event) {
         event.preventDefault();
-        this.props.dispatch(removeActivity(this.state.activity.id));
+        this.props.dispatch(removeActivity(this.props.activity.id));
         this.goBack();
     }
 
@@ -113,10 +119,10 @@ export class ActivityEditor extends React.Component {
         } else {
             // Try to be smart when there is no history by always going to a page with the activity
             // listed.
-            if (isOnSameDay(this.state.activity.started_at, new Date())) {
+            if (isOnSameDay(this.props.activity.started_at, new Date())) {
                 this.context.router.push('/');
             } else {
-                const [start, end] = getWeekRange(this.state.activity.started_at).map(date);
+                const [start, end] = getWeekRange(this.props.activity.started_at).map(date);
                 this.context.router.push({
                     pathname: '/list',
                     query: { start, end },
@@ -126,7 +132,7 @@ export class ActivityEditor extends React.Component {
     }
 
     render() {
-        if (this.state.loading) {
+        if (this.props.loading) {
             return <div>Loading...</div>;
         }
         return (
@@ -174,7 +180,7 @@ export class ActivityEditor extends React.Component {
                 <div className="action-area">
                     <button onClick={this.onCancel}>Cancel</button>
                     <button onClick={this.onRemove}>Remove</button>
-                    {this.state.activity.finished_at ?
+                    {this.props.activity.finished_at ?
                         <button onClick={this.onResume}>Resume</button> :
                         null}
                     <button onClick={this.onSave}>Save</button>
@@ -194,4 +200,12 @@ ActivityEditor.propTypes = {
     location: React.PropTypes.object.isRequired,
 };
 
-export default connect()(ActivityEditor);
+function mapStateToProps(state, ownProps) {
+    const activity = state.activities.activities[ownProps.params.id];
+    return {
+        activity,
+        loading: !activity,
+    };
+}
+
+export default connect(mapStateToProps)(ActivityEditor);

@@ -1,55 +1,65 @@
-import { apiList, apiSave, apiRemove } from '../activity';
+import { apiGet, apiList, apiSave, apiRemove, apiGetCurrent } from '../activity';
 
-export function requestActivities() {
+export function requestActivities(startDate, endDate) {
     return {
         type: 'REQUEST_ACTIVITIES',
+        startDate,
+        endDate,
     };
 }
 
-export function receiveActivities(activities) {
+export function receiveActivities(startDate, endDate, activities) {
     return {
         type: 'RECEIVE_ACTIVITIES',
+        startDate,
+        endDate,
         activities,
     };
 }
 
-function fetchActivities() {
-    return (dispatch) => {
-        dispatch(requestActivities());
-        return apiList().then(activities => dispatch(receiveActivities(activities)));
+export function fetchActivities(startDate, endDate) {
+    return (dispatch, getState) => {
+        if (getState().activities.ranges[`${startDate}-${endDate}`]) {
+            return Promise.resolve();
+        }
+        dispatch(requestActivities(startDate, endDate));
+        return apiList({ start_date: startDate, end_date: endDate })
+            .then(activities => dispatch(receiveActivities(startDate, endDate, activities)));
     };
 }
 
-function shouldFetchActivities(state) {
-    return !state.activities.isFetching && !state.activities.fetchDone;
+function requestActivity(id) {
+    return {
+        type: 'REQUEST_ACTIVITY',
+        id,
+    };
 }
 
-export function fetchActivitiesIfNeeded() {
-    return (dispatch, getState) => {
-        if (shouldFetchActivities(getState())) {
-            return dispatch(fetchActivities());
-        } else {
-            return Promise.resolve();
-        }
-    }
-}
-
-function getCurrentActivity() {
-    return (dispatch, getState) => {
-        return dispatch(fetchActivitiesIfNeeded())
-            .then(() => {
-                const activities = getState().activities.activities;
-                return activities.find(activity => activity.finished_at == null);
-            });
+function receiveActivity(activity) {
+    return {
+        type: 'RECEIVE_ACTIVITY',
+        activity,
     };
 }
 
 export function fetchActivity(id) {
     return (dispatch, getState) => {
-        return dispatch(fetchActivitiesIfNeeded())
-            .then(() => {
-                const activities = getState().activities.activities;
-                return activities.find(activity => activity.id == id);
+        if (getState().activities.activities[id]) {
+            return Promise.resolve();
+        }
+        dispatch(requestActivity(id));
+        return apiGet(id)
+            .then(activity => dispatch(receiveActivity(activity)));
+    };
+}
+
+export function fetchCurrentActivity() {
+    return (dispatch) => {
+        return apiGetCurrent()
+            .then(activity => {
+                if (activity) {
+                    dispatch(receiveActivity(activity));
+                }
             });
     };
 }
@@ -57,7 +67,7 @@ export function fetchActivity(id) {
 function updateActivitySuccess(activity) {
     return {
         type: 'UPDATE_ACTIVITY_SUCCESS',
-        data: activity,
+        activity,
     };
 }
 
@@ -95,27 +105,28 @@ export function startActivity(title, tags, startedAt = new Date()) {
 function stopActivitySuccess(activity) {
     return {
         type: 'STOP_ACTIVITY_SUCCESS',
-        data: activity,
+        activity,
     };
 }
 
 export function stopActivity(id, finishedAt = new Date()) {
     return (dispatch, getState) => {
         dispatch({ type: 'REQUEST_STOP_ACTIVITY', id });
-        const activities = getState().activities.activities;
-        const oldActivity = activities.find(activity => activity.id === id);
+        const oldActivity = getState().activities.activities[id];
         const newActivity = Object.assign({}, oldActivity, { finished_at: finishedAt });
         return apiSave(newActivity).then((activity) => dispatch(stopActivitySuccess(activity)));
     };
 }
 
 function stopCurrentActivity(finishedAt = new Date()) {
-    return (dispatch) => {
-        return dispatch(getCurrentActivity()).then((activity) => {
-            if (!activity) {
+    return (dispatch, getState) => {
+        return dispatch(fetchCurrentActivity()).then(() => {
+            const currentActivity = Object.values(getState().activities.activities)
+                .find(activity => !activity.finished_at);
+            if (!currentActivity) {
                 return null;
             }
-            return dispatch(stopActivity(activity.id, finishedAt));
+            return dispatch(stopActivity(currentActivity.id, finishedAt));
         });
     };
 }
@@ -145,8 +156,7 @@ export function resumeActivity(id, startedAt = new Date()) {
     return (dispatch, getState) => {
         dispatch({ type: 'REQUEST_RESUME_ACTIVITY', id });
 
-        const activities = getState().activities.activities;
-        const oldActivity = activities.find(activity => activity.id === id);
+        const oldActivity = getState().activities.activities[id];
         const newActivity = Object.assign({}, oldActivity, {
             started_at: startedAt,
             finished_at: null,

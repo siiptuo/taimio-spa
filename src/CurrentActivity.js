@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { stopActivity } from './actions';
+import { fetchCurrentActivity, stopActivity } from './actions';
 import Duration from './Duration';
 
 export class CurrentActivity extends React.Component {
@@ -10,9 +10,13 @@ export class CurrentActivity extends React.Component {
         this.handleStop = this.handleStop.bind(this);
     }
 
+    componentDidMount() {
+        this.props.dispatch(fetchCurrentActivity());
+    }
+
     handleStop(event) {
         event.preventDefault();
-        this.props.onActivityStop(this.props.activity.id);
+        this.props.dispatch(stopActivity(this.props.activity.id));
     }
 
     render() {
@@ -46,24 +50,18 @@ export class CurrentActivity extends React.Component {
 }
 
 CurrentActivity.propTypes = {
+    dispatch: React.PropTypes.func.isRequired,
     activity: React.PropTypes.object,
-    onActivityStop: React.PropTypes.func.isRequired,
     loading: React.PropTypes.bool.isRequired,
 };
 
 function mapStateToProps(state) {
+    const currentActivity = Object.values(state.activities.activities)
+        .find(activity => !activity.finished_at);
     return {
-        activity: state.activities.activities.find(activity => !activity.finished_at),
-        loading: state.activities.isFetching,
+        activity: currentActivity,
+        loading: false,
     };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        onActivityStop(id) {
-            dispatch(stopActivity(id));
-        },
-    };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(CurrentActivity);
+export default connect(mapStateToProps)(CurrentActivity);

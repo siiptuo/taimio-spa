@@ -1,55 +1,36 @@
-function activity(state, action) {
-    switch (action.type) {
-        case 'REQUEST_UPDATE_ACTIVITY':
-            if (state.id !== action.id) {
-                return state;
-            }
-            return Object.assign({}, state, { status: 'LOADING' });
-        case 'UPDATE_ACTIVITY_SUCCESS':
-        case 'STOP_ACTIVITY_SUCCESS':
-            if (state.id !== action.data.id) {
-                return state;
-            }
-            return Object.assign({}, state, action.data, { status: 'SUCCESS' });
-        default:
-            return state;
-    }
-}
+import { keyBy } from 'lodash';
 
 export default function activities(state = {
-    isFetching: false,
-    fetchDone: false,
-    activities: [],
+    ranges: {},
+    activities: {},
 }, action) {
     switch (action.type) {
-        case 'REQUEST_ACTIVITIES':
+        case 'RECEIVE_ACTIVITY':
             return Object.assign({}, state, {
-                isFetching: true,
-                fetchDone: false,
+                activities: Object.assign({}, state.activities, {
+                    [action.activity.id]: action.activity,
+                }),
             });
         case 'RECEIVE_ACTIVITIES':
             return Object.assign({}, state, {
-                isFetching: false,
-                fetchDone: true,
-                activities: action.activities,
-            });
-        case 'UPDATE_ACTIVITY_SUCCESS':
-        case 'STOP_ACTIVITY_SUCCESS':
-            return Object.assign({}, state, {
-                activities: state.activities.map(a => activity(a, action)),
-            });
-        case 'REMOVE_ACTIVITY_SUCCESS':
-            return Object.assign({}, state, {
-                activities: state.activities.filter(a => a.id != action.id),
+                activities: Object.assign({}, state.activities, keyBy(action.activities, 'id')),
+                ranges: Object.assign({}, state.ranges, {
+                    [`${action.startDate}-${action.endDate}`]: true,
+                }),
             });
         case 'START_ACTIVITY_SUCCESS':
+        case 'UPDATE_ACTIVITY_SUCCESS':
         case 'RESUME_ACTIVITY_SUCCESS':
+        case 'STOP_ACTIVITY_SUCCESS':
             return Object.assign({}, state, {
-                activities: [
-                    action.activity,
-                    ...state.activities,
-                ],
+                activities: Object.assign({}, state.activities, {
+                    [action.activity.id]: action.activity,
+                }),
             });
+        case 'REMOVE_ACTIVITY_SUCCESS':
+            const activities = Object.assign({}, state.activities);
+            delete activities[action.id];
+            return Object.assign({}, state, { activities });
         default:
             return state;
     }

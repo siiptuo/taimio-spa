@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { fetchActivitiesIfNeeded } from './actions';
+import { fetchActivities } from './actions';
 import { parseInput } from './activity';
 import ActivitySummary from './ActivitySummary';
 import { date } from './filters';
@@ -14,7 +14,7 @@ function getEndOfDay(date) {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999);
 }
 
-function diffDays(date, days) {
+export function diffDays(date, days) {
     const newDate = new Date(date.getTime());
     newDate.setDate(newDate.getDate() + days);
     return newDate;
@@ -49,18 +49,7 @@ class List extends React.Component {
     }
 
     componentDidMount() {
-        this.props.dispatch(fetchActivitiesIfNeeded());
-    }
-
-    getLocationState() {
-        let [start, end] = getWeekRange(new Date());
-
-        if ('start' in this.props.location.query && 'end' in this.props.location.query) {
-            start = getStartOfDay(new Date(this.props.location.query.start));
-            end = getEndOfDay(new Date(this.props.location.query.end));
-        }
-
-        return { start, end, search: parseInput(this.props.location.query.search || '') };
+        this.props.dispatch(fetchActivities(date(this.props.startDate), date(this.props.endDate)));
     }
 
     handleSearchInput(event) {
@@ -73,12 +62,10 @@ class List extends React.Component {
     }
 
     handleMove(days) {
-        const locationState = this.getLocationState();
-
-        const startDate = new Date(locationState.start.getTime());
+        const startDate = new Date(this.props.startDate.getTime());
         startDate.setDate(startDate.getDate() + days);
 
-        const endDate = new Date(locationState.end.getTime());
+        const endDate = new Date(this.props.endDate.getTime());
         endDate.setDate(endDate.getDate() + days);
 
         this.context.router.push({
@@ -88,16 +75,16 @@ class List extends React.Component {
                 end: date(endDate),
             }),
         });
+
+        this.props.dispatch(fetchActivities(date(startDate), date(endDate)));
     }
 
     render() {
-        const { search, start: startDate, end: endDate } = this.getLocationState();
-
         const activities = this.props.activities
-            .filter(activity => activity.title.includes(search.title) &&
-                    search.tags.every(tag => activity.tags.includes(tag)));
+            .filter(activity => activity.title.includes(this.props.search.title) &&
+                    this.props.search.tags.every(tag => activity.tags.includes(tag)));
 
-        const dates = genDateRange(startDate, endDate).reverse();
+        const dates = genDateRange(this.props.startDate, this.props.endDate).reverse();
 
         return (
             <div>
@@ -111,9 +98,9 @@ class List extends React.Component {
                 </div>
                 <div className="date-filter">
                     <button onClick={this.handlePreviousWeek}>{'<'}</button>
-                    <span className="start-date">{startDate.toLocaleDateString()}</span>
+                    <span className="start-date">{this.props.startDate.toLocaleDateString()}</span>
                     <span>-</span>
-                    <span className="end-date">{endDate.toLocaleDateString()}</span>
+                    <span className="end-date">{this.props.endDate.toLocaleDateString()}</span>
                     <button onClick={this.handleNextWeek}>{'>'}</button>
                 </div>
                 {this.props.loading ? 'Loading...' : dates.map(date => {
@@ -142,12 +129,29 @@ List.propTypes = {
     activities: React.PropTypes.array.isRequired,
     loading: React.PropTypes.bool.isRequired,
     location: React.PropTypes.object.isRequired,
+    startDate: React.PropTypes.instanceOf(Date).isRequired,
+    endDate: React.PropTypes.instanceOf(Date).isRequired,
+    search: React.PropTypes.object.isRequired,
 };
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
+    let [startDate, endDate] = getWeekRange(new Date());
+
+    if ('start' in ownProps.location.query && 'end' in ownProps.location.query) {
+        startDate = getStartOfDay(new Date(ownProps.location.query.start));
+        endDate = getEndOfDay(new Date(ownProps.location.query.end));
+    }
+
+    const search = parseInput(ownProps.location.query.search || '');
+
+    const range = state.activities.ranges[`${date(startDate)}-${date(endDate)}`];
+
     return {
-        activities: state.activities.activities,
-        loading: state.activities.isFetching,
+        activities: Object.values(state.activities.activities),
+        loading: !range,
+        startDate,
+        endDate,
+        search,
     };
 }
 

@@ -50,7 +50,7 @@ function createQueryParams(params) {
     return '?' + pairs.join('&');
 }
 
-export function getCurrentActivity() {
+export function apiGetCurrent() {
     return apiList()
         .then(activities => activities.find(activity => activity.finished_at == null));
 }
@@ -86,7 +86,7 @@ export function apiResume(activity) {
         finished_at: null,
     });
     delete newActivity.id;
-    return getCurrentActivity()
+    return apiGetCurrent()
         .then(currentActivity => {
             const promises = [apiSave(newActivity)];
             if (currentActivity) {

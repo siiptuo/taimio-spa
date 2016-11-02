@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { duration } from './filters';
-
-import { fetchActivitiesIfNeeded } from './actions';
+import { duration, date } from './filters';
+import { fetchActivities } from './actions';
+import { diffDays } from './List';
 
 export function countActivitiesByHour(activities) {
     const result = new Array(24).fill(0);
@@ -143,7 +143,7 @@ export class ActivityStats extends React.Component {
     }
 
     componentDidMount() {
-        this.props.dispatch(fetchActivitiesIfNeeded());
+        this.props.dispatch(fetchActivities(date(diffDays(new Date(), -30)), date(new Date())));
     }
 
     toggleTag(tagName) {
@@ -215,9 +215,11 @@ ActivityStats.propTypes = {
 };
 
 function mapStateToProps(state) {
+    const fromDate = diffDays(new Date(), -30);
     return {
-        activities: state.activities.activities.filter(activity => activity.finished_at),
-        loading: state.activities.isFetching,
+        activities: Object.values(state.activities.activities)
+            .filter(activity => activity.finished_at && activity.started_at > fromDate),
+        loading: false,
     };
 }
 

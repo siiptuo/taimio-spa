@@ -9,7 +9,7 @@ const shortTimeFormat = new Intl.DateTimeFormat(navigator.language, {
 const ActivityList = (props) => (
     <table className="activity-list">
         <tbody>
-            {props.activities.map(activity => (
+            {props.activities.sort((a, b) => b.started_at - a.started_at).map(activity => (
                 <tr key={activity.id} onClick={() => props.onActivityClick(activity)}>
                     <td className="activity-list-time-column">
                         {shortTimeFormat.format(activity.started_at)}

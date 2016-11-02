@@ -8,7 +8,7 @@ import ActivitySummary from './ActivitySummary';
 import * as activity from './activity';
 import * as filters from './filters';
 
-import { fetchActivitiesIfNeeded } from './actions';
+import { fetchActivities } from './actions';
 
 function onDate(date, reference) {
     return date.getYear() === reference.getYear()
@@ -22,7 +22,7 @@ function getTodayActivities(activities) {
 
 function mapStateToProps(state) {
     return {
-        activities: getTodayActivities(state.activities.activities),
+        activities: getTodayActivities(Object.values(state.activities.activities)),
         loading: false,
     };
 }
@@ -30,19 +30,9 @@ function mapStateToProps(state) {
 const TodayActivitySummary = connect(mapStateToProps)(ActivitySummary);
 
 export class Main extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            loading: false,
-        };
-        // this.handleActivityStop = this.handleActivityStop.bind(this);
-        // this.handleActivityStart = this.handleActivityStart.bind(this);
-    }
-
     componentDidMount() {
-        // const today = filters.date(new Date());
-        // activity.apiList({ start_date: today, end_date: today })
-        this.props.dispatch(fetchActivitiesIfNeeded());
+        const today = filters.date(new Date());
+        this.props.dispatch(fetchActivities(today, today));
     }
 
     render() {
