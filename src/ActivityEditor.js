@@ -17,21 +17,26 @@ function isOnSameDay(date1, date2) {
 }
 
 export class ActivityEditor extends React.Component {
+    static contextTypes = {
+        router: React.PropTypes.object,
+    }
+
+    static propTypes = {
+        params: React.PropTypes.shape({
+            id: React.PropTypes.string.isRequired,
+        }).isRequired,
+        dispatch: React.PropTypes.func.isRequired,
+        location: React.PropTypes.object.isRequired,
+        activity: activity.propType.isRequired,
+        loading: React.PropTypes.bool.isRequired,
+    }
+
     constructor(props) {
         super(props);
         this.state = {};
-        this.onStartedAtDateChange = this.onStartedAtDateChange.bind(this);
-        this.onStartedAtTimeChange = this.onStartedAtTimeChange.bind(this);
-        this.onFinishedAtTimeChange = this.onFinishedAtTimeChange.bind(this);
-        this.onOngoingChange = this.onOngoingChange.bind(this);
-        this.onInputChange = this.onInputChange.bind(this);
-        this.onSave = this.onSave.bind(this);
-        this.onCancel = this.onCancel.bind(this);
-        this.onResume = this.onResume.bind(this);
-        this.onRemove = this.onRemove.bind(this);
     }
 
-    setActivityState(activity) {
+    setActivityState = (activity) => {
         const ongoing = activity.finished_at == null;
         this.setState({
             ongoing,
@@ -54,27 +59,27 @@ export class ActivityEditor extends React.Component {
         this.setActivityState(nextProps.activity);
     }
 
-    onStartedAtDateChange(event) {
-        this.setState(Object.assign({}, this.state, { startedAtDate: event.target.value }));
+    onStartedAtDateChange = (event) => {
+        this.setState({ startedAtDate: event.target.value });
     }
 
-    onStartedAtTimeChange(event) {
-        this.setState(Object.assign({}, this.state, { startedAtTime: event.target.value }));
+    onStartedAtTimeChange = (event) => {
+        this.setState({ startedAtTime: event.target.value });
     }
 
-    onFinishedAtTimeChange(event) {
-        this.setState(Object.assign({}, this.state, { finishedAtTime: event.target.value }));
+    onFinishedAtTimeChange = (event) => {
+        this.setState({ finishedAtTime: event.target.value });
     }
 
-    onOngoingChange(event) {
-        this.setState(Object.assign({}, this.state, { ongoing: event.target.checked }));
+    onOngoingChange = (event) => {
+        this.setState({ ongoing: event.target.checked });
     }
 
-    onInputChange(event) {
-        this.setState(Object.assign({}, this.state, { input: event.target.value }));
+    onInputChange = (event) => {
+        this.setState({ input: event.target.value });
     }
 
-    onSave(event) {
+    onSave = (event) => {
         event.preventDefault();
         const { title, tags } = activity.parseInput(this.state.input);
         const startedAt = parseLocalDate(`${this.state.startedAtDate}T${this.state.startedAtTime}`);
@@ -95,24 +100,24 @@ export class ActivityEditor extends React.Component {
         this.goBack();
     }
 
-    onCancel(event) {
+    onCancel = (event) => {
         event.preventDefault();
         this.goBack();
     }
 
-    onResume(event) {
+    onResume = (event) => {
         event.preventDefault();
         this.props.dispatch(resumeActivity(this.props.activity.id));
         this.goBack();
     }
 
-    onRemove(event) {
+    onRemove = (event) => {
         event.preventDefault();
         this.props.dispatch(removeActivity(this.props.activity.id));
         this.goBack();
     }
 
-    goBack() {
+    goBack = () => {
         // Simply go back if there is history.
         if (this.props.location.action === 'PUSH') {
             this.context.router.goBack();
@@ -189,16 +194,6 @@ export class ActivityEditor extends React.Component {
         );
     }
 }
-
-ActivityEditor.contextTypes = {
-    router: React.PropTypes.object,
-};
-
-ActivityEditor.propTypes = {
-    params: React.PropTypes.object.isRequired,
-    dispatch: React.PropTypes.func.isRequired,
-    location: React.PropTypes.object.isRequired,
-};
 
 function mapStateToProps(state, ownProps) {
     const activity = state.activities.activities[ownProps.params.id];

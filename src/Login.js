@@ -3,15 +3,20 @@ import React from 'react';
 import * as auth from './auth';
 
 export default class Login extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = { error: null };
-
-        this.handleSubmit = this.handleSubmit.bind(this);
+    static contextTypes = {
+        router: React.PropTypes.object,
     }
 
-    handleSubmit(event) {
+    static propTypes = {
+        location: React.PropTypes.object,
+    }
+
+    constructor(props) {
+        super(props);
+        this.state = { error: null };
+    }
+
+    handleSubmit = (event) => {
         event.preventDefault();
 
         auth.login(this.refs.username.value, this.refs.password.value)
@@ -41,11 +46,3 @@ export default class Login extends React.Component {
         );
     }
 }
-
-Login.contextTypes = {
-    router: React.PropTypes.object,
-};
-
-Login.propTypes = {
-    location: React.PropTypes.object,
-};

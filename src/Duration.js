@@ -2,6 +2,11 @@ import React from 'react';
 import { duration } from './filters';
 
 export default class Duration extends React.Component {
+    static propTypes = {
+        startTime: React.PropTypes.instanceOf(Date),
+        endTime: React.PropTypes.instanceOf(Date),
+    }
+
     constructor(props) {
         super(props);
         if (!this.props.endTime) {
@@ -21,9 +26,3 @@ export default class Duration extends React.Component {
         );
     }
 }
-
-Duration.propTypes = {
-    time: React.PropTypes.number,
-    startTime: React.PropTypes.instanceOf(Date),
-    endTime: React.PropTypes.instanceOf(Date),
-};

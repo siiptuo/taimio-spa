@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { duration, date } from './filters';
 import { fetchActivities } from './actions';
 import { diffDays } from './List';
+import { propType as activityPropType } from './activity';
 
 export function countActivitiesByHour(activities) {
     const result = new Array(24).fill(0);
@@ -19,6 +20,10 @@ export function countActivitiesByHour(activities) {
 }
 
 class DayDonut extends React.Component {
+    static propTypes = {
+        activities: React.PropTypes.arrayOf(activityPropType).isRequired,
+    }
+
     render() {
         const hours = countActivitiesByHour(this.props.activities);
         const maxHours = Math.max.apply(null, hours);
@@ -81,6 +86,10 @@ function sumActivityDurations(activities) {
 }
 
 class DayTable extends React.Component {
+    static propTypes = {
+        activities: React.PropTypes.arrayOf(activityPropType).isRequired,
+    }
+
     render() {
         const labels = ['su', 'ma', 'ti', 'ke', 'to', 'pe', 'la'];
         const durations = groupActivitiesByDayOfTheWeek(this.props.activities)
@@ -118,10 +127,6 @@ class DayTable extends React.Component {
     }
 }
 
-DayTable.propTypes = {
-    activities: React.PropTypes.array.isRequired,
-};
-
 export function sumTagDurations(activities) {
     return activities.reduce((obj, activity) => {
         for (let tag of activity.tags) {
@@ -137,6 +142,12 @@ export function sumTagDurations(activities) {
 }
 
 export class ActivityStats extends React.Component {
+    static propTypes = {
+        dispatch: React.PropTypes.func.isRequired,
+        activities: React.PropTypes.arrayOf(activityPropType).isRequired,
+        loading: React.PropTypes.bool.isRequired,
+    }
+
     constructor(props) {
         super(props);
         this.state = { selectedTags: new Set() };
@@ -146,7 +157,7 @@ export class ActivityStats extends React.Component {
         this.props.dispatch(fetchActivities(date(diffDays(new Date(), -30)), date(new Date())));
     }
 
-    toggleTag(tagName) {
+    toggleTag = (tagName) => {
         const selectedTags = new Set(this.state.selectedTags);
         if (this.state.selectedTags.has(tagName)) {
             selectedTags.delete(tagName);
@@ -187,7 +198,7 @@ export class ActivityStats extends React.Component {
                         {tags.map(tag => (
                             <tr
                                 key={tag.name}
-                                onClick={this.toggleTag.bind(this, tag.name)}
+                                onClick={() => { this.toggleTag(tag.name); }}
                                 className={'activity-stats-container' + (this.state.selectedTags.has(tag.name) ? ' selected' : '')}
                             >
                                 <th className="activity-stats-title">{tag.name}</th>
@@ -207,12 +218,6 @@ export class ActivityStats extends React.Component {
         );
     }
 }
-
-ActivityStats.propTypes = {
-    dispatch: React.PropTypes.func.isRequired,
-    activities: React.PropTypes.array.isRequired,
-    loading: React.PropTypes.bool.isRequired,
-};
 
 function mapStateToProps(state) {
     const fromDate = diffDays(new Date(), -30);

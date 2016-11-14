@@ -1,5 +1,6 @@
 import React from 'react';
 import Duration from './Duration';
+import { propType as activityPropType } from './activity';
 
 const shortTimeFormat = new Intl.DateTimeFormat(navigator.language, {
     hour: 'numeric',
@@ -38,7 +39,7 @@ const ActivityList = (props) => (
 );
 
 ActivityList.propTypes = {
-    activities: React.PropTypes.array.isRequired,
+    activities: React.PropTypes.arrayOf(activityPropType).isRequired,
     onActivityClick: React.PropTypes.func.isRequired,
 };
 

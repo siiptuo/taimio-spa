@@ -3,18 +3,20 @@ import { connect } from 'react-redux';
 
 import { fetchCurrentActivity, stopActivity } from './actions';
 import Duration from './Duration';
+import { propType as activityPropType } from './activity';
 
 export class CurrentActivity extends React.Component {
-    constructor(props) {
-        super(props);
-        this.handleStop = this.handleStop.bind(this);
+    static propTypes = {
+        dispatch: React.PropTypes.func.isRequired,
+        activity: activityPropType,
+        loading: React.PropTypes.bool.isRequired,
     }
 
     componentDidMount() {
         this.props.dispatch(fetchCurrentActivity());
     }
 
-    handleStop(event) {
+    handleStop = (event) => {
         event.preventDefault();
         this.props.dispatch(stopActivity(this.props.activity.id));
     }
@@ -48,12 +50,6 @@ export class CurrentActivity extends React.Component {
         );
     }
 }
-
-CurrentActivity.propTypes = {
-    dispatch: React.PropTypes.func.isRequired,
-    activity: React.PropTypes.object,
-    loading: React.PropTypes.bool.isRequired,
-};
 
 function mapStateToProps(state) {
     const currentActivity = Object.values(state.activities.activities)

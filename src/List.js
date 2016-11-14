@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { fetchActivities } from './actions';
-import { parseInput } from './activity';
+import { parseInput, propType as activityPropType } from './activity';
 import ActivitySummary from './ActivitySummary';
 import { date } from './filters';
 
@@ -41,18 +41,25 @@ function genDateRange(startDate, endDate) {
 }
 
 class List extends React.Component {
-    constructor(props) {
-        super(props);
-        this.handleSearchInput = this.handleSearchInput.bind(this);
-        this.handleNextWeek = this.handleMove.bind(this, 7);
-        this.handlePreviousWeek = this.handleMove.bind(this, -7);
+    static contextTypes = {
+        router: React.PropTypes.object,
+    }
+
+    static propTypes = {
+        dispatch: React.PropTypes.func.isRequired,
+        activities: React.PropTypes.arrayOf(activityPropType).isRequired,
+        loading: React.PropTypes.bool.isRequired,
+        location: React.PropTypes.object.isRequired,
+        startDate: React.PropTypes.instanceOf(Date).isRequired,
+        endDate: React.PropTypes.instanceOf(Date).isRequired,
+        search: React.PropTypes.object.isRequired,
     }
 
     componentDidMount() {
         this.props.dispatch(fetchActivities(date(this.props.startDate), date(this.props.endDate)));
     }
 
-    handleSearchInput(event) {
+    handleSearchInput = (event) => {
         this.context.router.push({
             pathname: this.props.location.pathname,
             query: Object.assign({}, this.props.location.query, {
@@ -61,7 +68,7 @@ class List extends React.Component {
         });
     }
 
-    handleMove(days) {
+    handleMove = (days) => {
         const startDate = new Date(this.props.startDate.getTime());
         startDate.setDate(startDate.getDate() + days);
 
@@ -78,6 +85,10 @@ class List extends React.Component {
 
         this.props.dispatch(fetchActivities(date(startDate), date(endDate)));
     }
+
+    handleNextWeek = () => this.handleMove(7)
+
+    handlePreviousWeek = () => this.handleMove(-7)
 
     render() {
         const activities = this.props.activities
@@ -119,20 +130,6 @@ class List extends React.Component {
         );
     }
 }
-
-List.contextTypes = {
-    router: React.PropTypes.object,
-};
-
-List.propTypes = {
-    dispatch: React.PropTypes.func.isRequired,
-    activities: React.PropTypes.array.isRequired,
-    loading: React.PropTypes.bool.isRequired,
-    location: React.PropTypes.object.isRequired,
-    startDate: React.PropTypes.instanceOf(Date).isRequired,
-    endDate: React.PropTypes.instanceOf(Date).isRequired,
-    search: React.PropTypes.object.isRequired,
-};
 
 function mapStateToProps(state, ownProps) {
     let [startDate, endDate] = getWeekRange(new Date());

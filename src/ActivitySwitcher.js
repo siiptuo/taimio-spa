@@ -5,18 +5,21 @@ import { startActivity } from './actions';
 import * as activity from './activity';
 
 export class ActivitySwitcher extends React.Component {
+    static propTypes = {
+        onActivityStart: React.PropTypes.func.isRequired,
+        loading: React.PropTypes.bool.isRequired,
+    }
+
     constructor(props) {
         super(props);
         this.state = { input: '' };
-        this.handleInputChange = this.handleInputChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleInputChange(event) {
+    handleInputChange = (event) => {
         this.setState({ input: event.target.value });
     }
 
-    handleSubmit(event) {
+    handleSubmit = (event) => {
         event.preventDefault();
         const input = this.state.input.trim();
         if (!input) {
@@ -30,7 +33,8 @@ export class ActivitySwitcher extends React.Component {
     render() {
         return (
             <form className="start-activity-form" onSubmit={this.handleSubmit}>
-                <input type="text"
+                <input
+                    type="text"
                     placeholder="Activity title #tag1 #tag2"
                     value={this.state.input}
                     onChange={this.handleInputChange}
@@ -41,11 +45,6 @@ export class ActivitySwitcher extends React.Component {
         );
     }
 }
-
-ActivitySwitcher.propTypes = {
-    onActivityStart: React.PropTypes.func.isRequired,
-    loading: React.PropTypes.bool.isRequired,
-};
 
 function mapStateToProps(state) {
     return {

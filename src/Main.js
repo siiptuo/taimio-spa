@@ -5,7 +5,6 @@ import CurrentActivity from './CurrentActivity';
 import ActivitySwitcher from './ActivitySwitcher';
 import ActivitySummary from './ActivitySummary';
 
-import * as activity from './activity';
 import * as filters from './filters';
 
 import { fetchActivities } from './actions';
@@ -30,6 +29,10 @@ function mapStateToProps(state) {
 const TodayActivitySummary = connect(mapStateToProps)(ActivitySummary);
 
 export class Main extends React.Component {
+    static propTypes = {
+        dispatch: PropTypes.func.isRequired,
+    }
+
     componentDidMount() {
         const today = filters.date(new Date());
         this.props.dispatch(fetchActivities(today, today));
@@ -45,9 +48,5 @@ export class Main extends React.Component {
         );
     }
 }
-
-Main.propTypes = {
-    dispatch: PropTypes.func.isRequired,
-};
 
 export default connect()(Main);

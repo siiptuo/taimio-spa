@@ -4,13 +4,17 @@ import { Link, IndexLink } from 'react-router';
 import * as auth from './auth';
 
 export default class App extends React.Component {
+    static propTypes = {
+        children: React.PropTypes.element,
+    }
+
     constructor(props) {
         super(props);
         this.state = { loggedIn: auth.isLoggedIn() };
-        auth.setOnChange(this.handleOnChange.bind(this));
+        auth.setOnChange(this.handleOnChange);
     }
 
-    handleOnChange(loggedIn) {
+    handleOnChange = (loggedIn) => {
         this.setState({ loggedIn });
     }
 
@@ -36,7 +40,3 @@ export default class App extends React.Component {
         );
     }
 }
-
-App.propTypes = {
-    children: React.PropTypes.element,
-};

@@ -54,9 +54,9 @@ export function fetchActivity(id) {
 }
 
 export function fetchCurrentActivity() {
-    return (dispatch) => {
+    return dispatch => {
         return apiGetCurrent()
-            .then(activity => {
+            .then((activity) => {
                 if (activity) {
                     dispatch(receiveActivity(activity));
                 }
@@ -85,6 +85,36 @@ function startActivitySuccess(activity) {
     };
 }
 
+function stopActivitySuccess(activity) {
+    return {
+        type: 'STOP_ACTIVITY_SUCCESS',
+        activity,
+    };
+}
+
+export function stopActivity(id, finishedAt = new Date()) {
+    return (dispatch, getState) => {
+        dispatch({ type: 'REQUEST_STOP_ACTIVITY', id });
+        const oldActivity = getState().activities.activities[id];
+        const newActivity = Object.assign({}, oldActivity, { finished_at: finishedAt });
+        return apiSave(newActivity)
+            .then((activity) => { dispatch(stopActivitySuccess(activity)); });
+    };
+}
+
+function stopCurrentActivity(finishedAt = new Date()) {
+    return (dispatch, getState) => {
+        return dispatch(fetchCurrentActivity()).then(() => {
+            const currentActivity = Object.values(getState().activities.activities)
+                .find(activity => !activity.finished_at);
+            if (!currentActivity) {
+                return null;
+            }
+            return dispatch(stopActivity(currentActivity.id, finishedAt));
+        });
+    };
+}
+
 export function startActivity(title, tags, startedAt = new Date()) {
     return (dispatch) => {
         dispatch({ type: 'REQUEST_START_ACTIVITY' });
@@ -98,35 +128,6 @@ export function startActivity(title, tags, startedAt = new Date()) {
             apiSave(newActivity),
         ]).then(([oldActivity, newActivity]) => {
             dispatch(startActivitySuccess(newActivity));
-        });
-    };
-}
-
-function stopActivitySuccess(activity) {
-    return {
-        type: 'STOP_ACTIVITY_SUCCESS',
-        activity,
-    };
-}
-
-export function stopActivity(id, finishedAt = new Date()) {
-    return (dispatch, getState) => {
-        dispatch({ type: 'REQUEST_STOP_ACTIVITY', id });
-        const oldActivity = getState().activities.activities[id];
-        const newActivity = Object.assign({}, oldActivity, { finished_at: finishedAt });
-        return apiSave(newActivity).then((activity) => dispatch(stopActivitySuccess(activity)));
-    };
-}
-
-function stopCurrentActivity(finishedAt = new Date()) {
-    return (dispatch, getState) => {
-        return dispatch(fetchCurrentActivity()).then(() => {
-            const currentActivity = Object.values(getState().activities.activities)
-                .find(activity => !activity.finished_at);
-            if (!currentActivity) {
-                return null;
-            }
-            return dispatch(stopActivity(currentActivity.id, finishedAt));
         });
     };
 }

@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { getRequest, postRequest, putRequest, deleteRequest } from './api';
 
 export function parseInput(input) {
@@ -34,9 +36,7 @@ export function serialize(activity) {
 }
 
 function fixedEncodeURIComponent(str) {
-    return encodeURIComponent(str).replace(/[!'()*]/g, function(c) {
-        return '%' + c.charCodeAt(0).toString(16);
-    });
+    return encodeURIComponent(str).replace(/[!'()*]/g, c => `%${c.charCodeAt(0).toString(16)}`);
 }
 
 function createQueryParams(params) {
@@ -45,18 +45,13 @@ function createQueryParams(params) {
     }
     const pairs = [];
     for (let key in params) {
-        pairs.push(key + '=' + fixedEncodeURIComponent(params[key]));
+        pairs.push(`${key}=${fixedEncodeURIComponent(params[key])}`);
     }
-    return '?' + pairs.join('&');
-}
-
-export function apiGetCurrent() {
-    return apiList()
-        .then(activities => activities.find(activity => activity.finished_at == null));
+    return pairs.join('&');
 }
 
 export function apiList(params) {
-    return getRequest('activities' + createQueryParams(params))
+    return getRequest(`activities?${createQueryParams(params)}`)
         .then(data => data.map(unserialize));
 }
 
@@ -65,15 +60,19 @@ export function apiGet(id) {
         .then(unserialize);
 }
 
+export function apiGetCurrent() {
+    return apiList()
+        .then(activities => activities.find(activity => activity.finished_at == null));
+}
+
 export function apiSave(activity) {
     const isNew = typeof activity.id === 'undefined';
     if (isNew) {
         return postRequest('activities', serialize(activity))
             .then(unserialize);
-    } else {
-        return putRequest(`activities/${activity.id}`, serialize(activity))
-            .then(unserialize);
     }
+    return putRequest(`activities/${activity.id}`, serialize(activity))
+        .then(unserialize);
 }
 
 export function apiRemove(activityId) {
@@ -87,7 +86,7 @@ export function apiResume(activity) {
     });
     delete newActivity.id;
     return apiGetCurrent()
-        .then(currentActivity => {
+        .then((currentActivity) => {
             const promises = [apiSave(newActivity)];
             if (currentActivity) {
                 currentActivity.finished_at = newActivity.started_at;
@@ -96,3 +95,11 @@ export function apiResume(activity) {
             return Promise.all(promises);
         });
 }
+
+export const propType = React.PropTypes.shape({
+    id: React.PropTypes.number.isRequired,
+    title: React.PropTypes.string.isRequired,
+    tags: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+    started_at: React.PropTypes.instanceOf(Date).isRequired,
+    finished_at: React.PropTypes.instanceOf(Date),
+});

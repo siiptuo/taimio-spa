@@ -3,6 +3,7 @@ import React from 'react';
 import ActivityList from './ActivityList';
 
 import { duration } from './filters';
+import { propType as activityPropType } from './activity';
 
 const shortDateFormat = new Intl.DateTimeFormat(navigator.language, {
     weekday: 'short',
@@ -11,6 +12,10 @@ const shortDateFormat = new Intl.DateTimeFormat(navigator.language, {
 });
 
 export class ActivityDurationSum extends React.Component {
+    static propTypes = {
+        activities: React.PropTypes.arrayOf(activityPropType).isRequired,
+    }
+
     constructor(props) {
         super(props);
         if (this.props.activities.some(activity => !activity.finished_at)) {
@@ -31,18 +36,18 @@ export class ActivityDurationSum extends React.Component {
     }
 }
 
-ActivityDurationSum.propTypes = {
-    activities: React.PropTypes.array.isRequired,
-};
-
 export default class ActivitySummary extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.onActivityClick = this.onActivityClick.bind(this);
+    static contextTypes = {
+        router: React.PropTypes.object,
     }
 
-    onActivityClick(activity) {
+    static propTypes = {
+        activities: React.PropTypes.arrayOf(activityPropType).isRequired,
+        title: React.PropTypes.string,
+        date: React.PropTypes.instanceOf(Date).isRequired,
+    }
+
+    onActivityClick = (activity) => {
         this.context.router.push(`/activity/${activity.id}`);
     }
 
@@ -65,13 +70,3 @@ export default class ActivitySummary extends React.Component {
         );
     }
 }
-
-ActivitySummary.contextTypes = {
-    router: React.PropTypes.object,
-};
-
-ActivitySummary.propTypes = {
-    activities: React.PropTypes.array.isRequired,
-    title: React.PropTypes.string,
-    date: React.PropTypes.instanceOf(Date).isRequired,
-};
