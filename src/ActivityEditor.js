@@ -27,7 +27,7 @@ export class ActivityEditor extends React.Component {
         }).isRequired,
         dispatch: React.PropTypes.func.isRequired,
         location: React.PropTypes.object.isRequired,
-        activity: activity.propType.isRequired,
+        activity: activity.propType,
         loading: React.PropTypes.bool.isRequired,
     }
 
@@ -37,6 +37,9 @@ export class ActivityEditor extends React.Component {
     }
 
     setActivityState = (activity) => {
+        if (!activity) {
+            return;
+        }
         const ongoing = activity.finished_at == null;
         this.setState({
             ongoing,
@@ -96,8 +99,9 @@ export class ActivityEditor extends React.Component {
             tags,
             started_at: startedAt,
             finished_at: finishedAt,
-        }));
-        this.goBack();
+        })).then(() => {
+            this.goBack();
+        });
     }
 
     onCancel = (event) => {
@@ -107,27 +111,30 @@ export class ActivityEditor extends React.Component {
 
     onResume = (event) => {
         event.preventDefault();
-        this.props.dispatch(resumeActivity(this.props.activity.id));
-        this.context.router.push('/');
+        this.props.dispatch(resumeActivity(this.props.activity.id)).then(() => {
+            this.context.router.push('/');
+        });
     }
 
     onRemove = (event) => {
         event.preventDefault();
-        this.props.dispatch(removeActivity(this.props.activity.id));
-        this.goBack();
+        const activity = { ...this.props.activity };
+        this.props.dispatch(removeActivity(this.props.activity.id)).then(() => {
+            this.goBack(activity);
+        });
     }
 
-    goBack = () => {
+    goBack = (activity = this.props.activity) => {
         // Simply go back if there is history.
         if (this.props.location.action === 'PUSH') {
             this.context.router.goBack();
         } else {
             // Try to be smart when there is no history by always going to a page with the activity
             // listed.
-            if (isOnSameDay(this.props.activity.started_at, new Date())) {
+            if (isOnSameDay(activity.started_at, new Date())) {
                 this.context.router.push('/');
             } else {
-                const [start, end] = getWeekRange(this.props.activity.started_at).map(date);
+                const [start, end] = getWeekRange(activity.started_at).map(date);
                 this.context.router.push({
                     pathname: '/list',
                     query: { start, end },
