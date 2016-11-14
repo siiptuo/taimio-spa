@@ -108,7 +108,7 @@ export class ActivityEditor extends React.Component {
     onResume = (event) => {
         event.preventDefault();
         this.props.dispatch(resumeActivity(this.props.activity.id));
-        this.goBack();
+        this.context.router.push('/');
     }
 
     onRemove = (event) => {
