@@ -42,6 +42,13 @@ function receiveActivity(activity) {
     };
 }
 
+function receiveCurrentActivity(activity) {
+    return {
+        type: 'RECEIVE_CURRENT_ACTIVITY',
+        activity,
+    };
+}
+
 export function fetchActivity(id) {
     return (dispatch, getState) => {
         if (getState().activities.activities[id]) {
@@ -54,12 +61,13 @@ export function fetchActivity(id) {
 }
 
 export function fetchCurrentActivity() {
-    return dispatch => {
+    return (dispatch, getState) => {
+        if (getState().activities.current !== undefined) {
+            return Promise.resolve();
+        }
         return apiGetCurrent()
             .then((activity) => {
-                if (activity) {
-                    dispatch(receiveActivity(activity));
-                }
+                dispatch(receiveCurrentActivity(activity));
             });
     };
 }

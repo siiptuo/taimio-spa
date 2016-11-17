@@ -52,10 +52,8 @@ export class CurrentActivity extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const currentActivity = Object.values(state.activities.activities)
-        .find(activity => !activity.finished_at);
     return {
-        activity: currentActivity,
+        activity: state.activities.activities[state.activities.current],
         loading: false,
     };
 }
