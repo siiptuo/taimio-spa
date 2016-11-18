@@ -170,37 +170,43 @@ fieldset {
 }
 
 .activity-list {
-    border-spacing: 0;
     width: 100%;
-    cursor: default;
-}
+    list-style-type: none;
+    display: table;
+    margin: 0;
+    padding: 0;
 
-.activity-list tr:hover td {
-    background-color: #f8f8f8;
-}
+    > li {
+        display: table-row-group;
+        margin: 0;
 
+        &:last-child a > span {
+            &:first-child {
+                border-bottom-left-radius: @radius;
+            }
 
-.activity-list tr td {
-    padding: 0.5rem 0.5rem;
-    border-bottom: 1px solid #d4d4d4;
-    background-color: white;
-
-    &:first-child {
-        padding-left: 0.5rem;
+            &:last-child {
+                border-bottom-right-radius: @radius;
+            }
+        }
     }
 
-    &:last-child {
-        padding-right: 0.5rem;
-    }
-}
+    a {
+        display: table-row;
+        text-decoration: none;
+        color: inherit;
 
-.activity-list tr:last-child {
-    td:first-child {
-        border-bottom-left-radius: @radius;
-    }
+        &:hover > span {
+            background-color: #f8f8f8;
+            cursor: default;
+        }
 
-    td:last-child {
-        border-bottom-right-radius: @radius;
+        > span {
+            display: table-cell;
+            padding: 0.5rem 0.5rem;
+            border-bottom: 1px solid #d4d4d4;
+            background-color: white;
+        }
     }
 }
 

@@ -47,10 +47,6 @@ export default class ActivitySummary extends React.Component {
         date: React.PropTypes.instanceOf(Date).isRequired,
     }
 
-    onActivityClick = (activity) => {
-        this.context.router.push(`/activity/${activity.id}`);
-    }
-
     render() {
         return (
             <div className={"activity-summary-day" + (this.props.activities.length === 0 ? ' inactive' : '')}>
@@ -64,7 +60,6 @@ export default class ActivitySummary extends React.Component {
                 </h3>
                 <ActivityList
                     activities={this.props.activities}
-                    onActivityClick={this.onActivityClick}
                 />
             </div>
         );
