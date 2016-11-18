@@ -16,6 +16,14 @@ import ActivityEditor from './ActivityEditor';
 import Login from './Login';
 import Logout from './Logout';
 
+// Polyfills
+import "babel-polyfill";
+import 'whatwg-fetch';
+if (!window.Intl) {
+    require('intl');
+    require('intl/locale-data/jsonp/en.js');
+}
+
 function requireAuth(nextState, replace) {
     if (!auth.isLoggedIn()) {
         replace({
