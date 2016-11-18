@@ -13,11 +13,11 @@ const ActivityList = (props) => (
         {props.activities.sort((a, b) => b.started_at - a.started_at).map(activity => (
             <li key={activity.id}>
                 <Link to={`/activity/${activity.id}`}>
-                    <span className="activity-list-time-column">
+                    <span className="activity-list-time-column activity-list-time-start">
                         {shortTimeFormat.format(activity.started_at)}
                     </span>
-                    <span className="activity-list-time-column">-</span>
-                    <span className="activity-list-time-column">
+                    <span className="activity-list-time-column activity-list-time-separator">-</span>
+                    <span className="activity-list-time-column activity-list-time-end">
                         {activity.finished_at === null ?
                             '' :
                             shortTimeFormat.format(activity.finished_at)}
