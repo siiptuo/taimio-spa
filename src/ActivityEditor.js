@@ -118,10 +118,12 @@ export class ActivityEditor extends React.Component {
 
     onRemove = (event) => {
         event.preventDefault();
-        const activity = { ...this.props.activity };
-        this.props.dispatch(removeActivity(this.props.activity.id)).then(() => {
-            this.goBack(activity);
-        });
+        if (confirm('Remove activity?')) {
+            const activity = { ...this.props.activity };
+            this.props.dispatch(removeActivity(this.props.activity.id)).then(() => {
+                this.goBack(activity);
+            });
+        }
     }
 
     goBack = (activity = this.props.activity) => {
