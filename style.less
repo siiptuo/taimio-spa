@@ -45,6 +45,15 @@ input {
     border-bottom: 1px solid silver;
     box-sizing: border-box;
     border-radius: @radius;
+
+    &:hover {
+        box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    &:focus {
+        border-bottom-color: #aaa;
+        box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.1);
+    }
 }
 
 input[type='datetime-local'],
