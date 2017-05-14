@@ -24,6 +24,11 @@ if (!window.Intl) {
     require('intl/locale-data/jsonp/en.js');
 }
 
+// Remove tap delay in iOS standalone mode (add to home screen).
+if (window.navigator.standalone) {
+    require('react-fastclick')();
+}
+
 function requireAuth(nextState, replace) {
     if (!auth.isLoggedIn()) {
         replace({
