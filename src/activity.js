@@ -61,8 +61,14 @@ export function apiGet(id) {
 }
 
 export function apiGetCurrent() {
-    return apiList()
-        .then(activities => activities.find(activity => activity.finished_at == null));
+    return apiGet('current')
+        .then(activities => activities.find(activity => activity.finished_at == null))
+        .catch((error) => {
+            if (error.response && error.response.status === 404) {
+                return null;
+            }
+            throw error;
+        });
 }
 
 export function apiSave(activity) {
