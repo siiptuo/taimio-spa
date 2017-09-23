@@ -27,21 +27,21 @@ class DayDonut extends React.Component {
     render() {
         const hours = countActivitiesByHour(this.props.activities);
         const maxHours = Math.max.apply(null, hours);
-        const innerRadius = 0;
-        const outerRadius = 100;
-        const radius = (outerRadius + innerRadius) / 2;
+        const radius = 100;
         const center = 100;
         const paths = [];
         const delta = 360 / 24;
         for (let angle = -delta / 2; angle < 360 - delta / 2; angle += delta) {
             paths.push([
                 'M',
-                center + radius * Math.cos((angle + delta - 90) * Math.PI / 180),
-                center + radius * Math.sin((angle + delta - 90) * Math.PI / 180),
-                'A',
-                radius, radius, 0, 0, 0,
-                center + radius * Math.cos((angle - 90) * Math.PI / 180),
-                center + radius * Math.sin((angle - 90) * Math.PI / 180),
+                Math.round(center + radius * Math.cos((angle + delta - 90) * Math.PI / 180)),
+                Math.round(center + radius * Math.sin((angle + delta - 90) * Math.PI / 180)),
+                'A', radius, radius, 0, 0, 0,
+                Math.round(center + radius * Math.cos((angle - 90) * Math.PI / 180)),
+                Math.round(center + radius * Math.sin((angle - 90) * Math.PI / 180)),
+                'L',
+                center,
+                center,
             ].join(' '));
         }
         return (
@@ -50,7 +50,6 @@ class DayDonut extends React.Component {
                     <g key={i} className="day-donut">
                         <path
                             d={path}
-                            strokeWidth={outerRadius - innerRadius}
                             opacity={maxHours === 0 ? 0 : hours[i] / maxHours}
                         />
                         <text
