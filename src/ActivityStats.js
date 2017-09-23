@@ -84,13 +84,18 @@ function sumActivityDurations(activities) {
     return activities.reduce((sum, activity) => sum + getActivityDuration(activity), 0);
 }
 
+function getWeekDayNames() {
+    const formatter = new Intl.DateTimeFormat(navigator.language, { weekday: 'short' });
+    return [...new Array(7)].map((_, i) => formatter.format(new Date(2017, 8, 24 + i)));
+}
+
 class DayTable extends React.Component {
     static propTypes = {
         activities: React.PropTypes.arrayOf(activityPropType).isRequired,
     }
 
     render() {
-        const labels = ['su', 'ma', 'ti', 'ke', 'to', 'pe', 'la'];
+        const labels = getWeekDayNames();
         const durations = groupActivitiesByDayOfTheWeek(this.props.activities)
             .map(activities => ({ activities, durationSum: sumActivityDurations(activities) }));
         const maxDuration = Math.max.apply(null, durations.map(d => d.durationSum));
