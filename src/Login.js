@@ -1,14 +1,15 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import * as auth from './auth';
 
 export default class Login extends React.Component {
     static contextTypes = {
-        router: React.PropTypes.object,
+        router: PropTypes.object,
     }
 
     static propTypes = {
-        location: React.PropTypes.object,
+        location: PropTypes.object,
     }
 
     constructor(props) {

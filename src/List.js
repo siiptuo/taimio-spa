@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { fetchActivities } from './actions';
@@ -42,17 +43,17 @@ function genDateRange(startDate, endDate) {
 
 class List extends React.Component {
     static contextTypes = {
-        router: React.PropTypes.object,
+        router: PropTypes.object,
     }
 
     static propTypes = {
-        dispatch: React.PropTypes.func.isRequired,
-        activities: React.PropTypes.arrayOf(activityPropType).isRequired,
-        loading: React.PropTypes.bool.isRequired,
-        location: React.PropTypes.object.isRequired,
-        startDate: React.PropTypes.instanceOf(Date).isRequired,
-        endDate: React.PropTypes.instanceOf(Date).isRequired,
-        search: React.PropTypes.object.isRequired,
+        dispatch: PropTypes.func.isRequired,
+        activities: PropTypes.arrayOf(activityPropType).isRequired,
+        loading: PropTypes.bool.isRequired,
+        location: PropTypes.object.isRequired,
+        startDate: PropTypes.instanceOf(Date).isRequired,
+        endDate: PropTypes.instanceOf(Date).isRequired,
+        search: PropTypes.object.isRequired,
     }
 
     componentDidMount() {

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { getRequest, postRequest, putRequest, deleteRequest } from './api';
 
@@ -102,10 +103,10 @@ export function apiResume(activity) {
         });
 }
 
-export const propType = React.PropTypes.shape({
-    id: React.PropTypes.number.isRequired,
-    title: React.PropTypes.string.isRequired,
-    tags: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-    started_at: React.PropTypes.instanceOf(Date).isRequired,
-    finished_at: React.PropTypes.instanceOf(Date),
+export const propType = PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired,
+    tags: PropTypes.arrayOf(PropTypes.string).isRequired,
+    started_at: PropTypes.instanceOf(Date).isRequired,
+    finished_at: PropTypes.instanceOf(Date),
 });

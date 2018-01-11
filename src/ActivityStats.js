@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { duration, date } from './filters';
@@ -21,7 +22,7 @@ export function countActivitiesByHour(activities) {
 
 class DayDonut extends React.Component {
     static propTypes = {
-        activities: React.PropTypes.arrayOf(activityPropType).isRequired,
+        gctivities: PropTypes.arrayOf(activityPropType).isRequired,
     }
 
     render() {
@@ -91,7 +92,7 @@ function getWeekDayNames() {
 
 class DayTable extends React.Component {
     static propTypes = {
-        activities: React.PropTypes.arrayOf(activityPropType).isRequired,
+        activities: PropTypes.arrayOf(activityPropType).isRequired,
     }
 
     render() {
@@ -147,9 +148,9 @@ export function sumTagDurations(activities) {
 
 export class ActivityStats extends React.Component {
     static propTypes = {
-        dispatch: React.PropTypes.func.isRequired,
-        activities: React.PropTypes.arrayOf(activityPropType).isRequired,
-        loading: React.PropTypes.bool.isRequired,
+        dispatch: PropTypes.func.isRequired,
+        activities: PropTypes.arrayOf(activityPropType).isRequired,
+        loading: PropTypes.bool.isRequired,
     }
 
     constructor(props) {

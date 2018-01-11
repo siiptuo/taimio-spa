@@ -1,11 +1,12 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link, IndexLink } from 'react-router';
 
 import * as auth from './auth';
 
 export default class App extends React.Component {
     static propTypes = {
-        children: React.PropTypes.element,
+        children: PropTypes.element,
     }
 
     constructor(props) {

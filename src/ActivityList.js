@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import Duration from './Duration';
 import { propType as activityPropType } from './activity';
@@ -40,7 +41,7 @@ const ActivityList = (props) => (
 );
 
 ActivityList.propTypes = {
-    activities: React.PropTypes.arrayOf(activityPropType).isRequired,
+    activities: PropTypes.arrayOf(activityPropType).isRequired,
 };
 
 export default ActivityList;

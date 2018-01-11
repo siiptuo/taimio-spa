@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { date, time } from './filters';
@@ -18,17 +19,17 @@ function isOnSameDay(date1, date2) {
 
 export class ActivityEditor extends React.Component {
     static contextTypes = {
-        router: React.PropTypes.object,
+        router: PropTypes.object,
     }
 
     static propTypes = {
-        params: React.PropTypes.shape({
-            id: React.PropTypes.string.isRequired,
+        params: PropTypes.shape({
+            id: PropTypes.string.isRequired,
         }).isRequired,
-        dispatch: React.PropTypes.func.isRequired,
-        location: React.PropTypes.object.isRequired,
+        dispatch: PropTypes.func.isRequired,
+        location: PropTypes.object.isRequired,
         activity: activity.propType,
-        loading: React.PropTypes.bool.isRequired,
+        loading: PropTypes.bool.isRequired,
     }
 
     constructor(props) {

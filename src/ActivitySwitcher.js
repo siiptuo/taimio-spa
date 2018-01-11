@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { startActivity } from './actions';
 
@@ -6,8 +7,8 @@ import * as activity from './activity';
 
 export class ActivitySwitcher extends React.Component {
     static propTypes = {
-        onActivityStart: React.PropTypes.func.isRequired,
-        loading: React.PropTypes.bool.isRequired,
+        onActivityStart: PropTypes.func.isRequired,
+        loading: PropTypes.bool.isRequired,
     }
 
     constructor(props) {

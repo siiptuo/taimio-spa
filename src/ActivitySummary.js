@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import ActivityList from './ActivityList';
 
@@ -13,7 +14,7 @@ const shortDateFormat = new Intl.DateTimeFormat(navigator.language, {
 
 export class ActivityDurationSum extends React.Component {
     static propTypes = {
-        activities: React.PropTypes.arrayOf(activityPropType).isRequired,
+        activities: PropTypes.arrayOf(activityPropType).isRequired,
     }
 
     constructor(props) {
@@ -38,13 +39,13 @@ export class ActivityDurationSum extends React.Component {
 
 export default class ActivitySummary extends React.Component {
     static contextTypes = {
-        router: React.PropTypes.object,
+        router: PropTypes.object,
     }
 
     static propTypes = {
-        activities: React.PropTypes.arrayOf(activityPropType).isRequired,
-        title: React.PropTypes.string,
-        date: React.PropTypes.instanceOf(Date).isRequired,
+        activities: PropTypes.arrayOf(activityPropType).isRequired,
+        title: PropTypes.string,
+        date: PropTypes.instanceOf(Date).isRequired,
     }
 
     render() {

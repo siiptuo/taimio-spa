@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { fetchCurrentActivity, stopActivity } from './actions';
@@ -7,9 +8,9 @@ import { propType as activityPropType } from './activity';
 
 export class CurrentActivity extends React.Component {
     static propTypes = {
-        dispatch: React.PropTypes.func.isRequired,
+        dispatch: PropTypes.func.isRequired,
         activity: activityPropType,
-        loading: React.PropTypes.bool.isRequired,
+        loading: PropTypes.bool.isRequired,
     }
 
     componentDidMount() {
