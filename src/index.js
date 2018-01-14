@@ -9,6 +9,8 @@ import * as auth from './auth';
 
 import App from './App';
 
+import less from '../style.less';
+
 // Polyfills
 import "babel-polyfill";
 import 'whatwg-fetch';
