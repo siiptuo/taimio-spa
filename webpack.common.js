@@ -7,7 +7,7 @@ const path = require('path');
 const production = process.env.NODE_ENV === 'production';
 
 const extractLess = new ExtractTextPlugin({
-  // filename: "[name].[contenthash].css",
+  filename: 'style.css',
   disable: !production,
 });
 
