@@ -1,58 +1,58 @@
 function pad2(value) {
-    return (value < 10 ? '0' : '') + value;
+  return (value < 10 ? '0' : '') + value;
 }
 
 export function time(value, showSeconds = false) {
-    if (!(value instanceof Date)) {
-        return '';
-    }
-    const hour = pad2(value.getHours());
-    const min = pad2(value.getMinutes());
-    const sec = pad2(value.getSeconds());
-    return showSeconds ? `${hour}:${min}:${sec}` : `${hour}:${min}`;
+  if (!(value instanceof Date)) {
+    return '';
+  }
+  const hour = pad2(value.getHours());
+  const min = pad2(value.getMinutes());
+  const sec = pad2(value.getSeconds());
+  return showSeconds ? `${hour}:${min}:${sec}` : `${hour}:${min}`;
 }
 
 export function date(value) {
-    if (!(value instanceof Date)) {
-        return '';
-    }
-    const year = pad2(value.getFullYear());
-    const month = pad2(value.getMonth() + 1);
-    const date = pad2(value.getDate());
-    return `${year}-${month}-${date}`;
+  if (!(value instanceof Date)) {
+    return '';
+  }
+  const year = pad2(value.getFullYear());
+  const month = pad2(value.getMonth() + 1);
+  const date = pad2(value.getDate());
+  return `${year}-${month}-${date}`;
 }
 
 export function localDateTime(value) {
-    if (!(value instanceof Date)) {
-        return '';
-    }
-    const year = pad2(value.getFullYear());
-    const month = pad2(value.getMonth() + 1);
-    const date = pad2(value.getDate());
-    const hours = pad2(value.getHours());
-    const minutes = pad2(value.getMinutes());
-    const seconds = pad2(value.getSeconds());
-    return `${year}-${month}-${date}T${hours}:${minutes}:${seconds}`;
+  if (!(value instanceof Date)) {
+    return '';
+  }
+  const year = pad2(value.getFullYear());
+  const month = pad2(value.getMonth() + 1);
+  const date = pad2(value.getDate());
+  const hours = pad2(value.getHours());
+  const minutes = pad2(value.getMinutes());
+  const seconds = pad2(value.getSeconds());
+  return `${year}-${month}-${date}T${hours}:${minutes}:${seconds}`;
 }
 
 export function duration(start, end, realTime = false) {
-    let diff = start;
-    if (start instanceof Date) {
-        if (!(end instanceof Date)) {
-            end = new Date();
-        }
-        diff = end.getTime() - start.getTime();
-    } else if (typeof start !== 'number') {
-        throw new Error('start must be Date or Number');
+  let diff = start;
+  if (start instanceof Date) {
+    if (!(end instanceof Date)) {
+      end = new Date();
     }
-    const secs = Math.floor(diff / 1000);
-    const hours = Math.floor(secs / (60 * 60));
-    const mins = Math.floor(secs / 60) - hours * 60;
-    if (hours === 0) {
-        if (mins === 0) {
-            return realTime ? 'just now' : `${secs} s`;
-        }
-        return `${mins} min`;
+    diff = end.getTime() - start.getTime();
+  } else if (typeof start !== 'number') {
+    throw new Error('start must be Date or Number');
+  }
+  const secs = Math.floor(diff / 1000);
+  const hours = Math.floor(secs / (60 * 60));
+  const mins = Math.floor(secs / 60) - hours * 60;
+  if (hours === 0) {
+    if (mins === 0) {
+      return realTime ? 'just now' : `${secs} s`;
     }
-    return `${hours} h${mins !== 0 ? ` ${mins} min` : ''}`;
+    return `${mins} min`;
+  }
+  return `${hours} h${mins !== 0 ? ` ${mins} min` : ''}`;
 }

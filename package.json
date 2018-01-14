@@ -7,7 +7,8 @@
     "start": "webpack-dev-server --open --config webpack.dev.js",
     "build": "npm run build-js && npm run build-css",
     "test": "jest",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "prettier": "prettier --write 'src/**/*js' '*.js' '*.json'"
   },
   "repository": {
     "type": "git",
@@ -56,6 +57,7 @@
     "less-loader": "^4.0.5",
     "less-plugin-autoprefix": "^1.5.1",
     "less-plugin-clean-css": "^1.5.1",
+    "prettier": "^1.10.2",
     "react-addons-test-utils": "^15.3.2",
     "style-loader": "^0.19.1",
     "uglifyjs-webpack-plugin": "^1.1.6",

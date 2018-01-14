@@ -3,11 +3,11 @@ import React from 'react';
 import * as auth from './auth';
 
 export default class Logout extends React.Component {
-    componentDidMount() {
-        auth.logout();
-    }
+  componentDidMount() {
+    auth.logout();
+  }
 
-    render() {
-        return <p>Logged out</p>;
-    }
+  render() {
+    return <p>Logged out</p>;
+  }
 }
