@@ -61,11 +61,11 @@ class List extends React.Component {
     }
 
     handleSearchInput = (event) => {
-        this.context.router.push({
+        const search = new URLSearchParams(this.props.location.search);
+        search.set('search', event.target.value);
+        this.props.history.push({
             pathname: this.props.location.pathname,
-            query: Object.assign({}, this.props.location.query, {
-                search: event.target.value,
-            }),
+            search: search.toString(),
         });
     }
 
@@ -76,12 +76,13 @@ class List extends React.Component {
         const endDate = new Date(this.props.endDate.getTime());
         endDate.setDate(endDate.getDate() + days);
 
-        this.context.router.push({
+        const search = new URLSearchParams(this.props.location.search);
+        search.set('start', date(startDate));
+        search.set('end', date(endDate));
+
+        this.props.history.push({
             pathname: this.props.location.pathname,
-            query: Object.assign({}, this.props.location.query, {
-                start: date(startDate),
-                end: date(endDate),
-            }),
+            search: search.toString(),
         });
 
         this.props.dispatch(fetchActivities(date(startDate), date(endDate)));
@@ -104,7 +105,7 @@ class List extends React.Component {
                     <input
                         type="search"
                         placeholder="Search activities by title and tags..."
-                        value={this.props.location.query.search}
+                        value={new URLSearchParams(this.props.location.search).get('search')}
                         onInput={this.handleSearchInput}
                     />
                 </div>
@@ -134,13 +135,14 @@ class List extends React.Component {
 
 function mapStateToProps(state, ownProps) {
     let [startDate, endDate] = getWeekRange(new Date());
+    const query = new URLSearchParams(ownProps.location.search);
 
-    if ('start' in ownProps.location.query && 'end' in ownProps.location.query) {
-        startDate = getStartOfDay(new Date(ownProps.location.query.start));
-        endDate = getEndOfDay(new Date(ownProps.location.query.end));
+    if (query.has('start') && query.has('end')) {
+        startDate = getStartOfDay(new Date(query.get('start')));
+        endDate = getEndOfDay(new Date(query.get('end')));
     }
 
-    const search = parseInput(ownProps.location.query.search || '');
+    const search = parseInput(query.get('search') || '');
 
     const range = state.activities.ranges[`${date(startDate)}-${date(endDate)}`];
 

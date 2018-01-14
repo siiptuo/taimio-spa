@@ -23,9 +23,9 @@ export default class Login extends React.Component {
         auth.login(this.refs.username.value, this.refs.password.value)
             .then(() => {
                 if (this.props.location.state && this.props.location.state.nextPathname) {
-                    this.context.router.replace(this.props.location.state.nextPathname);
+                    this.props.history.replace(this.props.location.state.nextPathname);
                 } else {
-                    this.context.router.replace('/');
+                    this.props.history.replace('/');
                 }
             })
             .catch(error => {

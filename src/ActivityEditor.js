@@ -55,7 +55,7 @@ export class ActivityEditor extends React.Component {
         if (this.props.activity) {
             this.setActivityState(this.props.activity);
         } else {
-            this.props.dispatch(fetchActivity(this.props.params.id));
+            this.props.dispatch(fetchActivity(this.props.match.params.id));
         }
     }
 
@@ -135,10 +135,10 @@ export class ActivityEditor extends React.Component {
             // Try to be smart when there is no history by always going to a page with the activity
             // listed.
             if (isOnSameDay(activity.started_at, new Date())) {
-                this.context.router.push('/');
+                this.props.history.push('/');
             } else {
                 const [start, end] = getWeekRange(activity.started_at).map(date);
-                this.context.router.push({
+                this.props.history.push({
                     pathname: '/list',
                     query: { start, end },
                 });
@@ -206,7 +206,7 @@ export class ActivityEditor extends React.Component {
 }
 
 function mapStateToProps(state, ownProps) {
-    const activity = state.activities.activities[ownProps.params.id];
+    const activity = state.activities.activities[ownProps.match.params.id];
     return {
         activity,
         loading: !activity,
