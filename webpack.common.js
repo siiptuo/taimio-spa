@@ -1,20 +1,21 @@
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CleanCSSPlugin = require('less-plugin-clean-css');
 const LessPluginAutoPrefix = require('less-plugin-autoprefix');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const path = require('path');
 
 const production = process.env.NODE_ENV === 'production';
 
 const extractLess = new ExtractTextPlugin({
-  filename: 'style.css',
+  filename: '[name].[contenthash].css',
   disable: !production,
 });
 
 module.exports = {
   entry: './src/index.js',
   output: {
-    filename: 'bundle.js',
+    filename: '[name].[chunkhash].js',
     path: path.resolve(__dirname, 'public'),
   },
   module: {
@@ -63,5 +64,5 @@ module.exports = {
       },
     ],
   },
-  plugins: [extractLess],
+  plugins: [extractLess, new HtmlWebpackPlugin({ template: 'template.html' })],
 };
