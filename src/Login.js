@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import * as auth from './auth';
+import Logo from '../images/taimio.svg';
 
 export default class Login extends React.Component {
   static contextTypes = {
@@ -40,14 +41,13 @@ export default class Login extends React.Component {
 
   render() {
     return (
-      <div>
-        <form className="login-form" onSubmit={this.handleSubmit}>
-          <input ref="username" placeholder="Username" />
-          <input ref="password" type="password" placeholder="Password" />
-          {this.state.error && <p className="error">{this.state.error}</p>}
-          <button type="submit">Login</button>
-        </form>
-      </div>
+      <form className="login-form" onSubmit={this.handleSubmit}>
+        <img src={Logo} alt="Taimio" />
+        <input ref="username" placeholder="Username" />
+        <input ref="password" type="password" placeholder="Password" />
+        {this.state.error && <p className="error">{this.state.error}</p>}
+        <button type="submit">Login</button>
+      </form>
     );
   }
 }

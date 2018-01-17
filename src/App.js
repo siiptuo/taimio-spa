@@ -13,7 +13,6 @@ import List from './List';
 import ActivityStats from './ActivityStats';
 import ActivityEditor from './ActivityEditor';
 import Login from './Login';
-import Logout from './Logout';
 
 import Logo from '../images/logo-white.svg';
 
@@ -60,6 +59,9 @@ export default class App extends React.Component {
   };
 
   render() {
+    if (!auth.isLoggedIn()) {
+      return <Login />;
+    }
     return (
       <BrowserRouter>
         <div>
@@ -104,25 +106,13 @@ export default class App extends React.Component {
                   Stats
                 </NavLink>
                 <div className="spacer" />
-                {this.state.loggedIn ? (
-                  <NavLink
-                    to="/logout"
-                    activeClassName="selected"
-                    style={{ float: 'right' }}
-                    onClick={this.handleMenuItemClick}
-                  >
-                    Logout
-                  </NavLink>
-                ) : (
-                  <NavLink
-                    to="/login"
-                    activeClassName="selected"
-                    style={{ float: 'right' }}
-                    onClick={this.handleMenuItemClick}
-                  >
-                    Login
-                  </NavLink>
-                )}
+                <a
+                  href="#"
+                  style={{ float: 'right' }}
+                  onClick={() => auth.logout()}
+                >
+                  Logout
+                </a>
               </div>
             </nav>
           </header>
@@ -132,8 +122,6 @@ export default class App extends React.Component {
               <PrivateRoute path="/list" component={List} />
               <PrivateRoute path="/stats" component={ActivityStats} />
               <PrivateRoute path="/activity/:id" component={ActivityEditor} />
-              <Route path="/login" component={Login} />
-              <Route path="/logout" component={Logout} />
             </Switch>
           </section>
         </div>
