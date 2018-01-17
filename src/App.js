@@ -106,13 +106,12 @@ export default class App extends React.Component {
                   Stats
                 </NavLink>
                 <div className="spacer" />
-                <a
-                  href="#"
-                  style={{ float: 'right' }}
-                  onClick={() => auth.logout()}
-                >
-                  Logout
-                </a>
+                <span className="dropdown" style={{ float: 'right' }}>
+                  <span className="dropdown-button" onClick={this.handleMenuToggleClick}>User</span>
+                  <ul>
+                    <li><a href="#" onClick={() => auth.logout()}>Logout</a></li>
+                  </ul>
+                </span>
               </div>
             </nav>
           </header>
