@@ -8,14 +8,14 @@ const path = require('path');
 const production = process.env.NODE_ENV === 'production';
 
 const extractLess = new ExtractTextPlugin({
-  filename: '[name].[contenthash].css',
+  filename: '[contenthash].css',
   disable: !production,
 });
 
 module.exports = {
   entry: './src/index.js',
   output: {
-    filename: '[name].[chunkhash].js',
+    filename: '[chunkhash].js',
     path: path.resolve(__dirname, 'public'),
   },
   module: {
@@ -61,6 +61,10 @@ module.exports = {
           ],
           fallback: 'style-loader',
         }),
+      },
+      {
+        test: /\.svg$/,
+        use: ['file-loader'],
       },
     ],
   },

@@ -15,6 +15,8 @@ import ActivityEditor from './ActivityEditor';
 import Login from './Login';
 import Logout from './Logout';
 
+import Logo from '../images/logo-white.svg';
+
 import * as auth from './auth';
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
@@ -64,7 +66,7 @@ export default class App extends React.Component {
           <header>
             <nav>
               <div className="nav-top">
-                <img src="/logo-white.svg" alt="Taimio" />
+                <img src={Logo} alt="Taimio" />
                 <a
                   href="javascript:void(0)"
                   className="item-icon item-menu"
