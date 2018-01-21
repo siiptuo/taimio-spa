@@ -5,10 +5,6 @@ import * as auth from './auth';
 import Logo from '../images/taimio.svg';
 
 export default class Login extends React.Component {
-  static contextTypes = {
-    router: PropTypes.object,
-  };
-
   static propTypes = {
     location: PropTypes.object,
   };

@@ -53,10 +53,6 @@ function genDateRange(startDate, endDate) {
 }
 
 class List extends React.Component {
-  static contextTypes = {
-    router: PropTypes.object,
-  };
-
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     activities: PropTypes.arrayOf(activityPropType).isRequired,

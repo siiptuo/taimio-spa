@@ -130,7 +130,7 @@ export class ActivityEditor extends React.Component {
   onResume = event => {
     event.preventDefault();
     this.props.dispatch(resumeActivity(this.props.activity.id)).then(() => {
-      this.context.router.push('/');
+      this.props.history.push('/');
     });
   };
 
@@ -146,11 +146,11 @@ export class ActivityEditor extends React.Component {
 
   goBack = (activity = this.props.activity) => {
     // Simply go back if there is history.
-    if (this.props.location.action === 'PUSH') {
-      this.context.router.goBack();
+    if (this.props.history.action === 'PUSH') {
+      this.props.history.goBack();
     } else {
-      // Try to be smart when there is no history by always going to a page with the activity
-      // listed.
+      // Try to be smart when there is no history by going to the page where
+      // the activity is listed.
       if (isOnSameDay(activity.started_at, new Date())) {
         this.props.history.push('/');
       } else {

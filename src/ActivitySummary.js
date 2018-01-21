@@ -40,10 +40,6 @@ export class ActivityDurationSum extends React.Component {
 }
 
 export default class ActivitySummary extends React.Component {
-  static contextTypes = {
-    router: PropTypes.object,
-  };
-
   static propTypes = {
     activities: PropTypes.arrayOf(activityPropType).isRequired,
     title: PropTypes.string,
