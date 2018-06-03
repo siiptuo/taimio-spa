@@ -9,21 +9,21 @@ export function setOnChange(func) {
 export function login(username, password) {
   return postRequest('login', JSON.stringify({ username, password })).then(
     data => {
-      localStorage.token = data.token;
+      localStorage.taimioToken = data.token;
       onChange(true);
     },
   );
 }
 
 export function logout() {
-  delete localStorage.token;
+  delete localStorage.taimioToken;
   onChange(false);
 }
 
 export function getToken() {
-  return localStorage.token;
+  return localStorage.taimioToken;
 }
 
 export function isLoggedIn() {
-  return !!localStorage.token;
+  return !!localStorage.taimioToken;
 }
