@@ -106,6 +106,10 @@ function getWeekDayNames() {
   );
 }
 
+function radius(area) {
+  return Math.sqrt(area / Math.PI);
+}
+
 class DayTable extends React.Component {
   static propTypes = {
     activities: PropTypes.arrayOf(activityPropType).isRequired,
@@ -119,14 +123,15 @@ class DayTable extends React.Component {
         durationSum: sumActivityDurations(activities),
       }),
     );
-    const maxDuration = Math.max.apply(null, durations.map(d => d.durationSum));
+
+    const maxRadius = radius(Math.max(...durations.map(d => d.durationSum)));
 
     // Move sunday at end of the week.
     labels.push(labels.shift());
     durations.push(durations.shift());
 
     const columns = durations.map((d, i) => {
-      const size = maxDuration === 0 ? 0 : d.durationSum / maxDuration;
+      const size = maxRadius === 0 ? 0 : radius(d.durationSum) / maxRadius;
       const count = d.activities.length;
       const title =
         count === 0
